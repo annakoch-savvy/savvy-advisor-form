@@ -617,21 +617,22 @@ export default function AdvisorForm() {
     return (
       <div className="min-h-screen relative flex items-center justify-center px-4 py-12">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/form-bg.jpg" alt="" aria-hidden="true" className="fixed inset-0 w-full h-full" style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(8px)', transform: 'scale(1.1)', transformOrigin: 'center' }} />
-        <div className="fixed inset-0 bg-black/25" />
-        <div className="relative z-10 bg-white rounded-2xl shadow-2xl p-12 max-w-md w-full text-center">
-          <div className="w-14 h-14 bg-[#175242] rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
+        <img src="/form-bg.jpg" alt="" aria-hidden="true" className="fixed inset-0 w-full h-full" style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(5px)', transform: 'scale(1.1)', transformOrigin: 'center' }} />
+        <div className="fixed inset-0 bg-black/40" />
+
+        <div className="relative z-10 flex flex-col items-center text-center max-w-xl w-full px-6">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/savvy-logo-black.svg" alt="Savvy" className="h-7 mx-auto mb-6 opacity-60" />
-          <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-3">Submission received.</h2>
-          <p className="text-gray-500 text-sm leading-relaxed">
-            Thank you, <strong className="text-gray-800">{form.fullName}</strong>. Your advisor profile has been sent to the Savvy design team. They&apos;ll be in touch once your page is ready.
+          <img src="/savvy-logo-white.svg" alt="Savvy" className="h-8 mb-16 opacity-90" />
+
+          <h1 className="text-[3.25rem] sm:text-[4rem] font-serif font-light tracking-[-0.04em] text-white leading-[1.05] mb-6">
+            Thank you,<br />{form.fullName.split(' ')[0]}.
+          </h1>
+
+          <p className="text-white/70 text-base sm:text-lg font-light leading-relaxed max-w-lg mb-4">
+            We&apos;re so excited to bring your page to life. Your Client Marketing Associate will be in touch with the first draft as soon as it&apos;s ready.
           </p>
-          <p className="text-xs text-gray-300 italic mt-8">Forging the future of wealth management.</p>
+
+          <p className="text-white/40 text-xs tracking-wide mt-8">Experience Wealth Management, Redefined.</p>
         </div>
       </div>
     );

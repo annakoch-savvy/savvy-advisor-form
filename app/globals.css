@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+  --savvy-gold: #8E7E57;
+  --savvy-vanilla: #FFF8F1;
+  --savvy-ecru: #C7BCA1;
+  --savvy-deep-green: #175242;
+  --savvy-dark: #000000;
+  --savvy-warm-gray-4: #F5F2EC;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 300;
+  background-color: var(--savvy-vanilla);
+}
+
+.accent-savvy {
+  accent-color: var(--savvy-deep-green);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--savvy-warm-gray-4);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--savvy-ecru);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--savvy-gold);
+}

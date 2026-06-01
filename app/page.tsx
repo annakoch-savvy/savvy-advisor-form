@@ -354,6 +354,44 @@ function FloatTextarea({
   );
 }
 
+const SIDEBAR_QUOTES = [
+  { text: 'Experience Wealth Management, Redefined.', attribution: '' },
+  { text: 'We help people make better financial decisions so they can live the life they aspire to live.', attribution: '' },
+  { text: 'Savvy puts my best interests first, not theirs.', attribution: '— Stephen K., Odessa, FL' },
+  { text: 'Savvy provides personalized guidance rather than boiler plate advice.', attribution: '— David S., Bradenton, FL' },
+  { text: 'Modern, human advice.', attribution: '' },
+  { text: 'Your full financial picture in one place.', attribution: '' },
+  { text: 'We\'re building a world class team of wealth managers and technologists to deliver modern, human advice.', attribution: '' },
+];
+
+function SidebarQuote() {
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % SIDEBAR_QUOTES.length);
+        setVisible(true);
+      }, 500);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const quote = SIDEBAR_QUOTES[index];
+  return (
+    <div className="mt-auto" style={{ opacity: visible ? 1 : 0, transition: 'opacity 500ms ease' }}>
+      <p className="text-xs text-gray-500 italic leading-relaxed">
+        &ldquo;{quote.text}&rdquo;
+      </p>
+      {quote.attribution && (
+        <p className="text-xs text-gray-400 mt-1 not-italic">{quote.attribution}</p>
+      )}
+    </div>
+  );
+}
+
 function ReviewRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-start gap-1 py-3 border-b border-gray-100 last:border-0">
@@ -708,9 +746,7 @@ export default function AdvisorForm() {
             })}
           </nav>
 
-          <p className="text-xs text-gray-400 italic leading-relaxed mt-auto">
-            &ldquo;Forging the future of wealth management.&rdquo;
-          </p>
+          <SidebarQuote />
         </aside>
 
         {/* ── Right Panel ── */}

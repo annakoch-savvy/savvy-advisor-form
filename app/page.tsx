@@ -549,72 +549,6 @@ export default function AdvisorForm() {
     }
   };
 
-  // ── Intro screen (crossfades into form) ─────────────────────────────────────
-
-  if (intro || introFading) {
-    return (
-      <div className="min-h-screen relative flex items-center justify-center px-4 py-12">
-        {/* Shared background — stays fixed, never moves */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/form-bg.jpg" alt="" aria-hidden="true" className="fixed inset-0 w-full h-full" style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(5px)', transform: 'scale(1.1)', transformOrigin: 'center' }} />
-        <div className="fixed inset-0 bg-black/40" />
-
-        {/* Form card fades IN as intro fades OUT */}
-        <div
-          className="relative z-10 w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden flex min-h-[600px]"
-          style={{ opacity: introFading ? 1 : 0, transition: 'opacity 600ms ease', pointerEvents: introFading ? 'auto' : 'none' }}
-        >
-          {/* Minimal form preview so the card is ready to show — full form renders after intro unmounts */}
-          <div className="flex-1 flex items-center justify-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/savvy-logo-black.svg" alt="Savvy" className="h-7 opacity-30" />
-          </div>
-        </div>
-
-        {/* Intro content fades OUT */}
-        <div
-          className="fixed inset-0 z-20 flex flex-col items-center justify-center text-center px-6"
-          style={{ opacity: introFading ? 0 : 1, transition: 'opacity 600ms ease', pointerEvents: introFading ? 'none' : 'auto' }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/savvy-logo-white.svg" alt="Savvy" className="h-8 mb-16 opacity-90" />
-
-          <h1 className="text-[3.25rem] sm:text-[4rem] font-serif font-light tracking-[-0.04em] text-white leading-[1.05] mb-6">
-            Your Savvy<br />Advisor Page
-          </h1>
-
-          <p className="text-white/70 text-base sm:text-lg font-light leading-relaxed max-w-lg mb-10">
-            A dedicated page built around you — your background, your clients, and how you work. Answer a few questions and we&apos;ll handle the rest.
-          </p>
-
-          <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-12 text-sm text-white/60">
-            <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
-              Continuously updated
-            </li>
-            <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
-              Optimized for SEO &amp; GEO
-            </li>
-            <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
-              Grows your digital presence
-            </li>
-          </ul>
-
-          <button
-            type="button"
-            onClick={() => { setIntroFading(true); setTimeout(() => { setIntro(false); setIntroFading(false); }, 650); }}
-            className="px-10 py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase bg-white text-black border border-white hover:bg-transparent hover:text-white transition-all duration-200"
-          >
-            Let&apos;s Begin
-          </button>
-
-          <p className="mt-6 text-white/40 text-xs tracking-wide">Takes about 10–15 minutes</p>
-        </div>
-      </div>
-    );
-  }
 
   // ── Already submitted screen ────────────────────────────────────────────────
 
@@ -676,6 +610,55 @@ export default function AdvisorForm() {
         style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(8px)', transform: 'scale(1.1)', transformOrigin: 'center' }}
       />
       <div className="fixed inset-0 bg-black/25" />
+
+      {/* ── Intro overlay — sits on top, fades out on click ── */}
+      {(intro || introFading) && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-6"
+          style={{ opacity: introFading ? 0 : 1, transition: 'opacity 650ms ease', pointerEvents: introFading ? 'none' : 'auto' }}
+          onTransitionEnd={() => { if (introFading) { setIntro(false); setIntroFading(false); } }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/form-bg.jpg" alt="" aria-hidden="true" className="fixed inset-0 w-full h-full -z-10" style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(5px)', transform: 'scale(1.1)', transformOrigin: 'center' }} />
+          <div className="fixed inset-0 bg-black/40 -z-10" />
+
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/savvy-logo-white.svg" alt="Savvy" className="h-8 mb-16 opacity-90 relative" />
+
+          <h1 className="relative text-[3.25rem] sm:text-[4rem] font-serif font-light tracking-[-0.04em] text-white leading-[1.05] mb-6">
+            Your Savvy<br />Advisor Page
+          </h1>
+
+          <p className="relative text-white/70 text-base sm:text-lg font-light leading-relaxed max-w-lg mb-10">
+            A dedicated page built around you — your background, your clients, and how you work. Answer a few questions and we&apos;ll handle the rest.
+          </p>
+
+          <ul className="relative flex flex-col sm:flex-row gap-4 sm:gap-8 mb-12 text-sm text-white/60">
+            <li className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Continuously updated
+            </li>
+            <li className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Optimized for SEO &amp; GEO
+            </li>
+            <li className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Grows your digital presence
+            </li>
+          </ul>
+
+          <button
+            type="button"
+            onClick={() => setIntroFading(true)}
+            className="relative px-10 py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase bg-white text-black border border-white hover:bg-transparent hover:text-white transition-all duration-200"
+          >
+            Let&apos;s Begin
+          </button>
+
+          <p className="relative mt-6 text-white/40 text-xs tracking-wide">Takes about 10–15 minutes</p>
+        </div>
+      )}
 
       <div className="relative z-10 w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden flex min-h-[600px]">
 

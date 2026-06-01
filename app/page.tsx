@@ -627,7 +627,7 @@ export default function AdvisorForm() {
           <img src="/savvy-logo-white.svg" alt="Savvy" className="h-8 mb-16 opacity-90" />
 
           <h1 className="text-[3.25rem] sm:text-[4rem] font-serif font-light tracking-[-0.04em] text-white leading-[1.05] mb-6">
-            Thank you,<br />{form.fullName.split(' ')[0]}.
+            Thank you,<br />{form.fullName.split(' ')[0] || 'there'}!
           </h1>
 
           <p className="text-white/70 text-base sm:text-lg font-light leading-relaxed max-w-lg mb-4">

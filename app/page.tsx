@@ -615,7 +615,7 @@ export default function AdvisorForm() {
       {(intro || introFading) && (
         <div
           className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-6"
-          style={{ opacity: introFading ? 0 : 1, transition: 'opacity 650ms ease', pointerEvents: introFading ? 'none' : 'auto' }}
+          style={{ opacity: introFading ? 0 : 1, transition: 'opacity 1200ms ease', pointerEvents: introFading ? 'none' : 'auto' }}
           onTransitionEnd={() => { if (introFading) { setIntro(false); setIntroFading(false); } }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}

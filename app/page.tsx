@@ -554,8 +554,8 @@ export default function AdvisorForm() {
   if (intro) {
     return (
       <div
-        className="min-h-screen relative flex items-center justify-center px-4 py-12 transition-opacity duration-700"
-        style={{ opacity: introFading ? 0 : 1 }}
+        className="min-h-screen relative flex items-center justify-center px-4 py-12"
+        style={{ opacity: introFading ? 0 : 1, transition: 'opacity 700ms ease' }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/form-bg.jpg" alt="" aria-hidden="true" className="fixed inset-0 w-full h-full" style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(5px)', transform: 'scale(1.1)', transformOrigin: 'center' }} />

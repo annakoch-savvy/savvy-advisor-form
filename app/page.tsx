@@ -604,7 +604,7 @@ export default function AdvisorForm() {
 
           <button
             type="button"
-            onClick={() => { setIntroFading(true); setTimeout(() => setIntro(false), 650); }}
+            onClick={() => { setIntroFading(true); setTimeout(() => { setIntro(false); setIntroFading(false); }, 650); }}
             className="px-10 py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase bg-white text-black border border-white hover:bg-transparent hover:text-white transition-all duration-200"
           >
             Let&apos;s Begin

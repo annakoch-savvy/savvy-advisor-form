@@ -367,6 +367,7 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
 
 export default function AdvisorForm() {
   const [intro, setIntro] = useState(true);
+  const [introFading, setIntroFading] = useState(false);
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -552,7 +553,10 @@ export default function AdvisorForm() {
 
   if (intro) {
     return (
-      <div className="min-h-screen relative flex items-center justify-center px-4 py-12">
+      <div
+        className="min-h-screen relative flex items-center justify-center px-4 py-12 transition-opacity duration-700"
+        style={{ opacity: introFading ? 0 : 1 }}
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/form-bg.jpg" alt="" aria-hidden="true" className="fixed inset-0 w-full h-full" style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(5px)', transform: 'scale(1.1)', transformOrigin: 'center' }} />
         <div className="fixed inset-0 bg-black/40" />
@@ -591,7 +595,7 @@ export default function AdvisorForm() {
           {/* CTA */}
           <button
             type="button"
-            onClick={() => setIntro(false)}
+            onClick={() => { setIntroFading(true); setTimeout(() => setIntro(false), 700); }}
             className="px-10 py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase bg-white text-black border border-white hover:bg-transparent hover:text-white transition-all duration-200"
           >
             Let&apos;s Begin

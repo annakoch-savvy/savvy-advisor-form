@@ -375,7 +375,7 @@ function SidebarQuote() {
         setIndex((i) => (i + 1) % SIDEBAR_QUOTES.length);
         setVisible(true);
       }, 500);
-    }, 5000);
+    }, 8000);
     return () => clearInterval(timer);
   }, []);
 

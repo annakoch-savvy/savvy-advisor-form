@@ -613,7 +613,9 @@ export default function AdvisorForm() {
 
   // ── Success screen ──────────────────────────────────────────────────────────
 
-  if (submitted) {
+  const previewSuccess = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('preview') === 'success';
+
+  if (submitted || previewSuccess) {
     return (
       <div className="min-h-screen relative flex items-center justify-center px-4 py-12">
         {/* eslint-disable-next-line @next/next/no-img-element */}

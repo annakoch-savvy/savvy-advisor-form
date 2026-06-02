@@ -648,17 +648,13 @@ export default function AdvisorForm() {
         className="fixed inset-0 w-full h-full"
         style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(8px)', transform: 'scale(1.1)', transformOrigin: 'center' }}
       />
-      {/* Dark overlay — transitions from intro darkness to form darkness */}
-      <div
-        className="fixed inset-0"
-        style={{ backgroundColor: intro || introFading ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.25)', transition: 'background-color 1200ms ease' }}
-      />
+      <div className="fixed inset-0 bg-black/25" />
 
       {/* ── Intro overlay — sits on top, fades out on click ── */}
       {(intro || introFading) && (
         <div
           className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-6"
-          style={{ opacity: introFading ? 0 : 1, transition: 'opacity 1200ms ease', pointerEvents: introFading ? 'none' : 'auto' }}
+          style={{ opacity: introFading ? 0 : 1, transition: 'opacity 1200ms ease', pointerEvents: introFading ? 'none' : 'auto', background: 'rgba(0,0,0,0.42)' }}
           onTransitionEnd={() => { if (introFading) { setIntro(false); setIntroFading(false); } }}
         >
 

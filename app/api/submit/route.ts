@@ -819,8 +819,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Block duplicate submissions
-    const alreadyExists = await findExistingLandingPageTask(onboardingId);
+    // Block duplicate submissions (bypass with _test=true)
+    const isTest = formData.get('_test') === 'true';
+    const alreadyExists = !isTest && await findExistingLandingPageTask(onboardingId);
     if (alreadyExists) {
       return NextResponse.json(
         { error: `A "Savvy Landing Page" task already exists for "${submission.fullName}". This form can only be submitted once.` },

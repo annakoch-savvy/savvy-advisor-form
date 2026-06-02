@@ -642,13 +642,17 @@ export default function AdvisorForm() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center px-4 py-12">
-      {/* Blurred background image */}
+      {/* Single shared background — never reloads, stays fixed throughout */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/form-bg.jpg" alt="" aria-hidden="true"
         className="fixed inset-0 w-full h-full"
         style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(8px)', transform: 'scale(1.1)', transformOrigin: 'center' }}
       />
-      <div className="fixed inset-0 bg-black/25" />
+      {/* Dark overlay — transitions from intro darkness to form darkness */}
+      <div
+        className="fixed inset-0"
+        style={{ backgroundColor: intro || introFading ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.25)', transition: 'background-color 1200ms ease' }}
+      />
 
       {/* ── Intro overlay — sits on top, fades out on click ── */}
       {(intro || introFading) && (
@@ -657,22 +661,19 @@ export default function AdvisorForm() {
           style={{ opacity: introFading ? 0 : 1, transition: 'opacity 1200ms ease', pointerEvents: introFading ? 'none' : 'auto' }}
           onTransitionEnd={() => { if (introFading) { setIntro(false); setIntroFading(false); } }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/form-bg.jpg" alt="" aria-hidden="true" className="fixed inset-0 w-full h-full -z-10" style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(5px)', transform: 'scale(1.1)', transformOrigin: 'center' }} />
-          <div className="fixed inset-0 bg-black/40 -z-10" />
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/savvy-logo-white.svg" alt="Savvy" className="h-8 mb-16 opacity-90 relative" />
+          <img src="/savvy-logo-white.svg" alt="Savvy" className="h-8 mb-16 opacity-90" />
 
-          <h1 className="relative text-[3.25rem] sm:text-[4rem] font-serif font-light tracking-[-0.04em] text-white leading-[1.05] mb-6">
+          <h1 className="text-[3.25rem] sm:text-[4rem] font-serif font-light tracking-[-0.04em] text-white leading-[1.05] mb-6">
             Your Savvy<br />Advisor Page
           </h1>
 
-          <p className="relative text-white/70 text-base sm:text-lg font-light leading-relaxed max-w-lg mb-10">
+          <p className="text-white/70 text-base sm:text-lg font-light leading-relaxed max-w-lg mb-10">
             A dedicated page built around you — your background, your clients, and how you work. Answer a few questions and we&apos;ll handle the rest.
           </p>
 
-          <ul className="relative flex flex-col sm:flex-row gap-4 sm:gap-8 mb-12 text-sm text-white/60">
+          <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-12 text-sm text-white/60">
             <li className="flex items-center gap-2">
               <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               Continuously updated
@@ -690,12 +691,12 @@ export default function AdvisorForm() {
           <button
             type="button"
             onClick={() => setIntroFading(true)}
-            className="relative px-10 py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase bg-white text-black border border-white hover:bg-transparent hover:text-white transition-all duration-200"
+            className="px-10 py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase bg-white text-black border border-white hover:bg-transparent hover:text-white transition-all duration-200"
           >
             Let&apos;s Begin
           </button>
 
-          <p className="relative mt-6 text-white/40 text-xs tracking-wide">Takes about 10–15 minutes</p>
+          <p className="mt-6 text-white/40 text-xs tracking-wide">Takes about 10–15 minutes</p>
         </div>
       )}
 

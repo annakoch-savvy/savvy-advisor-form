@@ -98,6 +98,41 @@ function isImageFile(file: File) {
   return ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type);
 }
 
+async function compressImage(file: File, maxSizeKB = 800): Promise<File> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement('canvas');
+      const MAX_DIM = 1200;
+      let { width, height } = img;
+      if (width > MAX_DIM || height > MAX_DIM) {
+        if (width > height) { height = Math.round(height * MAX_DIM / width); width = MAX_DIM; }
+        else { width = Math.round(width * MAX_DIM / height); height = MAX_DIM; }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
+      let quality = 0.85;
+      const tryCompress = () => {
+        canvas.toBlob((blob) => {
+          if (!blob) { resolve(file); return; }
+          if (blob.size / 1024 <= maxSizeKB || quality <= 0.4) {
+            resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+          } else {
+            quality -= 0.1;
+            tryCompress();
+          }
+        }, 'image/jpeg', quality);
+      };
+      tryCompress();
+    };
+    img.onerror = () => resolve(file);
+    img.src = url;
+  });
+}
+
 // ─── Design tokens ────────────────────────────────────────────────────────────
 // Savvy green = #175242  |  gold = #8E7E57  |  vanilla = #FFF8F1
 
@@ -573,7 +608,10 @@ export default function AdvisorForm() {
       fd.append('favoritePartWorking', form.favoritePartWorking);
       fd.append('likesAboutSavvy', form.likesAboutSavvy);
       fd.append('designations', form.designations);
-      if (form.photo) fd.append('photo', form.photo);
+      if (form.photo) {
+        const compressed = await compressImage(form.photo);
+        fd.append('photo', compressed);
+      }
       const res = await fetch('/api/submit', { method: 'POST', body: fd });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Submission failed.');

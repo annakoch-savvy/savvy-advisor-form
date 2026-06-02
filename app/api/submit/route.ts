@@ -4,6 +4,7 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { AdvisorSubmission, PAGE_TYPE_LABELS } from '@/lib/emailTemplate';
 
 export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 const WRIKE_API = 'https://www.wrike.com/api/v4';
 const HUBSPOT_API = 'https://api.hubapi.com';

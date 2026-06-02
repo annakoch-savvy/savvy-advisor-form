@@ -410,7 +410,13 @@ HERO SECTION INTRO
 
 HOW CAN I HELP?
 [List the 4 chosen options, each on its own block with Title, Subtitle, Description exactly as written in the options list]
-
+${isMulti ? `
+OUR TEAM
+[${isDba
+  ? `Opening paragraph (2-3 sentences) introducing the ${s.dbaName} team — their shared mission, values, and what sets the team apart. Reference the DBA brand name naturally. End with: "[LOGO PLACEHOLDER — ${s.dbaName} team logo]". Then add a note: "[TEAM MEMBER SECTION: ${s.fullName}]" followed by their individual bio below. Close with a note: "[ADDITIONAL TEAM MEMBER SECTIONS TO BE ADDED]".`
+  : `Opening paragraph (2-3 sentences) introducing the team under Savvy branding — their shared mission and what they collectively bring to clients. Then add a note: "[TEAM MEMBER SECTION: ${s.fullName}]" followed by their individual bio below. Close with a note: "[ADDITIONAL TEAM MEMBER SECTIONS TO BE ADDED]".`
+}]
+` : ''}
 GET TO KNOW ${s.fullName.toUpperCase()}
 [3-4 paragraph bio in third person. Covers career background, areas of focus, what drives them, and a personal detail if mentioned. Natural, warm tone. Use the bio + how they became an advisor answers as source material.]
 
@@ -457,6 +463,7 @@ FAQ
         trimmed === 'HERO SECTION INTRO' ||
         trimmed === 'HOW CAN I HELP?' ||
         trimmed.startsWith('GET TO KNOW ') ||
+        trimmed === 'OUR TEAM' ||
         trimmed === 'FAQ'
       ) {
         return `<b>━━━ ${trimmed} ━━━</b>`;

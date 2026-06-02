@@ -839,25 +839,75 @@ export async function POST(req: NextRequest) {
       }),
     });
 
-    // Generate PDF and attach to the task, plus attach the advisor's photo if provided
+    // Generate PDF, attach files, and send Slack notification in parallel
     const taskId = taskData?.data?.[0]?.id;
-    if (taskId) {
-      const pdfBuffer = await generateAdvisorPdf(cleaned, hubspot.formId, hubspot.embedCode, calendly?.schedulingUrl, calendly?.embedCode, description);
-      const pdfFilename = `${cleaned.fullName.replace(/\s+/g, '_')}_Landing_Page_Brief.pdf`;
+    const wrikeTaskUrl = taskId
+      ? `https://www.wrike.com/open.htm?id=${taskId}`
+      : null;
 
-      const photoFile = formData.get('photo') as File | null;
+    await Promise.all([
+      // PDF + photo attachments
+      taskId
+        ? (async () => {
+            const pdfBuffer = await generateAdvisorPdf(cleaned, hubspot.formId, hubspot.embedCode, calendly?.schedulingUrl, calendly?.embedCode, description);
+            const pdfFilename = `${cleaned.fullName.replace(/\s+/g, '_')}_Landing_Page_Brief.pdf`;
+            const photoFile = formData.get('photo') as File | null;
+            await Promise.all([
+              attachPdfToWrikeTask(taskId, pdfBuffer, pdfFilename),
+              photoFile
+                ? (async () => {
+                    const photoBuffer = Buffer.from(await photoFile.arrayBuffer());
+                    const photoFilename = photoFile.name || `${cleaned.fullName.replace(/\s+/g, '_')}_headshot.jpg`;
+                    await attachFileToWrikeTask(taskId, photoBuffer, photoFilename, photoFile.type || 'image/jpeg');
+                  })()
+                : Promise.resolve(),
+            ]);
+          })()
+        : Promise.resolve(),
 
-      await Promise.all([
-        attachPdfToWrikeTask(taskId, pdfBuffer, pdfFilename),
-        photoFile
-          ? (async () => {
-              const photoBuffer = Buffer.from(await photoFile.arrayBuffer());
-              const photoFilename = photoFile.name || `${cleaned.fullName.replace(/\s+/g, '_')}_headshot.jpg`;
-              await attachFileToWrikeTask(taskId, photoBuffer, photoFilename, photoFile.type || 'image/jpeg');
-            })()
-          : Promise.resolve(),
-      ]);
-    }
+      // Slack notification
+      (async () => {
+        const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+        if (!webhookUrl) return;
+        const pageTypeLabel = PAGE_TYPE_LABELS[cleaned.pageType];
+        const topics = cleaned.financialTopics.slice(0, 3).join(', ') + (cleaned.financialTopics.length > 3 ? '…' : '');
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            blocks: [
+              {
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `:tada: *New advisor intake form submitted!*`,
+                },
+              },
+              {
+                type: 'section',
+                fields: [
+                  { type: 'mrkdwn', text: `*Advisor*\n${cleaned.fullName}` },
+                  { type: 'mrkdwn', text: `*Location*\n${cleaned.cityAndState}` },
+                  { type: 'mrkdwn', text: `*Page Type*\n${pageTypeLabel}` },
+                  { type: 'mrkdwn', text: `*Topics*\n${topics}` },
+                ],
+              },
+              ...(wrikeTaskUrl ? [{
+                type: 'section',
+                text: {
+                  type: 'mrkdwn',
+                  text: `*Wrike Task*\n<${wrikeTaskUrl}|View Landing Page Brief>`,
+                },
+              }] : []),
+              {
+                type: 'context',
+                elements: [{ type: 'mrkdwn', text: `Submitted via Savvy Advisor Intake Form` }],
+              },
+            ],
+          }),
+        });
+      })(),
+    ]);
 
     return NextResponse.json({ success: true, hubspotFormId: hubspot.formId });
   } catch (err: unknown) {

@@ -826,8 +826,12 @@ export default function AdvisorForm() {
               onMouseEnter={() => setBtnHover(true)}
               onMouseLeave={() => setBtnHover(false)}
               disabled={!gateEmail.trim()}
-              className="w-full py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase border-0 transition-all duration-200 disabled:opacity-50"
-              style={{ backgroundColor: btnHover ? '#b8923d' : '#C9A84C', color: '#0A1628' }}
+              className="w-full py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase border-0 transition-all duration-200"
+              style={{
+                backgroundColor: !gateEmail.trim() ? 'rgba(255,255,255,0.15)' : btnHover ? '#b8923d' : '#C9A84C',
+                color: 'white',
+                border: !gateEmail.trim() ? '1px solid rgba(255,255,255,0.3)' : 'none',
+              }}
             >
               Let&apos;s Begin
             </button>

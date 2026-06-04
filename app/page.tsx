@@ -39,6 +39,8 @@ function clearDraft(email: string) {
 interface FormData {
   pageType: PageType;
   email: string;
+  phone: string;
+  firmName: string;
   fullName: string;
   cityAndState: string;
   linkedIn: string;
@@ -441,6 +443,10 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
 export default function AdvisorForm() {
   const [intro, setIntro] = useState(true);
   const [introFading, setIntroFading] = useState(false);
+  const [emailGate, setEmailGate] = useState(false);
+  const [gateEmail, setGateEmail] = useState('');
+  const [gateLoading, setGateLoading] = useState(false);
+  const [btnHover, setBtnHover] = useState(false);
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -462,6 +468,8 @@ export default function AdvisorForm() {
   const [form, setForm] = useState<FormData>({
     pageType: 'solo_savvy',
     email: '',
+    phone: '',
+    firmName: '',
     fullName: '',
     cityAndState: '',
     linkedIn: '',
@@ -513,6 +521,24 @@ export default function AdvisorForm() {
     setErrors((prev) => ({ ...prev, pageType: undefined }));
   };
 
+  // ── Gate submit ─────────────────────────────────────────────────────────────
+
+  const handleGateSubmit = async () => {
+    if (!gateEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gateEmail)) return;
+    setGateLoading(true);
+    try {
+      const draft = loadDraft(gateEmail);
+      setForm((prev) => ({ ...prev, email: gateEmail }));
+      if (draft) {
+        const { savedAt: _s, ...fields } = draft;
+        setForm((prev) => ({ ...prev, ...fields, email: gateEmail }));
+      }
+      setEmailGate(false);
+    } finally {
+      setGateLoading(false);
+    }
+  };
+
   // ── Validation ──────────────────────────────────────────────────────────────
 
   const validateStep1 = (): boolean => {
@@ -530,7 +556,7 @@ export default function AdvisorForm() {
       e.linkedIn = 'Please enter a valid URL.';
     }
     if (!form.yearsOfExperience.trim()) e.yearsOfExperience = 'Years of experience is required.';
-    if (isDbaPageType(form.pageType) && !form.dbaName.trim()) e.dbaName = 'DBA name is required.';
+    if (isDbaPageType(form.pageType) && !form.firmName.trim()) e.firmName = 'Firm / Brand Name is required.';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -593,11 +619,13 @@ export default function AdvisorForm() {
       const fd = new FormData();
       fd.append('pageType', form.pageType);
       fd.append('email', form.email);
+      fd.append('phone', form.phone);
+      fd.append('firmName', form.firmName);
       fd.append('fullName', form.fullName);
       fd.append('cityAndState', form.cityAndState);
       fd.append('linkedIn', normalizeUrl(form.linkedIn));
       fd.append('yearsOfExperience', form.yearsOfExperience);
-      fd.append('dbaName', form.dbaName);
+      fd.append('dbaName', form.firmName);
       fd.append('financialTopics', JSON.stringify(form.financialTopics));
       fd.append('currentBio', form.currentBio);
       fd.append('howBecameAdvisor', form.howBecameAdvisor);
@@ -641,9 +669,62 @@ export default function AdvisorForm() {
             Already submitted.
           </h2>
           <p className="text-gray-500 text-sm leading-relaxed mb-8">
-            It looks like you&apos;ve already filled out this form. The Savvy team is working on your page and will be in touch soon.
+            The Savvy team is working on your page and will be in touch soon.
           </p>
-          <p className="text-xs text-gray-300 italic">Need to make a correction? Reach out to your Savvy contact directly.</p>
+          <button
+            type="button"
+            onClick={() => { setAlreadySubmitted(false); setEmailGate(true); }}
+            className="w-full py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase transition-all duration-200 mb-4"
+            style={{ backgroundColor: '#C9A84C', color: '#0A1628' }}
+          >
+            Edit My Submission →
+          </button>
+          <p className="text-xs text-gray-400 italic">Or reach out to your Savvy contact directly with any urgent changes.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Email gate screen ───────────────────────────────────────────────────────
+
+  if (emailGate && !submitted) {
+    return (
+      <div className="min-h-screen relative flex items-center justify-center px-4 py-12">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/form-bg.jpg" alt="" aria-hidden="true" className="fixed inset-0 w-full h-full" style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(8px)', transform: 'scale(1.1)', transformOrigin: 'center' }} />
+        <div className="fixed inset-0 bg-black/35" />
+        <div className="relative z-10 w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-2xl px-10 py-12 text-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/savvy-logo-black.svg" alt="Savvy" className="h-7 mx-auto mb-8 opacity-70" />
+            <p className="text-[10px] font-medium tracking-[0.16em] uppercase text-gray-400 mb-3">Let&apos;s Get Started</p>
+            <h2 className="text-[1.75rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-3">
+              Enter your email to begin.
+            </h2>
+            <p className="text-sm text-gray-500 leading-relaxed mb-8">
+              Enter your email and we&apos;ll pull up your profile to get you started.
+            </p>
+            <div className="space-y-4">
+              <input
+                type="email"
+                value={gateEmail}
+                onChange={(e) => setGateEmail(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleGateSubmit(); }}
+                placeholder="Enter your email address"
+                className="w-full px-4 py-3.5 rounded-lg border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition-all"
+              />
+              <button
+                type="button"
+                onClick={handleGateSubmit}
+                disabled={gateLoading || !gateEmail.trim()}
+                className="w-full py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ backgroundColor: '#C9A84C', color: '#0A1628' }}
+              >
+                {gateLoading ? 'Looking up your profile…' : 'Get Started →'}
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mt-5">Takes about 10 minutes · Progress saves automatically</p>
+          </div>
         </div>
       </div>
     );
@@ -686,25 +767,26 @@ export default function AdvisorForm() {
         className="fixed inset-0 w-full h-full"
         style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(8px)', transform: 'scale(1.1)', transformOrigin: 'center' }}
       />
-      <div className="fixed inset-0" style={{ backgroundColor: intro || introFading ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.25)', transition: 'background-color 1200ms ease' }} />
+      <div className="fixed inset-0" style={{ background: intro || introFading ? 'linear-gradient(to bottom, #0A1628, #095972)' : 'rgba(0,0,0,0.25)', transition: 'background 1200ms ease' }} />
 
       {/* ── Intro overlay — transparent, form card hidden behind it ── */}
       {(intro || introFading) && (
         <div
           className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-6"
           style={{ opacity: introFading ? 0 : 1, transition: 'opacity 1200ms ease', pointerEvents: introFading ? 'none' : 'auto' }}
-          onTransitionEnd={() => { if (introFading) { setIntro(false); setIntroFading(false); } }}
+          onTransitionEnd={() => { if (introFading) { setIntro(false); setIntroFading(false); setEmailGate(true); } }}
         >
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/savvy-logo-white.svg" alt="Savvy" className="h-8 mb-16 opacity-90" />
 
-          <h1 className="text-[3.25rem] sm:text-[4rem] font-serif font-light tracking-[-0.04em] text-white leading-[1.05] mb-6">
-            Your Savvy<br />Advisor Page
+          <h1 className="text-[3.25rem] sm:text-[4rem] font-serif font-light tracking-[-0.04em] leading-[1.05] mb-6">
+            <span className="text-white font-bold">Help us build</span>{' '}
+            <span className="italic" style={{ color: '#C9A84C' }}>your page.</span>
           </h1>
 
           <p className="text-white/70 text-base sm:text-lg font-light leading-relaxed max-w-lg mb-10">
-            A dedicated page built around you — your background, your clients, and how you work. Answer a few questions and we&apos;ll handle the rest.
+            Share your story, expertise, and approach — we&apos;ll take it from here and build your advisor page on savvywealth.com.
           </p>
 
           <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-12 text-sm text-white/60">
@@ -725,12 +807,15 @@ export default function AdvisorForm() {
           <button
             type="button"
             onClick={() => setIntroFading(true)}
-            className="px-10 py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase bg-white text-black border border-white hover:bg-transparent hover:text-white transition-all duration-200"
+            onMouseEnter={() => setBtnHover(true)}
+            onMouseLeave={() => setBtnHover(false)}
+            className="px-10 py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase border-0 transition-all duration-200"
+            style={{ backgroundColor: btnHover ? '#b8923d' : '#C9A84C', color: '#0A1628' }}
           >
             Let&apos;s Begin
           </button>
 
-          <p className="mt-6 text-white/40 text-xs tracking-wide">Takes about 10–15 minutes</p>
+          <p className="mt-6 text-white/40 text-xs tracking-wide">Takes about 10 minutes · Progress saves automatically</p>
         </div>
       )}
 
@@ -766,10 +851,11 @@ export default function AdvisorForm() {
                         ? 'bg-[#175242] border-[#175242] text-white'
                         : 'bg-white border-gray-300 text-gray-400'
                     }`}>
-                      {done
-                        ? <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7"/></svg>
-                        : s.number
-                      }
+                      {done ? (
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      ) : s.number}
                     </div>
                     {i < STEPS.length - 1 && (
                       <div className={`w-px h-8 mt-0.5 transition-colors ${done ? 'bg-[#175242]' : 'bg-gray-200'}`} />
@@ -830,7 +916,7 @@ export default function AdvisorForm() {
           {draftSavedAt && form.email && (
             <div className="px-8 md:px-10 py-1.5 flex items-center gap-1.5 bg-gray-50 border-t border-gray-100">
               <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-              <span className="text-xs text-gray-400">Draft auto-saved at {draftSavedAt}</span>
+              <span className="text-xs text-gray-400">Draft saved</span>
             </div>
           )}
 
@@ -983,6 +1069,7 @@ function StepBasicInfo({
                 </div>
               </div>
             )}
+            <FloatInput label="Phone Number" value={form.phone} onChange={set('phone')} type="tel" />
             <FloatInput label="Full Name" value={form.fullName} onChange={set('fullName')} error={errors.fullName} required />
             <div className="grid grid-cols-2 gap-3">
               <FloatInput label="City, State" value={form.cityAndState} onChange={set('cityAndState')} error={errors.cityAndState} required />
@@ -990,7 +1077,7 @@ function StepBasicInfo({
             </div>
             <FloatInput label="LinkedIn URL" value={form.linkedIn} onChange={set('linkedIn')} type="url" error={errors.linkedIn} required />
             {isDbaPageType(form.pageType) && (
-              <FloatInput label="DBA Brand Name" value={form.dbaName} onChange={set('dbaName')} error={errors.dbaName} required />
+              <FloatInput label="Firm / Brand Name" value={form.firmName} onChange={set('firmName')} error={errors.firmName} required />
             )}
           </FieldGroup>
         </div>
@@ -1159,11 +1246,12 @@ function StepReview({ form }: { form: FormData }) {
           <dl>
             <ReviewRow label="Page Type" value={PAGE_TYPE_LABELS[form.pageType]} />
             <ReviewRow label="Email" value={form.email} />
+            <ReviewRow label="Phone" value={form.phone} />
             <ReviewRow label="Full Name" value={form.fullName} />
             <ReviewRow label="City & State" value={form.cityAndState} />
             <ReviewRow label="LinkedIn" value={form.linkedIn} />
             <ReviewRow label="Years Exp." value={form.yearsOfExperience} />
-            {isDbaPageType(form.pageType) && <ReviewRow label="DBA Name" value={form.dbaName} />}
+            {isDbaPageType(form.pageType) && <ReviewRow label="Firm / Brand Name" value={form.firmName} />}
           </dl>
         </section>
 

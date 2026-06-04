@@ -774,7 +774,14 @@ export default function AdvisorForm() {
         <div
           className="fixed inset-0 z-50 flex flex-col items-center justify-center text-center px-6"
           style={{ opacity: introFading ? 0 : 1, transition: 'opacity 1200ms ease', pointerEvents: introFading ? 'none' : 'auto' }}
-          onTransitionEnd={() => { if (introFading) { setIntro(false); setIntroFading(false); setEmailGate(true); } }}
+          onTransitionEnd={() => {
+            if (introFading) {
+              const draft = loadDraft(gateEmail);
+              setForm((prev) => ({ ...prev, email: gateEmail, ...(draft ? (({ savedAt: _s, ...f }) => f)(draft) : {}) }));
+              setIntro(false);
+              setIntroFading(false);
+            }
+          }}
         >
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -788,7 +795,7 @@ export default function AdvisorForm() {
             Share your story, expertise, and approach — we&apos;ll take it from here and build your advisor page on savvywealth.com.
           </p>
 
-          <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-7 text-sm text-white/60">
+          <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-8 text-sm text-white/60">
             <li className="flex items-center gap-2">
               <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               Continuously updated
@@ -803,16 +810,28 @@ export default function AdvisorForm() {
             </li>
           </ul>
 
-          <button
-            type="button"
-            onClick={() => setIntroFading(true)}
-            onMouseEnter={() => setBtnHover(true)}
-            onMouseLeave={() => setBtnHover(false)}
-            className="px-10 py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase border-0 transition-all duration-200"
-            style={{ backgroundColor: btnHover ? '#b8923d' : '#C9A84C', color: '#0A1628' }}
-          >
-            Let&apos;s Begin
-          </button>
+          {/* Email + CTA combined */}
+          <div className="w-full max-w-sm flex flex-col gap-3">
+            <input
+              type="email"
+              value={gateEmail}
+              onChange={(e) => setGateEmail(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && gateEmail.trim()) { setIntroFading(true); } }}
+              placeholder="Enter your email address"
+              className="w-full px-4 py-3.5 rounded-[3px] text-sm text-gray-800 placeholder-gray-400 bg-white/95 border-0 focus:outline-none focus:ring-2 focus:ring-white/40"
+            />
+            <button
+              type="button"
+              onClick={() => { if (gateEmail.trim()) setIntroFading(true); }}
+              onMouseEnter={() => setBtnHover(true)}
+              onMouseLeave={() => setBtnHover(false)}
+              disabled={!gateEmail.trim()}
+              className="w-full py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase border-0 transition-all duration-200 disabled:opacity-50"
+              style={{ backgroundColor: btnHover ? '#b8923d' : '#C9A84C', color: '#0A1628' }}
+            >
+              Let&apos;s Begin
+            </button>
+          </div>
 
           <p className="mt-4 text-white/40 text-xs tracking-wide">Takes about 10 minutes · Progress saves automatically</p>
         </div>

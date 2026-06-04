@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 export const FINANCIAL_TOPICS = [
   'Investment Management',
@@ -17,56 +18,61 @@ export const FINANCIAL_TOPICS = [
   'P&G Employee Services',
 ] as const;
 
+const TOPIC_ICONS: Record<string, string> = {
+  'Investment Management':      '/icons/investment-management.svg',
+  'Tax Optimization':           '/icons/tax-optimization.svg',
+  'Direct Indexing':            '/icons/direct-indexing.svg',
+  'Retirement Planning':        '/icons/retirement-planning.svg',
+  'Trust & Estate Planning':    '/icons/trust-estate.svg',
+  'Risk Management':            '/icons/financial-planning.svg',
+  'Business Succession Planning':'/icons/succession-planning.svg',
+  'Education Planning':         '/icons/education-planning.svg',
+  'Financial Planning & Analysis':'/icons/financial-planning.svg',
+  'Alternative Investments':    '/icons/alternative-investments.svg',
+  '401(k) for Businesses':      '/icons/401k.svg',
+  'P&G Employee Services':      '/icons/small-business-tax.svg',
+};
+
 interface TopicsCheckboxProps {
   selected: string[];
   onChange: (selected: string[]) => void;
   error?: string;
 }
 
-export default function TopicsCheckbox({
-  selected,
-  onChange,
-  error,
-}: TopicsCheckboxProps) {
+export default function TopicsCheckbox({ selected, onChange, error }: TopicsCheckboxProps) {
   const handleToggle = (topic: string) => {
     if (selected.includes(topic)) {
       onChange(selected.filter((t) => t !== topic));
     } else {
-      if (selected.length >= 4) return; // max 4
+      if (selected.length >= 4) return;
       onChange([...selected, topic]);
     }
   };
 
   return (
     <div>
-      <p className="text-sm text-gray-500 mb-4">
+      <p className="text-sm text-gray-500 mb-5">
         Select <strong>3–4 topics</strong> that best describe your expertise.
         <span className="ml-2 text-xs text-gray-400">{selected.length}/4 selected</span>
       </p>
-      <div>
+
+      <div className="grid grid-cols-2 gap-2">
         {FINANCIAL_TOPICS.map((topic) => {
           const isChecked = selected.includes(topic);
           const isDisabled = !isChecked && selected.length >= 4;
+          const icon = TOPIC_ICONS[topic];
+
           return (
             <label
               key={topic}
-              className={`flex items-center gap-3 py-2.5 border-b cursor-pointer transition-colors ${
+              className={`flex items-center gap-3 px-4 py-3.5 rounded-lg border cursor-pointer transition-all ${
                 isChecked
-                  ? 'border-black'
+                  ? 'border-[#8E7E57] bg-[#F5F0E6]'
                   : isDisabled
-                  ? 'border-gray-100 opacity-40 cursor-not-allowed'
-                  : 'border-gray-200 hover:border-gray-400'
+                  ? 'border-gray-100 opacity-40 cursor-not-allowed bg-white'
+                  : 'border-gray-200 bg-white hover:border-[#8E7E57]/50 hover:bg-[#FAF7F2]'
               }`}
             >
-              <div className={`w-4 h-4 border-2 flex items-center justify-center transition-all shrink-0 ${
-                isChecked ? 'border-black bg-black' : 'border-gray-300'
-              }`}>
-                {isChecked && (
-                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                )}
-              </div>
               <input
                 type="checkbox"
                 checked={isChecked}
@@ -74,7 +80,35 @@ export default function TopicsCheckbox({
                 onChange={() => handleToggle(topic)}
                 className="sr-only"
               />
-              <span className={`text-sm ${isChecked ? 'text-black font-medium' : 'text-gray-600'}`}>{topic}</span>
+
+              {/* Savvy icon */}
+              {icon && (
+                <div className="shrink-0 w-7 h-7 flex items-center justify-center">
+                  <Image
+                    src={icon}
+                    alt=""
+                    width={28}
+                    height={28}
+                    className={`w-7 h-7 object-contain transition-all ${isChecked ? 'opacity-100' : 'opacity-50'}`}
+                    style={{ filter: isChecked ? 'none' : 'grayscale(30%)' }}
+                  />
+                </div>
+              )}
+
+              <span className={`text-sm leading-tight transition-colors ${
+                isChecked ? 'text-[#5a4e37] font-medium' : 'text-gray-600'
+              }`}>
+                {topic}
+              </span>
+
+              {/* Checkmark */}
+              {isChecked && (
+                <div className="ml-auto shrink-0 w-4 h-4 rounded-full bg-[#8E7E57] flex items-center justify-center">
+                  <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              )}
             </label>
           );
         })}

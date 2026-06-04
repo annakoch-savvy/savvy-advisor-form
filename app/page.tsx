@@ -788,7 +788,7 @@ export default function AdvisorForm() {
             Share your story, expertise, and approach — we&apos;ll take it from here and build your advisor page on savvywealth.com.
           </p>
 
-          <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-12 text-sm text-white/60">
+          <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-7 text-sm text-white/60">
             <li className="flex items-center gap-2">
               <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               Continuously updated
@@ -814,7 +814,7 @@ export default function AdvisorForm() {
             Let&apos;s Begin
           </button>
 
-          <p className="mt-6 text-white/40 text-xs tracking-wide">Takes about 10 minutes · Progress saves automatically</p>
+          <p className="mt-4 text-white/40 text-xs tracking-wide">Takes about 10 minutes · Progress saves automatically</p>
         </div>
       )}
 

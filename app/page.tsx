@@ -780,7 +780,7 @@ export default function AdvisorForm() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/savvy-logo-white.svg" alt="Savvy" className="h-8 mb-16 opacity-90" />
 
-          <h1 className="text-[3.25rem] sm:text-[4rem] font-serif font-light tracking-[-0.04em] text-white leading-[1.05] mb-6">
+          <h1 className="text-[3.25rem] sm:text-[4rem] font-serif font-extralight tracking-[-0.04em] text-white leading-[1.05] mb-6">
             Help us build<br />your page.
           </h1>
 

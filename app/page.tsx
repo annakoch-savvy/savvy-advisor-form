@@ -1256,6 +1256,19 @@ const FAQ_FIELDS: Array<{ key: keyof FormData; question: string; placeholder: st
   { key: 'designations', question: 'Do you have any designations or organizations you are a part of?', placeholder: 'e.g. CFP®, CFA, NAPFA member…' },
 ];
 
+// All questions combined into one linear flow
+const ALL_BIO_FAQ: Array<{ key: keyof FormData; question: string; placeholder: string; hint?: string; rows?: number }> = [
+  { key: 'currentBio', question: 'Tell us about yourself.', placeholder: 'Share a bit about your background, what you do, and who you help…', hint: 'This will appear in the hero section of your advisor page.', rows: 6 },
+  { key: 'howBecameAdvisor', question: 'How did you become a financial advisor?', placeholder: 'Share your journey into financial advising…', rows: 4 },
+  { key: 'clientTypes', question: 'What types of clients do you work with?', placeholder: 'Describe the clients you typically serve…', rows: 4 },
+  { key: 'areasOfExpertise', question: 'What areas of expertise do you have?', placeholder: 'Describe your specializations…', rows: 4 },
+  { key: 'strategies', question: 'What strategies do you usually help clients with?', placeholder: 'Describe the strategies you most commonly use…', rows: 4 },
+  { key: 'uniqueApproach', question: 'Is there a unique approach that sets you apart?', placeholder: 'What makes your advisory style different?', rows: 4 },
+  { key: 'favoritePartWorking', question: 'What is your favorite part about working with clients?', placeholder: 'What do you enjoy most about your work?', rows: 4 },
+  { key: 'likesAboutSavvy', question: 'What do you like about working with Savvy?', placeholder: 'Share what you value about the Savvy platform…', rows: 4 },
+  { key: 'designations', question: 'Do you have any designations or memberships?', placeholder: 'e.g. CFP®, CFA, NAPFA member, Genius Network…', rows: 3 },
+];
+
 function StepBioFaq({
   form, errors, set,
 }: {
@@ -1263,68 +1276,117 @@ function StepBioFaq({
   errors: Errors;
   set: (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }) {
+  const [qIdx, setQIdx] = useState(0);
+  const total = ALL_BIO_FAQ.length;
+  const current = ALL_BIO_FAQ[qIdx];
+  const accentColor = FAQ_ACCENT_COLORS[qIdx % FAQ_ACCENT_COLORS.length];
+  const answered = ALL_BIO_FAQ.filter(q => (form[q.key] as string)?.trim()).length;
+
   return (
-    <div className="max-w-3xl">
-      <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Bio &amp; FAQ</h2>
-      <p className="text-sm text-gray-500 mb-5">These answers will be used to write your advisor page. Write naturally in your own voice.</p>
-
-      {/* Speech-to-text feature highlight */}
-      <div className="rounded-xl bg-[#175242] px-7 py-6 mb-8 flex items-center gap-6">
-        <div className="shrink-0 w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
-          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
-          </svg>
-        </div>
-        <div>
-          <p className="text-white font-medium text-base mb-1">Don&apos;t want to write? Just talk.</p>
-          <p className="text-white/70 text-sm leading-relaxed">
-            Hit the mic on any field and speak naturally — like someone is interviewing you. We&apos;ll handle the writing.
-          </p>
-        </div>
+    <div className="max-w-xl">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight">Bio &amp; FAQ</h2>
+        <span className="text-sm text-gray-400">{qIdx + 1} / {total}</span>
       </div>
 
-      <div className="space-y-8">
-        <div>
-          <SectionLabel>Your Bio</SectionLabel>
-          <FloatTextarea
-            label="Current Bio"
-            value={form.currentBio}
-            onChange={set('currentBio')}
-            rows={5}
-            error={errors.currentBio}
-            required
-            showCompliance
-            showMic
-          />
-          <p className="text-xs text-gray-400 mt-1.5 pl-1">This will appear in the hero section of your advisor page.</p>
+      {/* Progress bar */}
+      <div className="h-1 bg-gray-100 rounded-full mb-6 overflow-hidden">
+        <div
+          className="h-1 rounded-full transition-all duration-500"
+          style={{ width: `${((qIdx + 1) / total) * 100}%`, backgroundColor: accentColor }}
+        />
+      </div>
+
+      {/* Speech-to-text callout — compact */}
+      <div className="rounded-lg px-4 py-3 mb-6 flex items-center gap-3" style={{ backgroundColor: accentColor }}>
+        <svg className="w-5 h-5 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
+        </svg>
+        <p className="text-white text-sm leading-snug">
+          <span className="font-medium">Don&apos;t want to write?</span> Hit the mic and just talk — we&apos;ll handle the rest.
+        </p>
+      </div>
+
+      {/* Question card */}
+      <div className="rounded-xl border border-gray-100 p-6 bg-white shadow-sm" style={{ borderLeft: `4px solid ${accentColor}` }}>
+        <p className="text-[10px] font-semibold tracking-[0.12em] uppercase mb-3" style={{ color: accentColor }}>
+          Question {qIdx + 1} of {total}
+        </p>
+        <h3 className="text-xl font-serif font-light text-gray-900 mb-5 leading-snug">
+          {current.question}
+        </h3>
+
+        <FloatTextarea
+          label=""
+          value={form[current.key] as string}
+          onChange={set(current.key)}
+          placeholder={current.placeholder}
+          rows={current.rows ?? 4}
+          error={errors[current.key]}
+          required={current.key !== 'designations'}
+          showCompliance
+          showMic
+          micColor={accentColor}
+        />
+
+        {current.hint && (
+          <p className="text-xs text-gray-400 mt-2">{current.hint}</p>
+        )}
+      </div>
+
+      {/* Question navigation */}
+      <div className="flex items-center justify-between mt-5">
+        <button
+          type="button"
+          onClick={() => setQIdx(i => Math.max(0, i - 1))}
+          disabled={qIdx === 0}
+          className="text-sm text-gray-400 hover:text-gray-700 disabled:opacity-0 flex items-center gap-1 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
+          Previous
+        </button>
+
+        {/* Dot indicators */}
+        <div className="flex items-center gap-1.5">
+          {ALL_BIO_FAQ.map((q, i) => {
+            const isAnswered = !!(form[q.key] as string)?.trim();
+            const isActive = i === qIdx;
+            return (
+              <button
+                key={q.key}
+                type="button"
+                onClick={() => setQIdx(i)}
+                className="rounded-full transition-all"
+                style={{
+                  width: isActive ? '20px' : '8px',
+                  height: '8px',
+                  backgroundColor: isActive ? accentColor : isAnswered ? accentColor + '60' : '#e5e7eb',
+                }}
+                title={q.question}
+              />
+            );
+          })}
         </div>
 
-        <div>
-          <SectionLabel>FAQ Questions</SectionLabel>
-          <div className="space-y-5">
-            {FAQ_FIELDS.map(({ key, question, placeholder }, idx) => {
-              const color = FAQ_ACCENT_COLORS[idx % FAQ_ACCENT_COLORS.length];
-              return (
-                <div key={key} style={{ borderLeft: `3px solid ${color}`, paddingLeft: '8px' }}>
-                  <FloatTextarea
-                    label={question}
-                    value={form[key] as string}
-                    onChange={set(key)}
-                    placeholder={placeholder}
-                    rows={3}
-                    error={errors[key]}
-                    required
-                    showCompliance
-                    showMic
-                    micColor={color}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <button
+          type="button"
+          onClick={() => setQIdx(i => Math.min(total - 1, i + 1))}
+          disabled={qIdx === total - 1}
+          className="text-sm hover:opacity-80 disabled:opacity-0 flex items-center gap-1 transition-colors font-medium"
+          style={{ color: accentColor }}
+        >
+          Next
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
+        </button>
       </div>
+
+      {/* Answered count */}
+      <p className="text-center text-xs text-gray-400 mt-4">
+        {answered} of {total} questions answered
+        {answered === total && <span className="text-green-500 ml-1">✓ All done — click Next to review</span>}
+      </p>
     </div>
   );
 }

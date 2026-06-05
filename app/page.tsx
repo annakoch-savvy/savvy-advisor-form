@@ -1541,8 +1541,8 @@ function StepReview({ form }: { form: FormData }) {
         <div className="relative" style={{ userSelect: 'none' }}>
 
           {/* ── Device mockup: transparent PNG ── */}
-          {/* paddingBottom: 62% slightly more than 60.9% so phone bottom isn't clipped */}
-          <div style={{ position: 'relative', paddingBottom: '62%', overflow: 'visible' }}>
+          {/* paddingBottom crops to just above phone chin */}
+          <div style={{ position: 'relative', paddingBottom: '57%', overflow: 'hidden' }}>
             {/* Image — pointer-events:none so laptop screen below is interactive */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/device-mockup.png" alt="" aria-hidden="true" style={{ position: 'absolute', top: '-34.8%', left: 0, width: '100%', zIndex: 2, pointerEvents: 'none' }} />

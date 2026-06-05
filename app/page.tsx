@@ -1297,26 +1297,9 @@ function StepBioFaq({
       {/* Large accordion-style card — accent color fills the top, white box below */}
       <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-300">
 
-        {/* ── Colored header section — always white text ── */}
-        <div className="px-8 pt-8 pb-7 transition-colors duration-300" style={{ backgroundColor: accentColor }}>
-
-          {/* Number + progress */}
-          <div className="flex items-center justify-between mb-7">
-            <div className="flex items-center gap-3">
-              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/60">
-                {String(qIdx + 1).padStart(2, '0')} →
-              </span>
-              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/60">
-                BIO &amp; FAQ
-              </span>
-            </div>
-            <span className="text-[11px] font-medium text-white/50">
-              {qIdx + 1} / {total}
-            </span>
-          </div>
-
-          {/* Question */}
-          <h2 className="text-[2rem] font-serif font-light leading-tight mb-7 tracking-[-0.02em] text-white">
+        {/* ── Colored header — question only, full bleed ── */}
+        <div className="px-8 pt-10 pb-8 transition-colors duration-300" style={{ backgroundColor: accentColor }}>
+          <h2 className="text-[2rem] font-serif font-light leading-tight tracking-[-0.02em] text-white mb-6">
             {current.question}
           </h2>
 

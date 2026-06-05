@@ -1685,8 +1685,9 @@ function StepReview({ form }: { form: FormData }) {
           </div>
           </div>{/* end overflow:hidden laptop */}
 
-          {/* ── CSS iPhone — proper aspect ratio, fills template ── */}
-          <div style={{ position: 'absolute', right: '0%', top: '28%', width: '27%', zIndex: 10 }}>
+          {/* ── CSS iPhone — sized/positioned to match phone in mockup image ── */}
+          {/* Phone in image: left=73.5%, width=23.5% of image width, top=40% of container height */}
+          <div style={{ position: 'absolute', left: '73.5%', top: '40%', width: '23.5%', zIndex: 10 }}>
             {/* Shell: iPhone aspect ratio ~9:19.5 */}
             <div style={{ background: '#1a1a1a', borderRadius: '9%', padding: '2.5%', boxShadow: '0 12px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.1)', position: 'relative' }}>
               {/* Side buttons */}
@@ -1700,8 +1701,8 @@ function StepReview({ form }: { form: FormData }) {
                 <div style={{ width: '28%', height: '6px', background: '#333', borderRadius: '3px' }} />
               </div>
 
-              {/* Screen — explicit aspect ratio so content fills it */}
-              <div style={{ borderRadius: '5%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", aspectRatio: '9/17' }}>
+              {/* Screen */}
+              <div style={{ borderRadius: '5%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", aspectRatio: '9/19' }}>
                 {/* Nav */}
                 <div style={{ padding: '4% 5%', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '120%', fontWeight: 400 }}>Savvy</span>

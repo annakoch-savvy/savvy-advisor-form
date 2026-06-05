@@ -1685,9 +1685,9 @@ function StepReview({ form }: { form: FormData }) {
           </div>
           </div>{/* end overflow:hidden laptop */}
 
-          {/* ── CSS iPhone — sized/positioned to match phone in mockup image ── */}
-          {/* Phone in image: left=73.5%, width=23.5% of image width, top=40% of container height */}
-          <div style={{ position: 'absolute', left: '73.5%', top: '40%', width: '23.5%', zIndex: 10 }}>
+          {/* ── CSS iPhone — precisely matched to phone in mockup image ── */}
+          {/* Measured: frame x=77.3%–94%, width=16.7%, top y=47% → 45.4% of container */}
+          <div style={{ position: 'absolute', left: '77.3%', top: '45.4%', width: '16.7%', zIndex: 10 }}>
             {/* Shell: iPhone aspect ratio ~9:19.5 */}
             <div style={{ background: '#1a1a1a', borderRadius: '9%', padding: '2.5%', boxShadow: '0 12px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.1)', position: 'relative' }}>
               {/* Side buttons */}

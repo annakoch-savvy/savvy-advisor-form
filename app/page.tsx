@@ -921,18 +921,24 @@ export default function AdvisorForm() {
             Advisor<br />Intake Form
           </h2>
 
-          {/* Vertical pill step tracker */}
+          {/* Vertical pill step tracker — completed/active steps are clickable */}
           <nav className="flex-1 flex flex-col gap-2">
             {STEPS.map((s) => {
               const done = s.number < step;
               const active = s.number === step;
               const muted = s.number > step;
+              const clickable = done || active;
               return (
-                <div
+                <button
                   key={s.number}
-                  className="flex items-center gap-3 rounded-full px-3 py-2.5 transition-all duration-300"
+                  type="button"
+                  disabled={!clickable}
+                  onClick={() => clickable && setStep(s.number)}
+                  className="flex items-center gap-3 rounded-full px-3 py-2.5 transition-all duration-300 text-left w-full"
                   style={{
                     backgroundColor: active ? s.color : done ? s.color + '22' : 'transparent',
+                    cursor: clickable ? 'pointer' : 'default',
+                    opacity: muted ? 0.5 : 1,
                   }}
                 >
                   {/* Icon circle */}
@@ -956,7 +962,7 @@ export default function AdvisorForm() {
                     )}
                   </div>
 
-                  {/* Label + description */}
+                  {/* Label */}
                   <div className="min-w-0">
                     <p
                       className="text-sm font-medium leading-none mb-0.5 transition-colors"
@@ -965,7 +971,7 @@ export default function AdvisorForm() {
                       {s.label}
                     </p>
                   </div>
-                </div>
+                </button>
               );
             })}
           </nav>

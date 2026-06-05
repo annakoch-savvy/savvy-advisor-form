@@ -1902,6 +1902,7 @@ function StepReview({ form }: { form: FormData }) {
             <div className="grid grid-cols-2 gap-x-6 gap-y-3">
               {[
                 ['Name', fullName],
+                ['Title / Role', form.title],
                 ['Email', form.email],
                 ['Phone', form.phone],
                 ['Location', form.cityAndState],
@@ -1909,6 +1910,8 @@ function StepReview({ form }: { form: FormData }) {
                 ['Experience', form.yearsOfExperience ? `${form.yearsOfExperience} years` : ''],
                 ['Page Type', PAGE_TYPE_LABELS[form.pageType]],
                 ['Designations', form.designations],
+                ['Approx. AUM', form.aum],
+                ['Households Served', form.households],
                 ...(isDbaPageType(form.pageType) ? [['Firm / Brand', form.firmName]] : []),
               ].map(([label, value]) => value ? (
                 <div key={label}>
@@ -1964,7 +1967,7 @@ function StepReview({ form }: { form: FormData }) {
         {/* FAQ — order 5, after mockup */}
         <div style={{ order: 5 }}>
           <AccordionSection
-            title={`FAQ · ${[form.howBecameAdvisor, form.clientTypes, form.areasOfExpertise, form.strategies, form.uniqueApproach, form.favoritePartWorking, form.likesAboutSavvy].filter(Boolean).length} of 7 answered`}
+            title={`FAQ · ${[form.howBecameAdvisor, form.clientTypes, form.areasOfExpertise, form.strategies, form.uniqueApproach, form.favoritePartWorking, form.likesAboutSavvy, form.blogPost, form.anythingElse].filter(Boolean).length} of 9 answered`}
             color="#6B484D"
             icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>}
             summary="Click to review your answers"
@@ -1978,6 +1981,8 @@ function StepReview({ form }: { form: FormData }) {
                 { q: 'What sets you apart?', v: form.uniqueApproach },
                 { q: 'Favorite part about working with clients?', v: form.favoritePartWorking },
                 { q: 'What do you like about working with Savvy?', v: form.likesAboutSavvy },
+                { q: 'Blog post on savvywealth.com?', v: form.blogPost },
+                { q: 'Anything else to include?', v: form.anythingElse },
               ].map(({ q, v }) => (
                 <div key={q}>
                   <p className="text-xs font-medium text-gray-400 mb-1">{q}</p>

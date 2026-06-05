@@ -1320,74 +1320,70 @@ function StepReview({ form }: { form: FormData }) {
           <img src="/device-mockup.jpg" alt="Device mockup" style={{ width: '100%', display: 'block' }} />
 
           {/* ── LAPTOP SCREEN OVERLAY ── */}
-          {/* Screen area: left 7.8%, top 5.2%, width 34.8%, height 26.5% */}
-          <div style={{ position: 'absolute', left: '7.8%', top: '5.2%', width: '34.8%', height: '26.5%', overflow: 'hidden', background: 'white' }}>
+          <div style={{ position: 'absolute', left: '16.2%', top: '22%', width: '67%', height: '41%', overflow: 'hidden', background: 'white' }}>
           <div style={{ width: '100%', height: '100%', overflowY: 'auto', fontFamily: "'Jost', sans-serif" }}>
 
-              {/* Nav */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px', borderBottom: '1px solid #f0f0f0', position: 'sticky', top: 0, background: 'white', zIndex: 10 }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/savvy-logo-black.svg" alt="Savvy" style={{ height: '14px' }} />
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  {['For Clients','For Advisors','Our Services','About'].map(l => (
-                    <span key={l} style={{ fontSize: '7px', color: '#666' }}>{l}</span>
+              {/* Nav — matches savvywealth.com exactly */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 24px', borderBottom: '1px solid #f0f0f0', position: 'sticky', top: 0, background: 'white', zIndex: 10 }}>
+                <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '16px', fontWeight: 400, color: '#111', letterSpacing: '-0.02em' }}>Savvy</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  {['For Clients','For Advisors','Our Services','Resources','About','Sign in'].map(l => (
+                    <span key={l} style={{ fontSize: '9px', color: '#555', fontWeight: 300 }}>{l}</span>
                   ))}
-                  <span style={{ fontSize: '7px', padding: '4px 10px', background: 'black', color: 'white', borderRadius: '4px', fontWeight: 500 }}>Find an Advisor</span>
+                  <span style={{ fontSize: '9px', padding: '5px 12px', background: 'black', color: 'white', fontWeight: 500, borderRadius: '2px' }}>Find an Advisor</span>
                 </div>
               </div>
 
               {/* Hero */}
-              <div style={{ display: 'flex', gap: '28px', padding: '24px 28px 20px', background: 'white' }}>
+              <div style={{ display: 'flex', gap: '40px', padding: '28px 32px 24px', background: 'white' }}>
                 {/* Left */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '28px', fontWeight: 300, color: '#111', margin: '0 0 10px', lineHeight: 1.1 }}>
-                    {fullName || 'Your Name'}
+                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '36px', fontWeight: 400, color: '#111', margin: '0 0 14px', lineHeight: 1.05 }}>
+                    {[fullName, form.designations].filter(Boolean).join(', ') || 'Your Name'}
                   </h1>
-                  <p style={{ fontSize: '8.5px', color: '#444', lineHeight: 1.6, marginBottom: '12px', display: '-webkit-box', WebkitLineClamp: 6, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  <p style={{ fontSize: '11px', color: '#333', lineHeight: 1.65, marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {form.currentBio || 'Your bio will appear here...'}
                   </p>
-                  {fullName && (
-                    <div style={{ marginBottom: '10px' }}>
-                      <div style={{ fontSize: '7.5px', fontWeight: 600, color: '#111', marginBottom: '4px', letterSpacing: '0.05em' }}>
+                  {form.firstName && (
+                    <div style={{ marginBottom: '14px' }}>
+                      <div style={{ fontSize: '9px', fontWeight: 600, color: '#111', marginBottom: '5px', letterSpacing: '0.06em' }}>
                         {(form.firstName || '').toUpperCase()}&apos;S TEAM:
                       </div>
-                      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                        {['Savvy Investment Team'].map(t => (
-                          <span key={t} style={{ fontSize: '7px', color: '#555' }}>{t}</span>
-                        ))}
+                      <div style={{ display: 'flex', gap: '16px' }}>
+                        <span style={{ fontSize: '9px', color: '#333' }}>Savvy Investment Team</span>
                       </div>
                     </div>
                   )}
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-                    <span style={{ fontSize: '7.5px', padding: '5px 12px', background: 'black', color: 'white', borderRadius: '4px', fontWeight: 500 }}>Schedule a call today</span>
-                    <span style={{ fontSize: '7.5px', padding: '5px 12px', border: '1px solid black', color: 'black', borderRadius: '4px', fontWeight: 500 }}>Send an email</span>
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+                    <span style={{ fontSize: '10px', padding: '8px 18px', background: 'black', color: 'white', fontWeight: 500, borderRadius: '3px' }}>Schedule a call today</span>
+                    <span style={{ fontSize: '10px', padding: '8px 18px', border: '1.5px solid black', color: 'black', fontWeight: 500, borderRadius: '3px' }}>Send an email</span>
                   </div>
                 </div>
 
-                {/* Right: photo card */}
-                <div style={{ width: '140px', flexShrink: 0 }}>
-                  <div style={{ position: 'relative' }}>
-                    {/* Background offset card */}
-                    <div style={{ position: 'absolute', top: '8px', right: '-6px', width: '100%', height: '155px', background: '#e8e8e4', borderRadius: '0 0 0 60px', zIndex: 0 }} />
-                    {/* Photo */}
-                    <div style={{ position: 'relative', zIndex: 1, borderRadius: '0 0 0 60px', overflow: 'hidden', width: '130px', height: '148px', background: '#d0d0cc' }}>
+                {/* Right: photo — matches Craig Austad layout */}
+                <div style={{ width: '200px', flexShrink: 0 }}>
+                  <div style={{ position: 'relative', marginBottom: '10px' }}>
+                    {/* White offset card behind photo (top-right) */}
+                    <div style={{ position: 'absolute', top: '-8px', right: '-8px', width: '90%', height: '90%', background: '#f0f0ee', zIndex: 0, borderRadius: '0 0 0 0' }} />
+                    {/* Photo with rounded top-left corner (matching real site) */}
+                    <div style={{ position: 'relative', zIndex: 1, width: '190px', height: '220px', background: '#c8c8c4', overflow: 'hidden', borderRadius: '40px 0 0 0' }}>
                       {photoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={photoUrl} alt={fullName} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
                       ) : (
                         <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <svg style={{ width: '32px', height: '32px', color: '#aaa' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                          <svg style={{ width: '48px', height: '48px', color: '#999' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         </div>
                       )}
                     </div>
                   </div>
                   {/* Location + LinkedIn */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', paddingLeft: '2px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <svg style={{ width: '10px', height: '10px', color: '#888', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                      <span style={{ fontSize: '7px', color: '#666' }}>{form.cityAndState || 'Location'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <svg style={{ width: '12px', height: '12px', color: '#777', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      <span style={{ fontSize: '9px', color: '#555' }}>{form.cityAndState || 'Location'}</span>
                     </div>
-                    <svg style={{ width: '12px', height: '12px', color: '#888' }} viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    <span style={{ fontSize: '9px', fontWeight: 700, color: '#0077b5', fontFamily: 'sans-serif', border: '1.5px solid #0077b5', padding: '1px 4px', borderRadius: '2px' }}>in</span>
                   </div>
                 </div>
               </div>
@@ -1473,37 +1469,35 @@ function StepReview({ form }: { form: FormData }) {
           </div>
 
           {/* ── PHONE SCREEN OVERLAY ── */}
-          {/* Phone screen: left 37.2%, top 26.8%, width 9.7%, height 17.5% */}
-          <div style={{ position: 'absolute', left: '37.2%', top: '26.8%', width: '9.7%', height: '17.5%', overflow: 'hidden', background: 'white', borderRadius: '2px', fontFamily: "'Jost', sans-serif" }}>
+          <div style={{ position: 'absolute', left: '78.2%', top: '50%', width: '14.8%', height: '31%', overflow: 'hidden', background: 'white', borderRadius: '4px', fontFamily: "'Jost', sans-serif" }}>
             {/* Mobile nav */}
-            <div style={{ padding: '3px 4px', borderBottom: '0.5px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/savvy-logo-black.svg" alt="Savvy" style={{ height: '5px' }} />
-              <div style={{ width: '8px', height: '5px', display: 'flex', flexDirection: 'column', gap: '1px', justifyContent: 'center' }}>
-                {[0,1,2].map(i => <div key={i} style={{ height: '0.5px', background: '#333', width: '100%' }} />)}
+            <div style={{ padding: '6px 10px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', position: 'sticky', top: 0, zIndex: 10 }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '13px', fontWeight: 400 }}>Savvy</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#333', width: '14px' }} />)}
               </div>
             </div>
             {/* Mobile hero */}
-            <div style={{ padding: '4px' }}>
+            <div style={{ padding: '12px 10px' }}>
               {/* Photo */}
-              <div style={{ width: '100%', height: '28px', borderRadius: '2px', overflow: 'hidden', background: '#ddd', marginBottom: '3px' }}>
+              <div style={{ width: '100%', height: '90px', borderRadius: '20px 0 0 0', overflow: 'hidden', background: '#c8c8c4', marginBottom: '8px' }}>
                 {photoUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
                 )}
               </div>
               {/* Name */}
-              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '7px', fontWeight: 300, color: '#111', marginBottom: '2px', lineHeight: 1.1 }}>
+              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '16px', fontWeight: 400, color: '#111', marginBottom: '4px', lineHeight: 1.1 }}>
                 {fullName || 'Your Name'}
               </div>
               {/* Location */}
-              <div style={{ fontSize: '4px', color: '#888', marginBottom: '2px' }}>{form.cityAndState}</div>
+              <div style={{ fontSize: '8px', color: '#777', marginBottom: '6px' }}>{form.cityAndState}</div>
               {/* Bio */}
-              <p style={{ fontSize: '4px', color: '#555', lineHeight: 1.4, margin: '0 0 3px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              <p style={{ fontSize: '8px', color: '#444', lineHeight: 1.5, margin: '0 0 8px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {form.currentBio}
               </p>
               {/* CTA */}
-              <div style={{ fontSize: '3.5px', padding: '2px 4px', background: 'black', color: 'white', borderRadius: '2px', display: 'inline-block' }}>Schedule a call</div>
+              <div style={{ fontSize: '8px', padding: '5px 10px', background: 'black', color: 'white', borderRadius: '2px', display: 'inline-block', fontWeight: 500 }}>Schedule a call today</div>
             </div>
           </div>
 

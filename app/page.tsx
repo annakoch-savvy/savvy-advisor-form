@@ -1273,60 +1273,103 @@ function StepBioFaq({
 function StepReview({ form }: { form: FormData }) {
   return (
     <div className="max-w-3xl">
-      <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Review Your Submission</h2>
-      <p className="text-sm text-gray-500 mb-8">Please look everything over before submitting.</p>
+      <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Almost there.</h2>
+      <p className="text-sm text-gray-500 mb-8">Take a moment to review before we build your page.</p>
 
-      <div className="space-y-7">
-        <section className="bg-gray-50 rounded-xl p-5">
-          <SectionLabel>Basic Info</SectionLabel>
-          <dl>
-            <ReviewRow label="Page Type" value={PAGE_TYPE_LABELS[form.pageType]} />
-            <ReviewRow label="Email" value={form.email} />
-            <ReviewRow label="Phone" value={form.phone} />
-            <ReviewRow label="Full Name" value={form.fullName} />
-            <ReviewRow label="City & State" value={form.cityAndState} />
-            <ReviewRow label="LinkedIn" value={form.linkedIn} />
-            <ReviewRow label="Years Exp." value={form.yearsOfExperience} />
-            {isDbaPageType(form.pageType) && <ReviewRow label="Firm / Brand Name" value={form.firmName} />}
-          </dl>
-        </section>
+      <div className="space-y-5">
 
-        <section className="bg-gray-50 rounded-xl p-5">
-          <SectionLabel>Financial Topics</SectionLabel>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {form.financialTopics.map((t) => (
-              <span key={t} className="px-3 py-1 bg-black/5 text-black text-xs font-medium rounded-[3px] tracking-[0.04em]">{t}</span>
+        {/* Profile card */}
+        <div className="rounded-xl border border-gray-100 overflow-hidden">
+          {/* Header with photo */}
+          <div className="bg-[#175242] px-6 py-5 flex items-center gap-5">
+            {form.photo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={URL.createObjectURL(form.photo)} alt="Profile" className="w-16 h-16 rounded-lg object-cover shadow-md shrink-0" />
+            ) : (
+              <div className="w-16 h-16 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                <svg className="w-7 h-7 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              </div>
+            )}
+            <div>
+              <p className="text-white font-medium text-lg leading-tight">{form.fullName || '—'}</p>
+              <p className="text-white/60 text-sm mt-0.5">{form.cityAndState || '—'}</p>
+              <p className="text-white/50 text-xs mt-1">{form.yearsOfExperience ? `${form.yearsOfExperience} years of experience` : ''}{form.designations ? ` · ${form.designations}` : ''}</p>
+            </div>
+          </div>
+
+          {/* Details grid */}
+          <div className="divide-y divide-gray-50">
+            <div className="grid grid-cols-2 divide-x divide-gray-50">
+              <div className="px-5 py-3.5">
+                <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-0.5">Email</p>
+                <p className="text-sm text-gray-800 truncate">{form.email || '—'}</p>
+              </div>
+              <div className="px-5 py-3.5">
+                <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-0.5">Phone</p>
+                <p className="text-sm text-gray-800">{form.phone || <span className="text-gray-300 italic text-xs">Not provided</span>}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 divide-x divide-gray-50">
+              <div className="px-5 py-3.5">
+                <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-0.5">LinkedIn</p>
+                <p className="text-sm text-gray-800 truncate">{form.linkedIn || '—'}</p>
+              </div>
+              <div className="px-5 py-3.5">
+                <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-0.5">Page Type</p>
+                <p className="text-sm text-gray-800">{PAGE_TYPE_LABELS[form.pageType]}</p>
+              </div>
+            </div>
+            {isDbaPageType(form.pageType) && (
+              <div className="px-5 py-3.5">
+                <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-0.5">Firm / Brand</p>
+                <p className="text-sm text-gray-800">{form.firmName || '—'}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Topics */}
+        <div className="rounded-xl border border-gray-100 px-5 py-4">
+          <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-3">Financial Topics</p>
+          <div className="flex flex-wrap gap-2">
+            {form.financialTopics.length > 0
+              ? form.financialTopics.map((t) => (
+                  <span key={t} className="px-3 py-1.5 bg-[#175242] text-white text-xs font-medium rounded-[3px] tracking-[0.04em]">{t}</span>
+                ))
+              : <span className="text-sm text-gray-300 italic">None selected</span>
+            }
+          </div>
+        </div>
+
+        {/* Bio */}
+        <div className="rounded-xl border border-gray-100 px-5 py-4">
+          <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-2">Bio</p>
+          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{form.currentBio || <span className="text-gray-300 italic">Not provided</span>}</p>
+        </div>
+
+        {/* FAQ */}
+        <div className="rounded-xl border border-gray-100 overflow-hidden">
+          <div className="px-5 py-3 border-b border-gray-50">
+            <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400">FAQ</p>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {[
+              { q: 'How did you become a financial advisor?', v: form.howBecameAdvisor },
+              { q: 'What types of clients do you work with?', v: form.clientTypes },
+              { q: 'What areas of expertise do you have?', v: form.areasOfExpertise },
+              { q: 'What strategies do you help clients with?', v: form.strategies },
+              { q: 'What sets you apart?', v: form.uniqueApproach },
+              { q: 'Favorite part about working with clients?', v: form.favoritePartWorking },
+              { q: 'What do you like about working with Savvy?', v: form.likesAboutSavvy },
+            ].map(({ q, v }) => (
+              <div key={q} className="px-5 py-3.5">
+                <p className="text-xs font-medium text-gray-400 mb-1">{q}</p>
+                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{v || <span className="text-gray-300 italic">Not provided</span>}</p>
+              </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        <section className="bg-gray-50 rounded-xl p-5">
-          <SectionLabel>Photo</SectionLabel>
-          {form.photo ? (
-            <div className="flex items-center gap-3 mt-1">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={URL.createObjectURL(form.photo)} alt="Preview" className="w-14 h-14 rounded-lg object-cover shadow" />
-              <span className="text-sm text-gray-600">{form.photo.name}</span>
-            </div>
-          ) : (
-            <span className="text-sm text-gray-400 italic">No photo uploaded</span>
-          )}
-        </section>
-
-        <section className="bg-gray-50 rounded-xl p-5">
-          <SectionLabel>Bio &amp; FAQ</SectionLabel>
-          <dl>
-            <ReviewRow label="Current Bio" value={form.currentBio} />
-            <ReviewRow label="Became Advisor" value={form.howBecameAdvisor} />
-            <ReviewRow label="Client Types" value={form.clientTypes} />
-            <ReviewRow label="Expertise" value={form.areasOfExpertise} />
-            <ReviewRow label="Strategies" value={form.strategies} />
-            <ReviewRow label="Unique Approach" value={form.uniqueApproach} />
-            <ReviewRow label="Favorite Part" value={form.favoritePartWorking} />
-            <ReviewRow label="Likes About Savvy" value={form.likesAboutSavvy} />
-            <ReviewRow label="Designations" value={form.designations} />
-          </dl>
-        </section>
       </div>
     </div>
   );

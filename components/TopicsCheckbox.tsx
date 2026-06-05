@@ -91,8 +91,8 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
           const isDisabled = !isChecked && selected.length >= 4;
           const icon = TOPIC_ICONS[topic];
           const accentColor = TOPIC_ACCENT_COLORS[index % TOPIC_ACCENT_COLORS.length];
-          const whiteText = useWhiteText(accentColor);
-          const textColor = whiteText ? 'white' : '#111111';
+          // Always use white text/icons on colored backgrounds — design decision
+          const textColor = 'white';
 
           return (
             <label
@@ -120,7 +120,7 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
                     className="w-7 h-7 object-contain transition-all"
                     style={{
                       filter: isChecked
-                        ? whiteText ? 'brightness(0) invert(1)' : 'brightness(0)'
+                        ? 'brightness(0) invert(1)'
                         : 'opacity(0.45)',
                     }}
                   />
@@ -137,7 +137,7 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
               {isChecked && (
                 <div
                   className="ml-auto shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
-                  style={{ background: whiteText ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.15)' }}
+                  style={{ background: 'rgba(255,255,255,0.25)' }}
                 >
                   <svg
                     className="w-3 h-3"

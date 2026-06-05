@@ -580,32 +580,32 @@ async function generateAdvisorPdf(s: AdvisorSubmission, hubspotFormId: string, h
     y -= 20;
   };
 
+  const drawLine = (text: string, x: number, size: number, font: import('pdf-lib').PDFFont, color: import('pdf-lib').RGB, lineH: number) => {
+    checkY(lineH + 4);
+    page.drawText(text, { x, y, size, font, color });
+    y -= lineH;
+  };
+
   const drawField = (label: string, value: string, highlight = false) => {
     const lines = wrapText(value || '—', regular, 8, contentWidth - 130);
-    const blockH = lines.length * 12 + 8;
-    checkY(blockH + 4);
-    if (highlight) page.drawRectangle({ x: margin, y: y - blockH + 8, width: contentWidth, height: blockH, color: vanilla });
-    page.drawText(label + ':', { x: margin + 8, y: y, size: 8, font: bold, color: gray });
-    lines.forEach((line, i) => {
-      page.drawText(line, { x: margin + 140, y: y - i * 12, size: 8, font: regular, color: black });
+    checkY(20);
+    if (highlight) page.drawRectangle({ x: margin, y: y - 4, width: contentWidth, height: lines.length * 12 + 8, color: vanilla });
+    page.drawText(label + ':', { x: margin + 8, y, size: 8, font: bold, color: gray });
+    lines.forEach((line) => {
+      checkY(12);
+      page.drawText(line, { x: margin + 140, y, size: 8, font: regular, color: black });
+      y -= 12;
     });
-    y -= blockH;
+    y -= 4;
   };
 
   const drawFaq = (num: string, question: string, answer: string) => {
     const qLines = wrapText(`${num}. ${question}`, bold, 8.5, contentWidth - 16);
     const aLines = wrapText(answer || '—', regular, 8, contentWidth - 16);
-    const needed = (qLines.length + aLines.length) * 13 + 16;
-    checkY(needed);
     y -= 8;
-    qLines.forEach((line, i) => {
-      page.drawText(line, { x: margin + 8, y: y - i * 13, size: 8.5, font: bold, color: gold });
-    });
-    y -= qLines.length * 13 + 4;
-    aLines.forEach((line, i) => {
-      page.drawText(line, { x: margin + 8, y: y - i * 13, size: 8, font: regular, color: black });
-    });
-    y -= aLines.length * 13;
+    qLines.forEach((line) => drawLine(line, margin + 8, 8.5, bold, gold, 13));
+    y -= 4;
+    aLines.forEach((line) => drawLine(line, margin + 8, 8, regular, black, 13));
   };
 
   const drawCode = (code: string) => {
@@ -659,12 +659,8 @@ async function generateAdvisorPdf(s: AdvisorSubmission, hubspotFormId: string, h
   // Bio
   drawSection('Bio');
   const bioLines = wrapText(s.currentBio || '—', regular, 8, contentWidth - 16);
-  checkY(bioLines.length * 12 + 8);
   y -= 6;
-  bioLines.forEach((line, i) => {
-    page.drawText(line, { x: margin + 8, y: y - i * 12, size: 8, font: regular, color: black });
-  });
-  y -= bioLines.length * 12;
+  bioLines.forEach((line) => drawLine(line, margin + 8, 8, regular, black, 12));
 
   // FAQ
   drawSection('FAQ Answers');
@@ -695,13 +691,9 @@ async function generateAdvisorPdf(s: AdvisorSubmission, hubspotFormId: string, h
       const trimmed = section.trim();
       if (!trimmed) continue;
       const lines = wrapText(trimmed, regular, 7.5, contentWidth - 16);
-      const needed = lines.length * 11 + 6;
-      checkY(needed);
       y -= 4;
-      lines.forEach((line, i) => {
-        page.drawText(line, { x: margin + 8, y: y - i * 11, size: 7.5, font: regular, color: black });
-      });
-      y -= needed;
+      lines.forEach((line) => drawLine(line, margin + 8, 7.5, regular, black, 11));
+      y -= 4;
     }
   }
 

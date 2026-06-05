@@ -492,6 +492,7 @@ export default function AdvisorForm() {
   const [gateLoading, setGateLoading] = useState(false);
   const [btnHover, setBtnHover] = useState(false);
   const [step, setStep] = useState(1);
+  const [maxStep, setMaxStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
@@ -661,7 +662,11 @@ export default function AdvisorForm() {
     else if (step === 3) valid = validateStep3();
     else if (step === 4) valid = validateStep4();
     else valid = true;
-    if (valid) setStep((s) => s + 1);
+    if (valid) {
+      const next = step + 1;
+      setStep(next);
+      setMaxStep((m) => Math.max(m, next));
+    }
   };
 
   const back = () => setStep((s) => s - 1);
@@ -926,8 +931,8 @@ export default function AdvisorForm() {
             {STEPS.map((s) => {
               const done = s.number < step;
               const active = s.number === step;
-              const muted = s.number > step;
-              const clickable = done || active;
+              const muted = s.number > maxStep;
+              const clickable = s.number <= maxStep;
               return (
                 <button
                   key={s.number}
@@ -1058,16 +1063,31 @@ export default function AdvisorForm() {
             )}
 
             {step < 5 ? (
-              <button
-                type="button"
-                onClick={advance}
-                className="px-7 py-2.5 rounded-[3px] text-sm font-medium tracking-[0.02em] text-white bg-black border border-black hover:bg-transparent hover:text-black transition-all duration-200 flex items-center gap-1.5"
-              >
-                Next
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/>
-                </svg>
-              </button>
+              <div className="flex items-center gap-3">
+                {/* Return to Review shortcut — shown when advisor navigated back from a completed section */}
+                {step < maxStep && maxStep === 5 && (
+                  <button
+                    type="button"
+                    onClick={() => { setStep(5); }}
+                    className="px-4 py-2.5 rounded-[3px] text-sm font-medium tracking-[0.02em] text-[#175242] border border-[#175242] hover:bg-[#175242] hover:text-white transition-all duration-200 flex items-center gap-1.5"
+                  >
+                    Back to Review
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={advance}
+                  className="px-7 py-2.5 rounded-[3px] text-sm font-medium tracking-[0.02em] text-white bg-black border border-black hover:bg-transparent hover:text-black transition-all duration-200 flex items-center gap-1.5"
+                >
+                  Next
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
             ) : (
               <div className="flex flex-col items-end gap-2">
                 {submitError && <p className="text-sm text-red-500">{submitError}</p>}

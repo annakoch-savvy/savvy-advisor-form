@@ -1268,13 +1268,110 @@ function StepBioFaq({
   );
 }
 
+// ─── Topic icon map (mirrors TopicsCheckbox) ─────────────────────────────────
+
+const TOPIC_ICONS_MAP: Record<string, string> = {
+  'Investment Management':        '/icons/investment-management.svg',
+  'Tax Optimization':             '/icons/tax-optimization.svg',
+  'Direct Indexing':              '/icons/direct-indexing.svg',
+  'Retirement Planning':          '/icons/retirement-planning.svg',
+  'Trust & Estate Planning':      '/icons/trust-estate.svg',
+  'Risk Management':              '/icons/financial-planning.svg',
+  'Business Succession Planning': '/icons/succession-planning.svg',
+  'Education Planning':           '/icons/education-planning.svg',
+  'Financial Planning & Analysis':'/icons/financial-planning.svg',
+  'Alternative Investments':      '/icons/alternative-investments.svg',
+  '401(k) for Businesses':        '/icons/401k.svg',
+  'P&G Employee Services':        '/icons/small-business-tax.svg',
+};
+
 // ─── Step 5: Review ───────────────────────────────────────────────────────────
 
 function StepReview({ form }: { form: FormData }) {
+  const photoUrl = form.photo ? URL.createObjectURL(form.photo) : null;
+  const firstName = form.fullName.split(' ')[0] || 'your';
+
   return (
     <div className="max-w-3xl">
       <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Almost there.</h2>
-      <p className="text-sm text-gray-500 mb-8">Take a moment to review before we build your page.</p>
+      <p className="text-sm text-gray-500 mb-6">Take a moment to review before we build your page.</p>
+
+      {/* ── Page mockup preview ── */}
+      <div className="mb-8">
+        <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-3">Page Preview</p>
+
+        {/* Device frame — laptop */}
+        <div className="relative w-full">
+          {/* Laptop shell */}
+          <div className="rounded-t-lg bg-gray-900 p-1.5 shadow-xl">
+            {/* Screen bezel */}
+            <div className="rounded-md bg-gray-800 p-1">
+              {/* Screen content */}
+              <div className="rounded bg-white overflow-hidden" style={{ height: '280px' }}>
+                {/* Savvy nav bar */}
+                <div className="flex items-center justify-between px-4 py-2 border-b border-gray-100">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/savvy-logo-black.svg" alt="Savvy" className="h-3.5" />
+                  <div className="flex items-center gap-3">
+                    <span className="text-[7px] text-gray-400">For Clients</span>
+                    <span className="text-[7px] text-gray-400">For Advisors</span>
+                    <span className="text-[7px] text-gray-400">Our Services</span>
+                    <span className="text-[7px] text-gray-400">About</span>
+                    <span className="text-[7px] px-2 py-0.5 bg-black text-white rounded-sm">Find an Advisor</span>
+                  </div>
+                </div>
+
+                {/* Page content — two column like Cindy Alvarez */}
+                <div className="flex gap-4 px-5 py-4 h-full">
+                  {/* Left column */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-serif font-light tracking-tight text-gray-900 mb-2 leading-tight">
+                      {form.fullName || 'Your Name'}
+                    </h3>
+                    <p className="text-[7.5px] text-gray-600 leading-relaxed line-clamp-5 mb-3">
+                      {form.currentBio || 'Your bio will appear here...'}
+                    </p>
+                    {/* Location */}
+                    <div className="flex items-center gap-1 mb-3">
+                      <svg className="w-2.5 h-2.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      <span className="text-[7px] text-gray-400">{form.cityAndState || 'Location'}</span>
+                    </div>
+                    {/* CTA buttons */}
+                    <div className="flex gap-2">
+                      <span className="text-[6.5px] px-2 py-1 bg-black text-white rounded-sm">Schedule a call today</span>
+                      <span className="text-[6.5px] px-2 py-1 border border-black text-black rounded-sm">Send an email</span>
+                    </div>
+                  </div>
+
+                  {/* Right column — photo */}
+                  <div className="shrink-0 w-28">
+                    {photoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={photoUrl} alt={form.fullName} className="w-full h-36 object-cover rounded-lg" />
+                    ) : (
+                      <div className="w-full h-36 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <svg className="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                      </div>
+                    )}
+                    <div className="flex justify-between items-center mt-1.5 px-0.5">
+                      <span className="text-[6px] text-gray-400">{form.cityAndState?.split(',')[1]?.trim() || ''}</span>
+                      <svg className="w-2.5 h-2.5 text-gray-400" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Laptop base */}
+          <div className="h-2.5 bg-gray-700 rounded-b-lg mx-4" />
+          <div className="h-1 bg-gray-600 rounded-b-xl mx-2 shadow-lg" />
+
+          {/* Caption */}
+          <p className="text-center text-[10px] text-gray-400 mt-3 italic">
+            Preview of {firstName}&apos;s advisor page on savvywealth.com
+          </p>
+        </div>
+      </div>
 
       <div className="space-y-5">
 
@@ -1334,7 +1431,13 @@ function StepReview({ form }: { form: FormData }) {
           <div className="flex flex-wrap gap-2">
             {form.financialTopics.length > 0
               ? form.financialTopics.map((t) => (
-                  <span key={t} className="px-3 py-1.5 bg-[#175242] text-white text-xs font-medium rounded-[3px] tracking-[0.04em]">{t}</span>
+                  <span key={t} className="flex items-center gap-2 pl-2 pr-3 py-1.5 bg-[#175242] text-white text-xs font-medium rounded-[3px] tracking-[0.04em]">
+                    {TOPIC_ICONS_MAP[t] && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={TOPIC_ICONS_MAP[t]} alt="" className="w-4 h-4 object-contain brightness-0 invert" />
+                    )}
+                    {t}
+                  </span>
                 ))
               : <span className="text-sm text-gray-300 italic">None selected</span>
             }

@@ -349,19 +349,17 @@ function FloatTextarea({
             type="button"
             onClick={toggle}
             title={recording ? 'Stop recording' : 'Speak your answer'}
-            className={`absolute right-3 top-3 p-1.5 rounded-full transition-all ${
+            className={`absolute right-3 top-3 p-2 rounded-full transition-all ${
               recording
                 ? 'bg-red-500 text-white shadow-lg shadow-red-200 animate-pulse'
-                : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'
+                : 'bg-[#175242] text-white hover:bg-[#0f3b2e] shadow-sm'
             }`}
           >
             {recording ? (
-              /* Stop icon */
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <rect x="6" y="6" width="12" height="12" rx="1"/>
               </svg>
             ) : (
-              /* Mic icon */
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
@@ -1212,7 +1210,25 @@ function StepBioFaq({
   return (
     <div className="max-w-3xl">
       <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Bio &amp; FAQ</h2>
-      <p className="text-sm text-gray-500 mb-8">These answers will be used to write your advisor page. Write naturally in your own voice.</p>
+      <p className="text-sm text-gray-500 mb-5">These answers will be used to write your advisor page. Write naturally in your own voice.</p>
+
+      {/* Speech-to-text callout */}
+      <div className="rounded-lg border border-[#175242]/20 bg-[#175242]/5 px-5 py-4 mb-8 flex items-start gap-4">
+        <div className="shrink-0 w-9 h-9 rounded-full bg-[#175242] flex items-center justify-center mt-0.5">
+          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          </svg>
+        </div>
+        <div>
+          <p className="text-sm font-medium text-[#175242] mb-0.5">Prefer to talk it out?</p>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            Tap the <span className="inline-flex items-center gap-1 font-medium text-[#175242]">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
+              mic icon
+            </span> on any field to speak your answer — just talk naturally, as if someone is interviewing you. Our AI will take care of the writing.
+          </p>
+        </div>
+      </div>
 
       <div className="space-y-8">
         <div>

@@ -1578,8 +1578,7 @@ function StepReview({ form }: { form: FormData }) {
           </div>
 
           {/* ── PHONE SCREEN OVERLAY ── */}
-          {/* Recalculated: top=(49.1-17.8)/64.3*100=48.7%, height=32.2/64.3*100=50.1% */}
-          <div style={{ position: 'absolute', left: '78.4%', top: '48.7%', width: '14.4%', height: '50.1%', overflow: 'hidden', background: 'white', borderRadius: '6% / 3%', fontFamily: "'Jost', sans-serif" }}>
+          <div style={{ position: 'absolute', left: '79.8%', top: '49.5%', width: '13.2%', height: '49%', overflow: 'hidden', background: 'white', borderRadius: '4px', fontFamily: "'Jost', sans-serif" }}>
             {/* Mobile nav */}
             <div style={{ padding: '6px 10px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', position: 'sticky', top: 0, zIndex: 10 }}>
               <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '13px', fontWeight: 400 }}>Savvy</span>

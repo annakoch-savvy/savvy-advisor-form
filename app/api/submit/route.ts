@@ -15,8 +15,6 @@ async function notifySlack(payload: {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL;
   if (!webhookUrl) return;
 
-  const processUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://savvy-advisor-form-delta.vercel.app'}/api/process/${payload.submissionId}`;
-
   await fetch(webhookUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -27,8 +25,8 @@ async function notifySlack(payload: {
           text: {
             type: 'mrkdwn',
             text: payload.isUpdate
-              ? `:pencil2: *Advisor submission updated*`
-              : `:tada: *New advisor intake form submitted!*`,
+              ? `:pencil2: *Advisor submission updated — processing started*`
+              : `:tada: *New advisor intake form submitted — processing started*`,
           },
         },
         {
@@ -41,19 +39,8 @@ async function notifySlack(payload: {
           ],
         },
         {
-          type: 'actions',
-          elements: [
-            {
-              type: 'button',
-              text: { type: 'plain_text', text: 'Process Submission →' },
-              url: processUrl,
-              style: 'primary',
-            },
-          ],
-        },
-        {
           type: 'context',
-          elements: [{ type: 'mrkdwn', text: `Submission ID: \`${payload.submissionId}\`` }],
+          elements: [{ type: 'mrkdwn', text: `Wrike task and HubSpot form are being created. You'll get a follow-up message when done.` }],
         },
       ],
     }),
@@ -175,7 +162,9 @@ export async function POST(req: NextRequest) {
       submissionId = inserted.id;
     }
 
-    // Notify Slack (non-blocking — don't fail the submission if this errors)
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://savvy-advisor-form-delta.vercel.app';
+
+    // Notify Slack (non-blocking)
     notifySlack({
       fullName,
       email,
@@ -184,6 +173,13 @@ export async function POST(req: NextRequest) {
       submissionId,
       isUpdate,
     }).catch((e) => console.error('Slack notification failed:', e));
+
+    // Auto-trigger processing in background (separate serverless invocation)
+    fetch(`${baseUrl}/api/process`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: submissionId }),
+    }).catch((e) => console.error('Process trigger failed:', e));
 
     return NextResponse.json({ success: true, id: submissionId, updated: isUpdate });
   } catch (err: unknown) {

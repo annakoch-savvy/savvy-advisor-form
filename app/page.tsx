@@ -1300,18 +1300,15 @@ function StepReview({ form }: { form: FormData }) {
       <div className="mb-8">
         <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-3">Your Page Preview</p>
 
-        {/* Load Cormorant Garamond for the mockup */}
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');`}</style>
+        {/* Device mockup with positioned screen overlays */}
+        <div className="relative" style={{ userSelect: 'none' }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/device-mockup.jpg" alt="Device mockup" style={{ width: '100%', display: 'block' }} />
 
-        {/* Laptop device frame */}
-        <div className="relative">
-          <div className="shadow-2xl" style={{ borderRadius: '12px 12px 0 0', background: '#1c1c1e', padding: '10px 10px 0' }}>
-            {/* Camera notch */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '6px' }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3a3a3c' }} />
-            </div>
-            {/* Screen */}
-            <div style={{ borderRadius: '4px 4px 0 0', overflow: 'hidden', background: 'white', height: '460px', overflowY: 'auto', fontFamily: "'Jost', sans-serif" }}>
+          {/* ── LAPTOP SCREEN OVERLAY ── */}
+          {/* Screen area: left 7.8%, top 5.2%, width 34.8%, height 26.5% */}
+          <div style={{ position: 'absolute', left: '7.8%', top: '5.2%', width: '34.8%', height: '26.5%', overflow: 'hidden', background: 'white' }}>
+          <div style={{ width: '100%', height: '100%', overflowY: 'auto', fontFamily: "'Jost', sans-serif" }}>
 
               {/* Nav */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px', borderBottom: '1px solid #f0f0f0', position: 'sticky', top: 0, background: 'white', zIndex: 10 }}>
@@ -1461,14 +1458,45 @@ function StepReview({ form }: { form: FormData }) {
             </div>
           </div>
 
-          {/* Laptop base */}
-          <div style={{ height: '10px', background: '#2c2c2e', borderRadius: '0 0 6px 6px', margin: '0 20px' }} />
-          <div style={{ height: '4px', background: '#1c1c1e', borderRadius: '0 0 8px 8px', margin: '0 4px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }} />
-
-          <div className="mt-4 text-center space-y-1">
-            <p className="text-[11px] text-gray-600 font-medium">This is a mockup, not your final page.</p>
-            <p className="text-[10px] text-gray-400">Our designers and writers will review all your information and refine the content before your page goes live on savvywealth.com.</p>
+          {/* ── PHONE SCREEN OVERLAY ── */}
+          {/* Phone screen: left 37.2%, top 26.8%, width 9.7%, height 17.5% */}
+          <div style={{ position: 'absolute', left: '37.2%', top: '26.8%', width: '9.7%', height: '17.5%', overflow: 'hidden', background: 'white', borderRadius: '2px', fontFamily: "'Jost', sans-serif" }}>
+            {/* Mobile nav */}
+            <div style={{ padding: '3px 4px', borderBottom: '0.5px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/savvy-logo-black.svg" alt="Savvy" style={{ height: '5px' }} />
+              <div style={{ width: '8px', height: '5px', display: 'flex', flexDirection: 'column', gap: '1px', justifyContent: 'center' }}>
+                {[0,1,2].map(i => <div key={i} style={{ height: '0.5px', background: '#333', width: '100%' }} />)}
+              </div>
+            </div>
+            {/* Mobile hero */}
+            <div style={{ padding: '4px' }}>
+              {/* Photo */}
+              <div style={{ width: '100%', height: '28px', borderRadius: '2px', overflow: 'hidden', background: '#ddd', marginBottom: '3px' }}>
+                {photoUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                )}
+              </div>
+              {/* Name */}
+              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '7px', fontWeight: 300, color: '#111', marginBottom: '2px', lineHeight: 1.1 }}>
+                {form.fullName || 'Your Name'}
+              </div>
+              {/* Location */}
+              <div style={{ fontSize: '4px', color: '#888', marginBottom: '2px' }}>{form.cityAndState}</div>
+              {/* Bio */}
+              <p style={{ fontSize: '4px', color: '#555', lineHeight: 1.4, margin: '0 0 3px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                {form.currentBio}
+              </p>
+              {/* CTA */}
+              <div style={{ fontSize: '3.5px', padding: '2px 4px', background: 'black', color: 'white', borderRadius: '2px', display: 'inline-block' }}>Schedule a call</div>
+            </div>
           </div>
+
+        </div>
+        <div className="mt-4 text-center space-y-1">
+          <p className="text-[11px] text-gray-600 font-medium">This is a mockup, not your final page.</p>
+          <p className="text-[10px] text-gray-400">Our designers and writers will review all your information and refine the content before your page goes live on savvywealth.com.</p>
         </div>
       </div>
 

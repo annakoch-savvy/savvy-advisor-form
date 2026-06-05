@@ -1688,55 +1688,55 @@ function StepReview({ form }: { form: FormData }) {
 
           {/* ── Phone screen content — same approach as laptop ── */}
           {/* Phone screen measured: left=78.6%, top=48.7%, width=14.4%, height=50% of container */}
-          {/* Phone screen — z:3, matches Chase Austin mobile layout */}
+          {/* Phone screen — static, everything fits within frame, no scroll */}
           <div style={{ position: 'absolute', left: '78.0%', top: '43.7%', width: '15.4%', height: '56.3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3, display: 'flex', flexDirection: 'column' }}>
-            {/* Sticky nav */}
-            <div style={{ padding: '3% 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0, borderBottom: '0.5px solid #f0f0f0' }}>
-              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '110%', fontWeight: 400 }}>Savvy</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4%' }}>
-                <span style={{ fontSize: '55%', border: '0.5px solid #aaa', padding: '1.5% 4%', color: '#333', borderRadius: '2px' }}>Sign in</span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5px' }}>
-                  {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#333', width: '10px' }} />)}
+            {/* Nav */}
+            <div style={{ padding: '2.5% 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0 }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '105%', fontWeight: 400 }}>Savvy</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '3%' }}>
+                <span style={{ fontSize: '52%', border: '0.5px solid #aaa', padding: '1% 3%', color: '#333', borderRadius: '1px' }}>Sign in</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                  {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#333', width: '9px' }} />)}
                 </div>
               </div>
             </div>
 
-            {/* Scrollable content */}
-            <div style={{ flex: 1, overflowY: 'auto' }}>
-              {/* Photo with white offset box bottom-right */}
-              <div style={{ position: 'relative', margin: '0 0 3% 0' }}>
-                <div style={{ position: 'absolute', bottom: '-4px', right: '-4px', width: '85%', height: '85%', background: 'transparent', border: '1px solid #ddd', zIndex: 0 }} />
-                <div style={{ position: 'relative', zIndex: 1, width: '90%', aspectRatio: '3/3.5', overflow: 'hidden', background: '#c8c8c4', borderRadius: '20px 0 0 0' }}>
-                  {photoUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
-                  )}
-                </div>
+            {/* Photo — fixed height to leave room for content below */}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <div style={{ position: 'absolute', bottom: '-3px', right: '-3px', width: '83%', height: '83%', border: '0.8px solid #ddd', zIndex: 0 }} />
+              <div style={{ position: 'relative', zIndex: 1, width: '88%', height: '28%', minHeight: 0, overflow: 'hidden', background: '#c8c8c4', borderRadius: '14px 0 0 0' }}>
+                {photoUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                )}
               </div>
+            </div>
 
-              {/* Location row — below photo, matching real site order */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4% 3%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '3%' }}>
-                  <svg style={{ width: '8px', height: '8px', color: '#888', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                  <span style={{ fontSize: '55%', color: '#666' }}>{form.cityAndState || 'Location'}</span>
+            {/* Content — flex-grow fills remaining space */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '3% 4%', minHeight: 0 }}>
+              {/* Location */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '2%' }}>
+                  <svg style={{ width: '7px', height: '7px', color: '#888', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  <span style={{ fontSize: '52%', color: '#666' }}>{form.cityAndState || 'Location'}</span>
                 </div>
-                <span style={{ fontSize: '55%', fontWeight: 700, color: '#0077b5', border: '0.5px solid #0077b5', padding: '1px 2px', borderRadius: '1px' }}>in</span>
+                <span style={{ fontSize: '52%', fontWeight: 700, color: '#0077b5', border: '0.5px solid #0077b5', padding: '0.5px 2px' }}>in</span>
               </div>
 
               {/* Name */}
-              <div style={{ padding: '0 4% 2%', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '145%', fontWeight: 400, color: '#111', lineHeight: 1.1 }}>
+              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '130%', fontWeight: 400, color: '#111', lineHeight: 1.1, marginBottom: '2%' }}>
                 {fullName || 'Your Name'}
               </div>
 
-              {/* Bio */}
-              <p style={{ padding: '0 4% 4%', fontSize: '60%', color: '#333', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden', margin: 0 }}>
+              {/* Bio — clamped to fill remaining space */}
+              <p style={{ fontSize: '57%', color: '#333', lineHeight: 1.5, margin: 0, flex: 1, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>
                 {form.currentBio}
               </p>
             </div>
 
-            {/* Sticky CTA at bottom — matching real site */}
+            {/* CTA — pinned to bottom */}
             <div style={{ padding: '3% 4%', background: 'black', flexShrink: 0, textAlign: 'center' }}>
-              <span style={{ fontSize: '65%', color: 'white', fontWeight: 500 }}>Schedule a call today</span>
+              <span style={{ fontSize: '62%', color: 'white', fontWeight: 500 }}>Schedule a call today</span>
             </div>
           </div>
 

@@ -921,35 +921,54 @@ export default function AdvisorForm() {
             Advisor<br />Intake Form
           </h2>
 
-          {/* Step nav */}
-          <nav className="flex-1">
-            {STEPS.map((s, i) => {
+          {/* Vertical pill step tracker */}
+          <nav className="flex-1 flex flex-col gap-2">
+            {STEPS.map((s) => {
               const done = s.number < step;
               const active = s.number === step;
+              const muted = s.number > step;
               return (
-                <div key={s.number} className="flex items-start gap-3">
-                  <div className="flex flex-col items-center">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ${
-                      done
-                        ? 'bg-[#175242] border-[#175242] text-white'
-                        : active
-                        ? 'bg-[#175242] border-[#175242] text-white'
-                        : 'bg-white border-gray-300 text-gray-400'
-                    }`}>
-                      {done ? (
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      ) : s.number}
-                    </div>
-                    {i < STEPS.length - 1 && (
-                      <div className={`w-px h-8 mt-0.5 transition-colors ${done ? 'bg-[#175242]' : 'bg-gray-200'}`} />
+                <div
+                  key={s.number}
+                  className="flex items-center gap-3 rounded-full px-3 py-2.5 transition-all duration-300"
+                  style={{
+                    backgroundColor: active ? s.color : done ? s.color + '22' : 'transparent',
+                  }}
+                >
+                  {/* Icon circle */}
+                  <div
+                    className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300"
+                    style={{
+                      backgroundColor: active ? 'rgba(255,255,255,0.2)' : done ? s.color : '#e8ddd0',
+                    }}
+                  >
+                    {done ? (
+                      <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    ) : (
+                      <span
+                        className="w-4 h-4 flex items-center justify-center"
+                        style={{ color: active ? 'white' : muted ? '#b0a090' : 'white' }}
+                      >
+                        {s.icon}
+                      </span>
                     )}
                   </div>
-                  <div className="pt-1 pb-8">
-                    <span className={`text-sm font-medium transition-colors ${
-                      active ? 'text-[#175242]' : done ? 'text-gray-600' : 'text-gray-400'
-                    }`}>{s.label}</span>
+
+                  {/* Label + description */}
+                  <div className="min-w-0">
+                    <p
+                      className="text-sm font-medium leading-none mb-0.5 transition-colors"
+                      style={{ color: active ? 'white' : done ? s.color : '#b0a090' }}
+                    >
+                      {s.label}
+                    </p>
+                    {active && (
+                      <p className="text-[11px] leading-none text-white/65 truncate">
+                        {s.description}
+                      </p>
+                    )}
                   </div>
                 </div>
               );
@@ -968,48 +987,32 @@ export default function AdvisorForm() {
             <img src="/savvy-logo-black.svg" alt="Savvy" className="h-6" />
           </div>
 
-          {/* ── Pill progress bar — visible on all screen sizes ── */}
+          {/* Mobile pill — only shown on small screens */}
           {(() => {
             const s = STEPS[step - 1];
             const pct = Math.round((step / STEPS.length) * 100);
             return (
-              <div className="px-6 md:px-10 pt-4 pb-0">
-                <div
-                  className="flex items-center gap-3 rounded-full px-2 py-2 pr-5 transition-all duration-500 shadow-sm"
-                  style={{ backgroundColor: s.color }}
-                >
-                  {/* Icon circle */}
-                  <div className="shrink-0 w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                    <span className="w-5 h-5" style={{ color: s.color }}>{s.icon}</span>
+              <div className="md:hidden px-4 pt-3 pb-0">
+                <div className="flex items-center gap-3 rounded-full px-2 py-2 pr-4 transition-all duration-500" style={{ backgroundColor: s.color }}>
+                  <div className="shrink-0 w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">
+                    <span className="w-4 h-4 text-white">{s.icon}</span>
                   </div>
-
-                  {/* Label + description */}
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-semibold text-sm leading-none mb-0.5">{s.label}</p>
-                    <p className="text-white/65 text-xs leading-none truncate">{s.description}</p>
+                    <p className="text-white/60 text-xs">{s.description}</p>
                   </div>
-
-                  {/* Progress line + dot */}
-                  <div className="relative flex items-center w-24 shrink-0">
+                  <div className="relative flex items-center w-16 shrink-0">
                     <div className="w-full h-px bg-white/25 rounded-full" />
-                    <div
-                      className="absolute h-px bg-white/80 rounded-full transition-all duration-500"
-                      style={{ width: `${pct}%` }}
-                    />
-                    <div
-                      className="absolute w-2 h-2 rounded-full bg-white transition-all duration-500"
-                      style={{ left: `calc(${pct}% - 4px)` }}
-                    />
+                    <div className="absolute h-px bg-white/80 rounded-full" style={{ width: `${pct}%` }} />
+                    <div className="absolute w-2 h-2 rounded-full bg-white" style={{ left: `calc(${pct}% - 4px)` }} />
                   </div>
-
-                  {/* Percent */}
-                  <span className="text-white/70 text-xs font-medium shrink-0 w-8 text-right">{pct}%</span>
+                  <span className="text-white/70 text-xs font-medium shrink-0">{pct}%</span>
                 </div>
               </div>
             );
           })()}
 
-          {/* Content — pt matches sidebar logo height (h-7 = 28px) + p-10 top so headings align */}
+          {/* Content */}
           <div className="flex-1 px-8 md:px-10 pt-[46px] pb-8 md:pb-10 overflow-y-auto">
             {step === 1 && (
               <StepBasicInfo form={form} errors={errors} set={set} setVal={setVal} onPageTypeChange={handlePageTypeChange} draftBanner={draftBanner} onApplyDraft={applyDraft} onDiscardDraft={() => { clearDraft(form.email); setDraftBanner(null); }} onEmailChange={(val) => { if (!val) { setDraftBanner(null); return; } const draft = loadDraft(val); if (draft) setDraftBanner({ draft }); else setDraftBanner(null); }} />

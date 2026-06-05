@@ -1553,13 +1553,18 @@ function StepReview({ form }: { form: FormData }) {
               <div style={{ display: 'flex', gap: '20px', padding: '16px 20px 14px', background: 'white' }}>
                 {/* Left */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  {/* Name: real page ~44px on 940px viewport → 44×0.5=22px; designations smaller */}
-                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '26px', fontWeight: 400, color: '#111', margin: '0 0 10px', lineHeight: 1.05 }}>
+                  {/* Name only — designations on separate line */}
+                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '26px', fontWeight: 400, color: '#111', margin: '0 0 4px', lineHeight: 1.05 }}>
                     {fullName || 'Your Name'}
-                    {form.designations && <span style={{ fontSize: '16px', fontWeight: 300 }}>, {form.designations}</span>}
                   </h1>
-                  {/* Bio: real page ~16px on 940px → 16×0.5=8px */}
-                  <p style={{ fontSize: '8px', color: '#333', lineHeight: 1.65, marginBottom: '10px', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {/* Designations — truncated, separate from name */}
+                  {form.designations && (
+                    <p style={{ fontSize: '7px', color: '#888', marginBottom: '8px', letterSpacing: '0.04em', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                      {form.designations.slice(0, 60)}{form.designations.length > 60 ? '…' : ''}
+                    </p>
+                  )}
+                  {/* Bio — clamped to 4 lines */}
+                  <p style={{ fontSize: '8px', color: '#333', lineHeight: 1.65, marginBottom: '10px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {form.currentBio || 'Your bio will appear here...'}
                   </p>
                   {form.firstName && (

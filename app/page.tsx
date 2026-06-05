@@ -1526,12 +1526,13 @@ function StepReview({ form }: { form: FormData }) {
         {/* Device mockup */}
         <div className="relative" style={{ userSelect: 'none' }}>
 
-          {/* ── Laptop portion: overflow hidden crops whitespace ── */}
-          <div style={{ overflow: 'hidden', position: 'relative' }}>
+          {/* ── Laptop: image + screen content, uses padding-bottom for stable height ── */}
+          <div style={{ position: 'relative', paddingBottom: '64.3%', overflow: 'hidden' }}>
+            {/* Device image — shifted up to crop whitespace */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/device-mockup.jpg" alt="" aria-hidden="true" style={{ width: '100%', display: 'block', marginTop: '-17.8%', marginBottom: '-17.9%' }} />
+            <img src="/device-mockup.jpg" alt="" aria-hidden="true" style={{ position: 'absolute', top: '-27.7%', left: 0, width: '100%' }} />
 
-            {/* Laptop screen content */}
+            {/* Laptop screen content — percentages relative to this container */}
             <div style={{ position: 'absolute', left: '16.2%', top: '6.53%', width: '67%', height: '63.8%', overflow: 'hidden', background: 'white' }}>
           <div style={{ width: '100%', height: '100%', overflowY: 'auto', fontFamily: "'Jost', sans-serif" }}>
 

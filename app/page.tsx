@@ -801,15 +801,15 @@ export default function AdvisorForm() {
 
           <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-8 text-sm text-white/60">
             <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 shrink-0" style={{ color: '#D79F32' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <svg className="w-4 h-4 shrink-0" style={{ color: '#C9A84C' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               Continuously updated
             </li>
             <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 shrink-0" style={{ color: '#095972' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <svg className="w-4 h-4 shrink-0" style={{ color: '#C9A84C' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               Optimized for SEO &amp; GEO
             </li>
             <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 shrink-0" style={{ color: '#175242' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <svg className="w-4 h-4 shrink-0" style={{ color: '#C9A84C' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               Grows your digital presence
             </li>
           </ul>
@@ -1317,76 +1317,73 @@ function StepReview({ form }: { form: FormData }) {
       <div className="mb-8">
         <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-3">Your Page Preview</p>
 
-        {/* Device mockup with positioned screen overlays */}
-        <div className="relative" style={{ userSelect: 'none' }}>
+        {/* Device mockup — cropped to remove whitespace, content from 17.8% to 82.1% */}
+        <div className="relative" style={{ userSelect: 'none', overflow: 'hidden' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/device-mockup.jpg" alt="Device mockup" style={{ width: '100%', display: 'block' }} />
+          <img src="/device-mockup.jpg" alt="Device mockup" style={{ width: '100%', display: 'block', marginTop: '-17.8%', marginBottom: '-17.9%' }} />
 
           {/* ── LAPTOP SCREEN OVERLAY ── */}
-          <div style={{ position: 'absolute', left: '16.2%', top: '22%', width: '67%', height: '41%', overflow: 'hidden', background: 'white' }}>
+          {/* Recalculated: top=(22-17.8)/64.3*100=6.53%, height=41/64.3*100=63.8% */}
+          <div style={{ position: 'absolute', left: '16.2%', top: '6.53%', width: '67%', height: '63.8%', overflow: 'hidden', background: 'white' }}>
           <div style={{ width: '100%', height: '100%', overflowY: 'auto', fontFamily: "'Jost', sans-serif" }}>
 
-              {/* Nav — matches savvywealth.com exactly */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 24px', borderBottom: '1px solid #f0f0f0', position: 'sticky', top: 0, background: 'white', zIndex: 10 }}>
-                <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '16px', fontWeight: 400, color: '#111', letterSpacing: '-0.02em' }}>Savvy</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              {/* Nav */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 16px', borderBottom: '1px solid #f0f0f0', position: 'sticky', top: 0, background: 'white', zIndex: 10 }}>
+                <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '11px', fontWeight: 400, color: '#111' }}>Savvy</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   {['For Clients','For Advisors','Our Services','Resources','About','Sign in'].map(l => (
-                    <span key={l} style={{ fontSize: '9px', color: '#555', fontWeight: 300 }}>{l}</span>
+                    <span key={l} style={{ fontSize: '6px', color: '#555' }}>{l}</span>
                   ))}
-                  <span style={{ fontSize: '9px', padding: '5px 12px', background: 'black', color: 'white', fontWeight: 500, borderRadius: '2px' }}>Find an Advisor</span>
+                  <span style={{ fontSize: '6px', padding: '3px 8px', background: 'black', color: 'white', fontWeight: 500, borderRadius: '2px' }}>Find an Advisor</span>
                 </div>
               </div>
 
               {/* Hero */}
-              <div style={{ display: 'flex', gap: '40px', padding: '28px 32px 24px', background: 'white' }}>
+              <div style={{ display: 'flex', gap: '20px', padding: '16px 20px 14px', background: 'white' }}>
                 {/* Left */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '36px', fontWeight: 400, color: '#111', margin: '0 0 14px', lineHeight: 1.05 }}>
-                    {[fullName, form.designations].filter(Boolean).join(', ') || 'Your Name'}
+                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '22px', fontWeight: 400, color: '#111', margin: '0 0 8px', lineHeight: 1.1 }}>
+                    {fullName || 'Your Name'}
+                    {form.designations && <span style={{ fontSize: '14px', fontWeight: 300 }}>, {form.designations}</span>}
                   </h1>
-                  <p style={{ fontSize: '11px', color: '#333', lineHeight: 1.65, marginBottom: '16px', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  <p style={{ fontSize: '7.5px', color: '#333', lineHeight: 1.6, marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {form.currentBio || 'Your bio will appear here...'}
                   </p>
                   {form.firstName && (
-                    <div style={{ marginBottom: '14px' }}>
-                      <div style={{ fontSize: '9px', fontWeight: 600, color: '#111', marginBottom: '5px', letterSpacing: '0.06em' }}>
+                    <div style={{ marginBottom: '8px' }}>
+                      <div style={{ fontSize: '6.5px', fontWeight: 700, color: '#111', marginBottom: '3px', letterSpacing: '0.06em' }}>
                         {(form.firstName || '').toUpperCase()}&apos;S TEAM:
                       </div>
-                      <div style={{ display: 'flex', gap: '16px' }}>
-                        <span style={{ fontSize: '9px', color: '#333' }}>Savvy Investment Team</span>
-                      </div>
+                      <span style={{ fontSize: '6.5px', color: '#333' }}>Savvy Investment Team</span>
                     </div>
                   )}
-                  <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-                    <span style={{ fontSize: '10px', padding: '8px 18px', background: 'black', color: 'white', fontWeight: 500, borderRadius: '3px' }}>Schedule a call today</span>
-                    <span style={{ fontSize: '10px', padding: '8px 18px', border: '1.5px solid black', color: 'black', fontWeight: 500, borderRadius: '3px' }}>Send an email</span>
+                  <div style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
+                    <span style={{ fontSize: '6.5px', padding: '5px 10px', background: 'black', color: 'white', fontWeight: 500, borderRadius: '2px' }}>Schedule a call today</span>
+                    <span style={{ fontSize: '6.5px', padding: '5px 10px', border: '1px solid black', color: 'black', fontWeight: 500, borderRadius: '2px' }}>Send an email</span>
                   </div>
                 </div>
 
-                {/* Right: photo — matches Craig Austad layout */}
-                <div style={{ width: '200px', flexShrink: 0 }}>
-                  <div style={{ position: 'relative', marginBottom: '10px' }}>
-                    {/* White offset card behind photo (top-right) */}
-                    <div style={{ position: 'absolute', top: '-8px', right: '-8px', width: '90%', height: '90%', background: '#f0f0ee', zIndex: 0, borderRadius: '0 0 0 0' }} />
-                    {/* Photo with rounded top-left corner (matching real site) */}
-                    <div style={{ position: 'relative', zIndex: 1, width: '190px', height: '220px', background: '#c8c8c4', overflow: 'hidden', borderRadius: '40px 0 0 0' }}>
+                {/* Right: photo */}
+                <div style={{ width: '130px', flexShrink: 0 }}>
+                  <div style={{ position: 'relative', marginBottom: '6px' }}>
+                    <div style={{ position: 'absolute', top: '-5px', right: '-5px', width: '88%', height: '88%', background: '#ebebea', zIndex: 0 }} />
+                    <div style={{ position: 'relative', zIndex: 1, width: '120px', height: '145px', background: '#c8c8c4', overflow: 'hidden', borderRadius: '25px 0 0 0' }}>
                       {photoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={photoUrl} alt={fullName} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
                       ) : (
                         <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <svg style={{ width: '48px', height: '48px', color: '#999' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                          <svg style={{ width: '32px', height: '32px', color: '#aaa' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         </div>
                       )}
                     </div>
                   </div>
-                  {/* Location + LinkedIn */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '6px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <svg style={{ width: '12px', height: '12px', color: '#777', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                      <span style={{ fontSize: '9px', color: '#555' }}>{form.cityAndState || 'Location'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                      <svg style={{ width: '8px', height: '8px', color: '#777', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      <span style={{ fontSize: '6.5px', color: '#555' }}>{form.cityAndState || 'Location'}</span>
                     </div>
-                    <span style={{ fontSize: '9px', fontWeight: 700, color: '#0077b5', fontFamily: 'sans-serif', border: '1.5px solid #0077b5', padding: '1px 4px', borderRadius: '2px' }}>in</span>
+                    <span style={{ fontSize: '6.5px', fontWeight: 700, color: '#0077b5', border: '1px solid #0077b5', padding: '0.5px 2px', borderRadius: '2px' }}>in</span>
                   </div>
                 </div>
               </div>
@@ -1472,7 +1469,8 @@ function StepReview({ form }: { form: FormData }) {
           </div>
 
           {/* ── PHONE SCREEN OVERLAY ── */}
-          <div style={{ position: 'absolute', left: '78.2%', top: '50%', width: '14.8%', height: '31%', overflow: 'hidden', background: 'white', borderRadius: '4px', fontFamily: "'Jost', sans-serif" }}>
+          {/* Recalculated: top=(49.1-17.8)/64.3*100=48.7%, height=32.2/64.3*100=50.1% */}
+          <div style={{ position: 'absolute', left: '78.4%', top: '48.7%', width: '14.4%', height: '50.1%', overflow: 'hidden', background: 'white', borderRadius: '6% / 3%', fontFamily: "'Jost', sans-serif" }}>
             {/* Mobile nav */}
             <div style={{ padding: '6px 10px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', position: 'sticky', top: 0, zIndex: 10 }}>
               <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '13px', fontWeight: 400 }}>Savvy</span>

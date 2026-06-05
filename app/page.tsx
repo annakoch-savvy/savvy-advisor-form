@@ -1301,7 +1301,7 @@ function StepReview({ form }: { form: FormData }) {
         <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-3">Your Page Preview</p>
 
         {/* Load Cormorant Garamond for the mockup */}
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&display=swap');`}</style>
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');`}</style>
 
         {/* Laptop device frame */}
         <div className="relative">
@@ -1381,18 +1381,50 @@ function StepReview({ form }: { form: FormData }) {
                 </div>
               </div>
 
-              {/* How Can I Help */}
+              {/* Quote / How I Work section */}
+              {form.uniqueApproach && (
+                <div style={{ padding: '18px 28px', background: '#f5f0e8', borderTop: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+                  <div>
+                    <div style={{ fontSize: '7.5px', fontWeight: 600, color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      How {form.fullName.split(' ')[0]} works with clients
+                    </div>
+                    <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '13px', fontStyle: 'italic', color: '#222', margin: 0, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      &ldquo;{form.uniqueApproach}&rdquo;
+                    </p>
+                  </div>
+                  <span style={{ fontSize: '7px', padding: '5px 10px', background: '#f0ebe0', color: '#333', borderRadius: '4px', whiteSpace: 'nowrap', flexShrink: 0, border: '1px solid #ddd' }}>
+                    Meet with {form.fullName.split(' ')[0]}
+                  </span>
+                </div>
+              )}
+
+              {/* How Can I Help — with title, subtitle, description + icon */}
               {form.financialTopics.length > 0 && (
                 <div style={{ padding: '20px 28px', background: 'white', borderTop: '1px solid #f5f5f5' }}>
                   <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '20px', fontWeight: 300, color: '#111', margin: '0 0 14px' }}>How can I help?</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     {form.financialTopics.slice(0, 4).map((topic) => (
-                      <div key={topic} style={{ border: '1px solid #eee', borderRadius: '8px', padding: '10px 12px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                        {TOPIC_ICONS_MAP[topic] && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={TOPIC_ICONS_MAP[topic]} alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', flexShrink: 0, marginTop: '1px', filter: 'brightness(0) saturate(100%) invert(52%) sepia(15%) saturate(500%) hue-rotate(15deg) brightness(95%)' }} />
-                        )}
-                        <span style={{ fontSize: '8px', fontWeight: 500, color: '#222', lineHeight: 1.4 }}>{topic}</span>
+                      <div key={topic} style={{ border: '1px solid #eee', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '80px' }}>
+                        <div>
+                          <div style={{ fontSize: '8.5px', fontWeight: 600, color: '#111', marginBottom: '3px', lineHeight: 1.3 }}>{topic}</div>
+                          <div style={{ fontSize: '6.5px', fontWeight: 600, color: '#888', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
+                            {topic === 'Retirement Planning' ? 'Dreams into actionable plans' :
+                             topic === 'Tax Optimization' ? 'Striving to minimize your tax burden' :
+                             topic === 'Investment Management' ? 'Strategic, data-driven investing' :
+                             topic === 'Trust & Estate Planning' ? 'Preservation of your legacy' :
+                             topic === 'Direct Indexing' ? 'Greater customization for your portfolio' :
+                             topic === 'Business Succession Planning' ? 'Establish your succession plan' :
+                             topic === 'Financial Planning & Analysis' ? 'Take control of your financial future' :
+                             topic === 'Education Planning' ? 'Maximize your financial resources' :
+                             'Personalized guidance'}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          {TOPIC_ICONS_MAP[topic] && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={TOPIC_ICONS_MAP[topic]} alt="" style={{ width: '22px', height: '22px', objectFit: 'contain', filter: 'brightness(0) saturate(100%) invert(52%) sepia(15%) saturate(500%) hue-rotate(15deg) brightness(95%) opacity(0.7)' }} />
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1408,6 +1440,23 @@ function StepReview({ form }: { form: FormData }) {
                   {form.currentBio || 'Your bio will appear here...'}
                 </p>
               </div>
+
+              {/* FAQ */}
+              {(form.howBecameAdvisor || form.clientTypes) && (
+                <div style={{ padding: '20px 28px', background: 'white', borderTop: '1px solid #eee' }}>
+                  <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '20px', fontWeight: 300, color: '#111', margin: '0 0 12px' }}>FAQ</h2>
+                  {[
+                    { q: 'How did you become a financial advisor?', a: form.howBecameAdvisor },
+                    { q: 'What types of clients do you work with?', a: form.clientTypes },
+                    { q: 'What areas of expertise do you have?', a: form.areasOfExpertise },
+                  ].filter(f => f.a).map(({ q, a }) => (
+                    <div key={q} style={{ borderTop: '1px solid #f0f0f0', padding: '8px 0' }}>
+                      <div style={{ fontSize: '8px', fontWeight: 600, color: '#111', marginBottom: '3px' }}>{q}</div>
+                      <p style={{ fontSize: '7.5px', color: '#666', lineHeight: 1.5, margin: 0, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{a}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
 
             </div>
           </div>

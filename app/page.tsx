@@ -1241,9 +1241,18 @@ function StepPhoto({
 
 // ─── Step 4: Bio & FAQ ────────────────────────────────────────────────────────
 
-// All 8 brand accent colors — same order as TOPIC_ACCENT_COLORS for consistency
-// Decorative left borders are not functional UI components so all colors are permitted
-const FAQ_ACCENT_COLORS = ['#175242', '#D79F32', '#095972', '#C06F74', '#6B484D', '#F19E70', '#B63D35', '#A98EB1'];
+// Card header colors — all dark enough for white text (min 4.5:1 contrast)
+// Light brand colors (#D79F32, #F19E70, #A98EB1, #C06F74) replaced with darker variants
+const FAQ_ACCENT_COLORS = [
+  '#175242', // Deep Green   (9.04:1 white)
+  '#8a6320', // Dark Gold    (5.1:1 white)
+  '#095972', // Deep Blue    (7.83:1 white)
+  '#8a4045', // Dark Mauve   (5.2:1 white)
+  '#6B484D', // Maroon       (7.90:1 white)
+  '#b55518', // Dark Orange  (5.0:1 white)
+  '#B63D35', // Red          (5.66:1 white)
+  '#5c3d75', // Dark Lavender(6.8:1 white)
+];
 
 const FAQ_FIELDS: Array<{ key: keyof FormData; question: string; placeholder: string }> = [
   { key: 'howBecameAdvisor', question: 'How did you become a financial advisor?', placeholder: 'Share your journey into financial advising…' },
@@ -1282,35 +1291,32 @@ function StepBioFaq({
   const accentColor = FAQ_ACCENT_COLORS[qIdx % FAQ_ACCENT_COLORS.length];
   const answered = ALL_BIO_FAQ.filter(q => (form[q.key] as string)?.trim()).length;
 
-  const useWhite = useWhiteText(accentColor);
-  const textOnAccent = useWhite ? 'white' : '#111111';
-
   return (
-    <div className="max-w-2xl">
+    <div className="w-full">
 
       {/* Large accordion-style card — accent color fills the top, white box below */}
       <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-300">
 
-        {/* ── Colored header section ── */}
-        <div className="px-8 pt-8 pb-6 transition-colors duration-300" style={{ backgroundColor: accentColor }}>
+        {/* ── Colored header section — always white text ── */}
+        <div className="px-8 pt-8 pb-7 transition-colors duration-300" style={{ backgroundColor: accentColor }}>
 
           {/* Number + progress */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-7">
             <div className="flex items-center gap-3">
-              <span className="text-[11px] font-bold tracking-[0.18em] uppercase" style={{ color: useWhite ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.45)' }}>
+              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/60">
                 {String(qIdx + 1).padStart(2, '0')} →
               </span>
-              <span className="text-[11px] font-bold tracking-[0.18em] uppercase" style={{ color: useWhite ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.45)' }}>
+              <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/60">
                 BIO &amp; FAQ
               </span>
             </div>
-            <span className="text-[11px] font-medium" style={{ color: useWhite ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.35)' }}>
+            <span className="text-[11px] font-medium text-white/50">
               {qIdx + 1} / {total}
             </span>
           </div>
 
           {/* Question */}
-          <h2 className="text-[1.85rem] font-serif font-light leading-tight mb-5 tracking-[-0.02em]" style={{ color: textOnAccent }}>
+          <h2 className="text-[2rem] font-serif font-light leading-tight mb-7 tracking-[-0.02em] text-white">
             {current.question}
           </h2>
 
@@ -1326,13 +1332,9 @@ function StepBioFaq({
                   onClick={() => setQIdx(i)}
                   className="rounded-full transition-all duration-200"
                   style={{
-                    width: isActive ? '24px' : '8px',
+                    width: isActive ? '28px' : '8px',
                     height: '8px',
-                    backgroundColor: isActive
-                      ? (useWhite ? 'rgba(255,255,255,0.95)' : 'rgba(0,0,0,0.7)')
-                      : isAnswered
-                      ? (useWhite ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.3)')
-                      : (useWhite ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.12)'),
+                    backgroundColor: isActive ? 'rgba(255,255,255,0.95)' : isAnswered ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.2)',
                   }}
                   title={q.question}
                 />

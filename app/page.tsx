@@ -1315,8 +1315,8 @@ function StepReview({ form }: { form: FormData }) {
       <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Almost there.</h2>
       <p className="text-sm text-gray-500 mb-6">Take a moment to review before we build your page.</p>
 
-      {/* ── Page mockup preview ── */}
-      <div className="mb-8">
+      {/* ── Page mockup preview — order:4 puts it after Bio (order:3) and before FAQ (order:5) ── */}
+      <div className="mb-8" style={{ order: 4 }}>
         <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-3">Your Page Preview</p>
 
         {/* Device mockup — cropped to remove whitespace, content from 17.8% to 82.1% */}
@@ -1511,10 +1511,10 @@ function StepReview({ form }: { form: FormData }) {
         </div>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-5" style={{ display: 'flex', flexDirection: 'column' }}>
 
-        {/* Profile card */}
-        <div className="rounded-xl border border-gray-100 overflow-hidden" style={{ borderLeft: '3px solid #175242' }}>
+        {/* Profile card — order 1 */}
+        <div className="rounded-xl border border-gray-100 overflow-hidden" style={{ borderLeft: '3px solid #175242', order: 1 }}>
           {/* Header with photo */}
           <div className="bg-[#175242] px-6 py-5 flex items-center gap-5">
             {form.photo ? (
@@ -1563,8 +1563,8 @@ function StepReview({ form }: { form: FormData }) {
           </div>
         </div>
 
-        {/* Topics */}
-        <div className="rounded-xl border border-gray-100 px-5 py-4" style={{ borderLeft: '3px solid #B63D35' }}>
+        {/* Topics — order 2 */}
+        <div className="rounded-xl border border-gray-100 px-5 py-4" style={{ borderLeft: '3px solid #B63D35', order: 2 }}>
           <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-3">Financial Topics</p>
           <div className="flex flex-wrap gap-2">
             {form.financialTopics.length > 0
@@ -1589,14 +1589,14 @@ function StepReview({ form }: { form: FormData }) {
           </div>
         </div>
 
-        {/* Bio */}
-        <div className="rounded-xl border border-gray-100 px-5 py-4" style={{ borderLeft: '3px solid #095972' }}>
+        {/* Bio — order 3 */}
+        <div className="rounded-xl border border-gray-100 px-5 py-4" style={{ borderLeft: '3px solid #095972', order: 3 }}>
           <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-2">Bio</p>
           <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{form.currentBio || <span className="text-gray-300 italic">Not provided</span>}</p>
         </div>
 
-        {/* FAQ */}
-        <div className="rounded-xl border border-gray-100 overflow-hidden" style={{ borderLeft: '3px solid #6B484D' }}>
+        {/* FAQ — order 5 (after mockup at order 4) */}
+        <div className="rounded-xl border border-gray-100 overflow-hidden" style={{ borderLeft: '3px solid #6B484D', order: 5 }}>
           <div className="px-5 py-3 border-b border-gray-50">
             <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400">FAQ</p>
           </div>

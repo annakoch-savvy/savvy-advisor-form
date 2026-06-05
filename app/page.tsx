@@ -1705,23 +1705,21 @@ function StepReview({ form }: { form: FormData }) {
           {/* Phone screen — matches Chase Austin mobile screenshot exactly */}
           <div style={{ position: 'absolute', left: '78.0%', top: '43.7%', width: '15.4%', height: '56.3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3, display: 'flex', flexDirection: 'column' }}>
 
-            {/* Nav */}
-            <div style={{ padding: '1.5% 3%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0, borderBottom: '0.5px solid #f0f0f0' }}>
-              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '6px', fontWeight: 400 }}>Savvy</span>
+            {/* Nav — Savvy + Sign in (plain text) + Find an Advisor (black pill) */}
+            <div style={{ padding: '2% 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0 }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '7px', fontWeight: 400 }}>Savvy</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                <span style={{ fontSize: '4px', padding: '1px 3px', background: 'black', color: 'white', fontWeight: 600, borderRadius: '1px' }}>Sign in</span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-                  {[0,1,2].map(i => <div key={i} style={{ height: '0.5px', background: '#222', width: '6px' }} />)}
-                </div>
+                <span style={{ fontSize: '4.5px', color: '#333' }}>Sign in</span>
+                <span style={{ fontSize: '4px', padding: '1.5px 3px', background: 'black', color: 'white', fontWeight: 600, borderRadius: '1px', whiteSpace: 'nowrap' }}>Find an Advisor</span>
               </div>
             </div>
 
-            {/* Photo — matches desktop style: transparent offset card, top-left rounded corner */}
-            <div style={{ position: 'relative', flexShrink: 0, padding: '3% 3% 1%' }}>
-              {/* Offset outline card — transparent fill, thin border, matches desktop */}
-              <div style={{ position: 'absolute', top: '0%', right: '0%', width: '88%', height: '88%', background: 'transparent', border: '0.5px solid #d0cfc9', zIndex: 0 }} />
-              {/* Photo — 4/3 ratio, rounded top-left only (matches desktop 25px → 6px scaled) */}
-              <div style={{ width: '90%', aspectRatio: '4/3', overflow: 'hidden', background: '#c8c8c4', borderRadius: '6px 0 0 0', position: 'relative', zIndex: 1 }}>
+            {/* Photo — large, solid white offset card (matches reference), big top-left radius */}
+            <div style={{ position: 'relative', flexShrink: 0, padding: '4% 4% 0%' }}>
+              {/* Solid white offset card — visible to bottom-right */}
+              <div style={{ position: 'absolute', bottom: '-2%', right: '0%', width: '85%', height: '85%', background: 'white', border: '0.5px solid #e0e0dc', zIndex: 0 }} />
+              {/* Photo — 3/4 portrait, large rounded top-left */}
+              <div style={{ width: '88%', aspectRatio: '3/4', overflow: 'hidden', background: '#c8c8c4', borderRadius: '10px 0 0 0', position: 'relative', zIndex: 1 }}>
                 {photoUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
@@ -1729,32 +1727,27 @@ function StepReview({ form }: { form: FormData }) {
               </div>
             </div>
 
-            {/* Location + LinkedIn */}
-            <div style={{ padding: '1% 3%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-                <svg style={{ width: '4px', height: '4px', color: '#666', flexShrink: 0 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                <span style={{ fontSize: '4px', color: '#444' }}>{form.cityAndState || 'Location'}</span>
-              </div>
-              <span style={{ fontSize: '4px', fontWeight: 700, color: '#0077b5', border: '0.5px solid #0077b5', padding: '0.5px 2px', borderRadius: '1px' }}>in</span>
+            {/* Location — Savvy icon + city only, no LinkedIn */}
+            <div style={{ padding: '2% 4%', display: 'flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
+              <svg style={{ width: '5px', height: '5px', color: '#555', flexShrink: 0 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10"/><path strokeLinecap="round" d="M12 8v4l3 3"/></svg>
+              <span style={{ fontSize: '4.5px', color: '#555' }}>{form.cityAndState || 'Location'}</span>
             </div>
 
-            {/* Name — prominent */}
-            <div style={{ padding: '0 3% 1.5%', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '9px', fontWeight: 400, color: '#111', lineHeight: 1.1, flexShrink: 0 }}>
+            {/* Name — very large, matches reference */}
+            <div style={{ padding: '0 4% 1%', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '13px', fontWeight: 400, color: '#111', lineHeight: 1.05, flexShrink: 0 }}>
               {fullName || 'Your Name'}
             </div>
 
-            {/* Bio — fills remaining space */}
-            <div style={{ flex: 1, padding: '0 3%', overflow: 'hidden', minHeight: 0 }}>
-              <p style={{ fontSize: '4px', color: '#333', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 6, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                {form.currentBio}
-              </p>
+            {/* Bio label */}
+            <div style={{ padding: '0 4% 1%', fontSize: '4px', color: '#999', flexShrink: 0 }}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing
             </div>
 
-            {/* CTA — margin so button doesn't touch phone edge */}
-            <div style={{ padding: '3%', flexShrink: 0 }}>
-              <div style={{ background: 'black', borderRadius: '2px', padding: '2.5% 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: '4.5px', color: 'white', fontWeight: 600, letterSpacing: '0.01em' }}>Schedule a call today</span>
-              </div>
+            {/* Bio */}
+            <div style={{ flex: 1, padding: '0 4%', overflow: 'hidden', minHeight: 0 }}>
+              <p style={{ fontSize: '4.5px', color: '#333', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                {form.currentBio}
+              </p>
             </div>
 
           </div>

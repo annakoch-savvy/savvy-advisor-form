@@ -1706,7 +1706,7 @@ function StepReview({ form }: { form: FormData }) {
           <div style={{ position: 'absolute', left: '78.0%', top: '43.7%', width: '15.4%', height: '56.3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3, display: 'flex', flexDirection: 'column' }}>
 
             {/* Nav */}
-            <div style={{ padding: '2% 3%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0, borderBottom: '0.5px solid #f0f0f0' }}>
+            <div style={{ padding: '1.5% 3%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0, borderBottom: '0.5px solid #f0f0f0' }}>
               <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '6px', fontWeight: 400 }}>Savvy</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                 <span style={{ fontSize: '4px', padding: '1px 3px', background: 'black', color: 'white', fontWeight: 600, borderRadius: '1px' }}>Sign in</span>
@@ -1716,10 +1716,10 @@ function StepReview({ form }: { form: FormData }) {
               </div>
             </div>
 
-            {/* Photo */}
+            {/* Photo — taller to dominate like reference */}
             <div style={{ position: 'relative', flexShrink: 0 }}>
-              <div style={{ position: 'absolute', top: '4%', right: 0, width: '88%', height: '90%', background: 'white', border: '0.5px solid #e8e8e4' }} />
-              <div style={{ width: '92%', aspectRatio: '4/3.2', overflow: 'hidden', background: '#c8c8c4', borderRadius: '8px 0 0 0', position: 'relative', zIndex: 1 }}>
+              <div style={{ position: 'absolute', top: '3%', right: 0, width: '88%', height: '92%', background: 'white', border: '0.5px solid #e8e8e4' }} />
+              <div style={{ width: '93%', aspectRatio: '3/3.8', overflow: 'hidden', background: '#c8c8c4', borderRadius: '8px 0 0 0', position: 'relative', zIndex: 1 }}>
                 {photoUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
@@ -1728,7 +1728,7 @@ function StepReview({ form }: { form: FormData }) {
             </div>
 
             {/* Location + LinkedIn */}
-            <div style={{ padding: '2% 3%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+            <div style={{ padding: '1.5% 3%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
                 <svg style={{ width: '4px', height: '4px', color: '#666', flexShrink: 0 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                 <span style={{ fontSize: '4px', color: '#444' }}>{form.cityAndState || 'Location'}</span>
@@ -1737,19 +1737,19 @@ function StepReview({ form }: { form: FormData }) {
             </div>
 
             {/* Name */}
-            <div style={{ padding: '1% 3% 1%', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '9px', fontWeight: 400, color: '#111', lineHeight: 1.1, flexShrink: 0 }}>
+            <div style={{ padding: '0 3% 1%', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '9px', fontWeight: 400, color: '#111', lineHeight: 1.1, flexShrink: 0 }}>
               {fullName || 'Your Name'}
             </div>
 
             {/* Bio */}
-            <div style={{ flex: 1, padding: '0 3% 2%', overflow: 'hidden' }}>
-              <p style={{ fontSize: '4px', color: '#333', lineHeight: 1.5, margin: 0, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            <div style={{ flex: 1, padding: '0 3%', overflow: 'hidden' }}>
+              <p style={{ fontSize: '4px', color: '#333', lineHeight: 1.5, margin: 0, display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {form.currentBio}
               </p>
             </div>
 
             {/* CTA */}
-            <div style={{ background: 'black', flexShrink: 0, padding: '3% 3%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: 'black', flexShrink: 0, padding: '2.5% 3%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <span style={{ fontSize: '4.5px', color: 'white', fontWeight: 600, letterSpacing: '0.01em' }}>Schedule a call today</span>
             </div>
 

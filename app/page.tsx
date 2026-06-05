@@ -398,7 +398,7 @@ function FloatTextarea({
             type="button"
             onClick={toggle}
             title={recording ? 'Stop recording' : 'Speak your answer'}
-            className={`absolute right-3 top-3 p-2 rounded-full transition-all ${recording ? 'bg-red-500 text-white shadow-lg shadow-red-200 animate-pulse' : 'text-white shadow-sm'}`}
+            className={`mic-trigger-btn absolute right-3 top-3 p-2 rounded-full transition-all ${recording ? 'bg-red-500 text-white shadow-lg shadow-red-200 animate-pulse' : 'text-white shadow-sm'}`}
             style={!recording ? { backgroundColor: micColor } : undefined}
           >
             {recording ? (
@@ -1388,15 +1388,25 @@ function StepBioFaq({
       {/* ── Colored section — question + interview note + dots ── */}
       <div className="flex-1 flex flex-col px-10 pt-10 pb-8 transition-colors duration-300" style={{ backgroundColor: accentColor }}>
 
-        {/* Interview style note */}
-        <div className="flex items-center gap-2 mb-8">
-          <svg className="w-4 h-4 text-white/60 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
-          </svg>
-          <p className="text-white/60 text-xs">
-            Answer like you&apos;re being interviewed — speak naturally, we&apos;ll handle the writing.
-          </p>
+        {/* Interview option — pill button */}
+        <div className="inline-flex mb-8">
+          <div className="flex items-center gap-2.5 bg-white/15 hover:bg-white/22 border border-white/25 rounded-full px-4 py-2 cursor-pointer transition-all"
+            onClick={() => {
+              // Find the mic button in the white section and trigger it
+              const micBtn = document.querySelector<HTMLButtonElement>('.mic-trigger-btn');
+              micBtn?.click();
+            }}
+          >
+            <svg className="w-3.5 h-3.5 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
+            </svg>
+            <span className="text-white text-xs font-medium">Prefer to talk it out?</span>
+            <span className="text-white/60 text-xs">Tap to speak your answer</span>
+            <svg className="w-3 h-3 text-white/50 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
         </div>
 
         {/* Question — takes remaining space */}

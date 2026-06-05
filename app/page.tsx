@@ -1528,21 +1528,26 @@ function AccordionSection({ title, color, summary, children, defaultOpen = false
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="rounded-xl border border-gray-100 overflow-hidden" style={{ borderLeft: `3px solid ${color}` }}>
+    <div className="rounded-xl overflow-hidden shadow-sm">
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 text-left transition-opacity hover:opacity-90"
+        style={{ backgroundColor: color }}
       >
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-semibold tracking-[0.12em] uppercase mb-0.5" style={{ color }}>{title}</p>
-          <div className="text-xs text-gray-500 truncate">{summary}</div>
+          <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-white mb-0.5">{title}</p>
+          <div className="text-xs text-white/65 truncate">{summary}</div>
         </div>
-        <svg className={`w-4 h-4 text-gray-400 shrink-0 ml-3 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className={`w-4 h-4 text-white/80 shrink-0 ml-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-      {open && <div className="border-t border-gray-50 px-5 py-4">{children}</div>}
+      {open && (
+        <div className="bg-white border border-t-0 border-gray-100 rounded-b-xl px-5 py-4">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

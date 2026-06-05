@@ -1545,10 +1545,10 @@ function StepReview({ form }: { form: FormData }) {
           <div style={{ position: 'relative', paddingBottom: '64%', overflow: 'hidden' }}>
             {/* Image — pointer-events:none so laptop screen below is interactive */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/device-mockup.png" alt="" aria-hidden="true" style={{ position: 'absolute', top: '-34.8%', left: 0, width: '100%', zIndex: 2, pointerEvents: 'none' }} />
+            <img src="/device-mockup.png" alt="" aria-hidden="true" style={{ position: 'absolute', top: '-33.1%', left: 0, width: '100%', zIndex: 2, pointerEvents: 'none' }} />
 
             {/* Laptop screen — z:1, scrollable, interactive */}
-            <div style={{ position: 'absolute', left: '14.9%', top: '0.8%', width: '68.1%', height: '67.6%', overflow: 'hidden', background: 'white', zIndex: 1 }}>
+            <div style={{ position: 'absolute', left: '14.9%', top: '0.8%', width: '68.1%', height: '64.4%', overflow: 'hidden', background: 'white', zIndex: 1 }}>
           <div style={{ width: '100%', height: '100%', overflowY: 'auto', fontFamily: "'Jost', sans-serif", cursor: 'default' }}>
 
               {/* Nav */}
@@ -1701,9 +1701,8 @@ function StepReview({ form }: { form: FormData }) {
           </div>
 
           {/* ── Phone screen content — same approach as laptop ── */}
-          {/* Phone screen measured: left=78.6%, top=48.7%, width=14.4%, height=50% of container */}
-          {/* Phone screen — matches Chase Austin mobile screenshot exactly */}
-          <div style={{ position: 'absolute', left: '78.0%', top: '43.7%', width: '15.4%', height: '56.3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3, display: 'flex', flexDirection: 'column' }}>
+          {/* Phone screen — recalculated for paddingBottom:64%, top: -33.1% image offset */}
+          <div style={{ position: 'absolute', left: '78.0%', top: '41.6%', width: '15.4%', height: '52.3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3, display: 'flex', flexDirection: 'column' }}>
 
             {/* Nav — Savvy + Sign in (plain text) + Find an Advisor (black pill) */}
             <div style={{ padding: '2% 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0 }}>

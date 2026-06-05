@@ -1300,105 +1300,125 @@ function StepReview({ form }: { form: FormData }) {
       <div className="mb-8">
         <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-3">Your Page Preview</p>
 
+        {/* Load Cormorant Garamond for the mockup */}
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&display=swap');`}</style>
+
         {/* Laptop device frame */}
         <div className="relative">
-          <div className="rounded-t-xl bg-[#1a1a1a] pt-3 px-3 pb-0 shadow-2xl">
-            {/* Camera dot */}
-            <div className="flex justify-center mb-1.5">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#333]" />
+          <div className="shadow-2xl" style={{ borderRadius: '12px 12px 0 0', background: '#1c1c1e', padding: '10px 10px 0' }}>
+            {/* Camera notch */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '6px' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3a3a3c' }} />
             </div>
             {/* Screen */}
-            <div className="rounded-t-md overflow-hidden bg-white" style={{ height: '420px', overflowY: 'auto' }}>
+            <div style={{ borderRadius: '4px 4px 0 0', overflow: 'hidden', background: 'white', height: '460px', overflowY: 'auto', fontFamily: "'Jost', sans-serif" }}>
 
-              {/* ── Savvy Nav ── */}
-              <div className="flex items-center justify-between px-5 py-2.5 border-b border-gray-100 sticky top-0 bg-white z-10">
+              {/* Nav */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px', borderBottom: '1px solid #f0f0f0', position: 'sticky', top: 0, background: 'white', zIndex: 10 }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/savvy-logo-black.svg" alt="Savvy" className="h-4" />
-                <div className="flex items-center gap-4">
+                <img src="/savvy-logo-black.svg" alt="Savvy" style={{ height: '14px' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                   {['For Clients','For Advisors','Our Services','About'].map(l => (
-                    <span key={l} className="text-[8px] text-gray-500">{l}</span>
+                    <span key={l} style={{ fontSize: '7px', color: '#666' }}>{l}</span>
                   ))}
-                  <span className="text-[8px] px-2.5 py-1 bg-black text-white rounded font-medium">Find an Advisor</span>
+                  <span style={{ fontSize: '7px', padding: '4px 10px', background: 'black', color: 'white', borderRadius: '4px', fontWeight: 500 }}>Find an Advisor</span>
                 </div>
               </div>
 
-              {/* ── Hero Section (matches Cindy Alvarez layout) ── */}
-              <div className="flex gap-6 px-8 py-6 bg-white">
-                {/* Left: name, bio, team, CTAs */}
-                <div className="flex-1 min-w-0">
-                  <h1 className="text-2xl font-serif font-light text-gray-900 mb-3 leading-tight">
+              {/* Hero */}
+              <div style={{ display: 'flex', gap: '28px', padding: '24px 28px 20px', background: 'white' }}>
+                {/* Left */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '28px', fontWeight: 300, color: '#111', margin: '0 0 10px', lineHeight: 1.1 }}>
                     {form.fullName || 'Your Name'}
                   </h1>
-                  <p className="text-[9px] text-gray-600 leading-relaxed mb-4 line-clamp-6">
+                  <p style={{ fontSize: '8.5px', color: '#444', lineHeight: 1.6, marginBottom: '12px', display: '-webkit-box', WebkitLineClamp: 6, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {form.currentBio || 'Your bio will appear here...'}
                   </p>
-                  {form.designations && (
-                    <p className="text-[8px] text-gray-400 mb-3 uppercase tracking-wide">{form.designations}</p>
+                  {form.fullName && (
+                    <div style={{ marginBottom: '10px' }}>
+                      <div style={{ fontSize: '7.5px', fontWeight: 600, color: '#111', marginBottom: '4px', letterSpacing: '0.05em' }}>
+                        {form.fullName.split(' ')[0].toUpperCase()}&apos;S TEAM:
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                        {['Savvy Investment Team'].map(t => (
+                          <span key={t} style={{ fontSize: '7px', color: '#555' }}>{t}</span>
+                        ))}
+                      </div>
+                    </div>
                   )}
-                  <div className="flex gap-2 mt-4">
-                    <span className="text-[7.5px] px-3 py-1.5 bg-black text-white rounded font-medium">Schedule a call today</span>
-                    <span className="text-[7.5px] px-3 py-1.5 border border-black text-black rounded font-medium">Send an email</span>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                    <span style={{ fontSize: '7.5px', padding: '5px 12px', background: 'black', color: 'white', borderRadius: '4px', fontWeight: 500 }}>Schedule a call today</span>
+                    <span style={{ fontSize: '7.5px', padding: '5px 12px', border: '1px solid black', color: 'black', borderRadius: '4px', fontWeight: 500 }}>Send an email</span>
                   </div>
                 </div>
 
-                {/* Right: photo + location + linkedin */}
-                <div className="shrink-0 w-36">
-                  <div className="rounded-xl overflow-hidden bg-gray-100 mb-2" style={{ height: '160px' }}>
-                    {photoUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={photoUrl} alt={form.fullName} className="w-full h-full object-cover object-top" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <svg className="w-10 h-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between px-0.5">
-                    <div className="flex items-center gap-1">
-                      <svg className="w-2.5 h-2.5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                      <span className="text-[7px] text-gray-500">{form.cityAndState || 'Location'}</span>
+                {/* Right: photo card */}
+                <div style={{ width: '140px', flexShrink: 0 }}>
+                  <div style={{ position: 'relative' }}>
+                    {/* Background offset card */}
+                    <div style={{ position: 'absolute', top: '8px', right: '-6px', width: '100%', height: '155px', background: '#e8e8e4', borderRadius: '0 0 0 60px', zIndex: 0 }} />
+                    {/* Photo */}
+                    <div style={{ position: 'relative', zIndex: 1, borderRadius: '0 0 0 60px', overflow: 'hidden', width: '130px', height: '148px', background: '#d0d0cc' }}>
+                      {photoUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={photoUrl} alt={form.fullName} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg style={{ width: '32px', height: '32px', color: '#aaa' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        </div>
+                      )}
                     </div>
-                    <svg className="w-3 h-3 text-gray-400" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </div>
+                  {/* Location + LinkedIn */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', paddingLeft: '2px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <svg style={{ width: '10px', height: '10px', color: '#888', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                      <span style={{ fontSize: '7px', color: '#666' }}>{form.cityAndState || 'Location'}</span>
+                    </div>
+                    <svg style={{ width: '12px', height: '12px', color: '#888' }} viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                   </div>
                 </div>
               </div>
 
-              {/* ── How Can I Help section ── */}
+              {/* How Can I Help */}
               {form.financialTopics.length > 0 && (
-                <div className="px-8 py-5 bg-white border-t border-gray-50">
-                  <h2 className="text-lg font-serif font-light text-gray-900 mb-4">How can I help?</h2>
-                  <div className="grid grid-cols-2 gap-3">
+                <div style={{ padding: '20px 28px', background: 'white', borderTop: '1px solid #f5f5f5' }}>
+                  <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '20px', fontWeight: 300, color: '#111', margin: '0 0 14px' }}>How can I help?</h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     {form.financialTopics.slice(0, 4).map((topic) => (
-                      <div key={topic} className="border border-gray-100 rounded-lg p-3 flex items-start gap-2">
+                      <div key={topic} style={{ border: '1px solid #eee', borderRadius: '8px', padding: '10px 12px', display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
                         {TOPIC_ICONS_MAP[topic] && (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={TOPIC_ICONS_MAP[topic]} alt="" className="w-6 h-6 object-contain shrink-0 mt-0.5" style={{ filter: 'brightness(0) saturate(100%) invert(24%) sepia(13%) saturate(1000%) hue-rotate(95deg) brightness(95%) contrast(88%)' }} />
+                          <img src={TOPIC_ICONS_MAP[topic]} alt="" style={{ width: '20px', height: '20px', objectFit: 'contain', flexShrink: 0, marginTop: '1px', filter: 'brightness(0) saturate(100%) invert(52%) sepia(15%) saturate(500%) hue-rotate(15deg) brightness(95%)' }} />
                         )}
-                        <span className="text-[8px] font-medium text-gray-800 leading-tight">{topic}</span>
+                        <span style={{ fontSize: '8px', fontWeight: 500, color: '#222', lineHeight: 1.4 }}>{topic}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* ── Get to Know section ── */}
-              <div className="px-8 py-5 bg-[#f9f6f1] border-t border-gray-100">
-                <h2 className="text-lg font-serif font-light text-gray-900 mb-3">Get to know {form.fullName.split(' ')[0] || 'your advisor'}</h2>
-                <p className="text-[8.5px] text-gray-600 leading-relaxed line-clamp-4">
-                  {form.currentBio || 'Bio will appear here...'}
+              {/* Get to Know */}
+              <div style={{ padding: '20px 28px', background: '#faf8f5', borderTop: '1px solid #eee' }}>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '20px', fontWeight: 300, color: '#111', margin: '0 0 8px' }}>
+                  Get to know {form.fullName.split(' ')[0] || 'your advisor'}
+                </h2>
+                <p style={{ fontSize: '8px', color: '#555', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {form.currentBio || 'Your bio will appear here...'}
                 </p>
               </div>
 
             </div>
           </div>
-          {/* Laptop hinge + base */}
-          <div className="h-3 bg-[#2a2a2a] mx-6 rounded-b-lg" />
-          <div className="h-1.5 bg-[#222] mx-2 rounded-b-xl shadow-xl" />
-          <div className="h-px bg-[#444] mx-0 rounded-full mt-0.5 shadow" />
 
-          <div className="mt-3 text-center">
-            <p className="text-[11px] text-gray-500 font-medium">This is a mockup, not your final page.</p>
-            <p className="text-[10px] text-gray-400 mt-0.5">Our designers and writers will review all your information and refine the content before your page goes live on savvywealth.com.</p>
+          {/* Laptop base */}
+          <div style={{ height: '10px', background: '#2c2c2e', borderRadius: '0 0 6px 6px', margin: '0 20px' }} />
+          <div style={{ height: '4px', background: '#1c1c1e', borderRadius: '0 0 8px 8px', margin: '0 4px', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }} />
+
+          <div className="mt-4 text-center space-y-1">
+            <p className="text-[11px] text-gray-600 font-medium">This is a mockup, not your final page.</p>
+            <p className="text-[10px] text-gray-400">Our designers and writers will review all your information and refine the content before your page goes live on savvywealth.com.</p>
           </div>
         </div>
       </div>

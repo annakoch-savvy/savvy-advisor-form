@@ -1848,12 +1848,12 @@ function StepReview({ form }: { form: FormData }) {
                 const chipColor = TOPIC_ACCENT_COLORS[topicIdx % TOPIC_ACCENT_COLORS.length] ?? '#175242';
                 const whiteOnChip = useWhiteText(chipColor);
                 return (
-                  <div key={t} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium"
-                    style={{ backgroundColor: chipColor, color: whiteOnChip ? 'white' : '#111' }}>
+                  <div key={t} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white"
+                    style={{ backgroundColor: chipColor }}>
                     {TOPIC_ICONS_MAP[t] && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={TOPIC_ICONS_MAP[t]} alt="" className="w-5 h-5 object-contain shrink-0"
-                        style={{ filter: whiteOnChip ? 'brightness(0) invert(1)' : 'brightness(0)' }} />
+                        style={{ filter: 'brightness(0) invert(1)' }} />
                     )}
                     {t}
                   </div>

@@ -1396,9 +1396,10 @@ function StepReview({ form }: { form: FormData }) {
           <div className="h-1.5 bg-[#222] mx-2 rounded-b-xl shadow-xl" />
           <div className="h-px bg-[#444] mx-0 rounded-full mt-0.5 shadow" />
 
-          <p className="text-center text-[10px] text-gray-400 mt-3 italic">
-            Preview of {firstName}&apos;s advisor page on savvywealth.com
-          </p>
+          <div className="mt-3 text-center">
+            <p className="text-[11px] text-gray-500 font-medium">This is a mockup, not your final page.</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">Our designers and writers will review all your information and refine the content before your page goes live on savvywealth.com.</p>
+          </div>
         </div>
       </div>
 

@@ -1199,7 +1199,10 @@ function StepPhoto({
 
 // ─── Step 4: Bio & FAQ ────────────────────────────────────────────────────────
 
-const FAQ_ACCENT_COLORS = ['#175242', '#095972', '#D79F32', '#6B484D', '#A98EB1', '#B63D35', '#F19E70'];
+// Only colors passing WCAG 2.1 SC 1.4.11 (3:1) as UI component borders against white:
+// Deep Green 9.04 | Deep Blue 7.83 | Maroon 7.90 | Red 5.66 | Bright Mauve 3.64
+// Removed: Golden Yellow (2.36), Lavender (2.92), Orange (2.13) — all fail 3:1
+const FAQ_ACCENT_COLORS = ['#175242', '#095972', '#6B484D', '#B63D35', '#C06F74', '#175242', '#095972'];
 
 const FAQ_FIELDS: Array<{ key: keyof FormData; question: string; placeholder: string }> = [
   { key: 'howBecameAdvisor', question: 'How did you become a financial advisor?', placeholder: 'Share your journey into financial advising…' },
@@ -1561,7 +1564,7 @@ function StepReview({ form }: { form: FormData }) {
         </div>
 
         {/* Topics */}
-        <div className="rounded-xl border border-gray-100 px-5 py-4" style={{ borderLeft: '3px solid #D79F32' }}>
+        <div className="rounded-xl border border-gray-100 px-5 py-4" style={{ borderLeft: '3px solid #B63D35' }}>
           <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-3">Financial Topics</p>
           <div className="flex flex-wrap gap-2">
             {form.financialTopics.length > 0

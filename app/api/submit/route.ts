@@ -105,10 +105,8 @@ export async function POST(req: NextRequest) {
         .upload(photoPath, photoBuffer, { contentType: photoFile.type || 'image/jpeg', upsert: true });
 
       if (!uploadError) {
-        const { data: { publicUrl } } = supabaseAdmin.storage
-          .from('advisor-photos')
-          .getPublicUrl(photoPath);
-        photoUrl = publicUrl;
+        // Store the storage path so we can generate signed URLs on demand
+        photoUrl = photoPath;
       }
     }
 

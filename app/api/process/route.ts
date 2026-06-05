@@ -901,11 +901,18 @@ export async function POST(req: NextRequest) {
 
             const attachments: Promise<void>[] = [attachPdfToWrikeTask(taskId, pdfBuffer, pdfFilename)];
 
-            // If submission has a photo_url, download and attach to Wrike
+            // If submission has a photo, generate a signed URL and attach to Wrike
             if (photoUrl) {
               attachments.push(
                 (async () => {
-                  const photoRes = await fetch(photoUrl);
+                  // photo_url stores the storage path — generate a 60s signed URL
+                  const { data: signedData, error: signErr } = await supabaseAdmin.storage
+                    .from('advisor-photos')
+                    .createSignedUrl(photoUrl, 60);
+                  if (signErr || !signedData?.signedUrl) {
+                    throw new Error(`Failed to generate signed URL for photo: ${signErr?.message}`);
+                  }
+                  const photoRes = await fetch(signedData.signedUrl);
                   if (!photoRes.ok) throw new Error(`Failed to download photo: ${photoRes.status}`);
                   const photoBuffer = Buffer.from(await photoRes.arrayBuffer());
                   const ext = photoUrl.split('.').pop()?.split('?')[0] ?? 'jpg';

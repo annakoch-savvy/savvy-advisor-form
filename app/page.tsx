@@ -1523,28 +1523,40 @@ const TOPIC_ICONS_MAP: Record<string, string> = {
 
 // ─── Step 5: Review ───────────────────────────────────────────────────────────
 
-function AccordionSection({ title, color, summary, children, defaultOpen = false }: {
-  title: string; color: string; summary: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean;
+function AccordionSection({ title, color, icon, summary, children, defaultOpen = false }: {
+  title: string; color: string; icon: React.ReactNode; summary: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  // Light tinted background — same treatment as completed sidebar steps
+  const bg = color + '18'; // ~10% opacity tint
+
   return (
-    <div className="rounded-xl overflow-hidden shadow-sm">
+    <div>
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-5 py-4 text-left transition-opacity hover:opacity-90"
-        style={{ backgroundColor: color }}
+        className="w-full flex items-center gap-4 px-4 py-4 rounded-full text-left transition-all hover:brightness-95"
+        style={{ backgroundColor: bg }}
       >
-        <div className="flex-1 min-w-0">
-          <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-white mb-0.5">{title}</p>
-          <div className="text-xs text-white/65 truncate">{summary}</div>
+        {/* Icon circle */}
+        <div className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center" style={{ backgroundColor: color }}>
+          <span className="w-5 h-5 text-white">{icon}</span>
         </div>
-        <svg className={`w-4 h-4 text-white/80 shrink-0 ml-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+        {/* Text */}
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-base leading-tight" style={{ color }}>{title}</p>
+          {!open && <p className="text-xs mt-0.5 truncate" style={{ color: color + 'aa' }}>{summary}</p>}
+        </div>
+
+        {/* Chevron */}
+        <svg className={`w-4 h-4 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} style={{ color: color + '99' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
+
       {open && (
-        <div className="bg-white border border-t-0 border-gray-100 rounded-b-xl px-5 py-4">
+        <div className="mx-4 mt-1 mb-2 bg-white rounded-2xl border border-gray-100 px-5 py-4 shadow-sm">
           {children}
         </div>
       )}
@@ -1797,6 +1809,7 @@ function StepReview({ form }: { form: FormData }) {
           <AccordionSection
             title="Basic Info"
             color="#175242"
+            icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>}
             summary={`${fullName || '—'} · ${form.cityAndState || '—'} · ${form.email || '—'}`}
             defaultOpen
           >
@@ -1826,6 +1839,7 @@ function StepReview({ form }: { form: FormData }) {
           <AccordionSection
             title="Financial Topics"
             color="#B63D35"
+            icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>}
             summary={form.financialTopics.length > 0 ? form.financialTopics.join(' · ') : 'None selected'}
           >
             <div className="flex flex-wrap gap-2">
@@ -1854,6 +1868,7 @@ function StepReview({ form }: { form: FormData }) {
           <AccordionSection
             title="Bio"
             color="#095972"
+            icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>}
             summary={form.currentBio ? form.currentBio.slice(0, 80) + (form.currentBio.length > 80 ? '…' : '') : 'Not provided'}
           >
             <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{form.currentBio || <span className="italic text-gray-300">Not provided</span>}</p>
@@ -1865,6 +1880,7 @@ function StepReview({ form }: { form: FormData }) {
           <AccordionSection
             title={`FAQ · ${[form.howBecameAdvisor, form.clientTypes, form.areasOfExpertise, form.strategies, form.uniqueApproach, form.favoritePartWorking, form.likesAboutSavvy].filter(Boolean).length} of 7 answered`}
             color="#6B484D"
+            icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>}
             summary="Click to review your answers"
           >
             <div className="space-y-4">

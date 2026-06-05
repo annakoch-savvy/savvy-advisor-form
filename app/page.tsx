@@ -1212,20 +1212,18 @@ function StepBioFaq({
       <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Bio &amp; FAQ</h2>
       <p className="text-sm text-gray-500 mb-5">These answers will be used to write your advisor page. Write naturally in your own voice.</p>
 
-      {/* Speech-to-text callout */}
-      <div className="rounded-lg border border-[#175242]/20 bg-[#175242]/5 px-5 py-4 mb-8 flex items-start gap-4">
-        <div className="shrink-0 w-9 h-9 rounded-full bg-[#175242] flex items-center justify-center mt-0.5">
-          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+      {/* Speech-to-text feature highlight */}
+      <div className="rounded-xl bg-[#175242] px-7 py-6 mb-8 flex items-center gap-6">
+        <div className="shrink-0 w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
+          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
           </svg>
         </div>
         <div>
-          <p className="text-sm font-medium text-[#175242] mb-0.5">Prefer to talk it out?</p>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            Tap the <span className="inline-flex items-center gap-1 font-medium text-[#175242]">
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
-              mic icon
-            </span> on any field to speak your answer — just talk naturally, as if someone is interviewing you. Our AI will take care of the writing.
+          <p className="text-white font-medium text-base mb-1">Don&apos;t want to write? Just talk.</p>
+          <p className="text-white/70 text-sm leading-relaxed">
+            Hit the mic on any field and speak naturally — like someone is interviewing you. We&apos;ll handle the writing.
           </p>
         </div>
       </div>

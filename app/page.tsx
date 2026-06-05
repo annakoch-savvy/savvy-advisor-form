@@ -976,10 +976,52 @@ export default function AdvisorForm() {
             ) : (
               <div className="flex flex-col items-end gap-2">
                 {submitError && <p className="text-sm text-red-500">{submitError}</p>}
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={submitting}
+                <div className="flex items-center gap-3">
+                  <a
+                    href="#"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      const fd = new FormData();
+                      const fullName2 = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ');
+                      fd.append('fullName', fullName2);
+                      fd.append('email', form.email);
+                      fd.append('cityAndState', form.cityAndState);
+                      fd.append('linkedIn', form.linkedIn);
+                      fd.append('yearsOfExperience', form.yearsOfExperience);
+                      fd.append('pageType', form.pageType);
+                      fd.append('firmName', form.firmName);
+                      fd.append('financialTopics', JSON.stringify(form.financialTopics));
+                      fd.append('currentBio', form.currentBio);
+                      fd.append('howBecameAdvisor', form.howBecameAdvisor);
+                      fd.append('clientTypes', form.clientTypes);
+                      fd.append('areasOfExpertise', form.areasOfExpertise);
+                      fd.append('strategies', form.strategies);
+                      fd.append('uniqueApproach', form.uniqueApproach);
+                      fd.append('favoritePartWorking', form.favoritePartWorking);
+                      fd.append('likesAboutSavvy', form.likesAboutSavvy);
+                      fd.append('designations', form.designations);
+                      const res = await fetch('/api/preview-pdf', { method: 'POST', body: fd });
+                      if (res.ok) {
+                        const blob = await res.blob();
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${fullName2.replace(/\s+/g, '_')}_Advisor_Profile.pdf`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }
+                    }}
+                    className="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1.5 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    Download my responses
+                  </a>
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={submitting}
                   className="px-7 py-2.5 rounded-[3px] text-sm font-medium tracking-[0.02em] text-white bg-black border border-black hover:bg-transparent hover:text-black transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {submitting && (
@@ -990,6 +1032,7 @@ export default function AdvisorForm() {
                   )}
                   {submitting ? 'Submitting…' : 'Submit Profile'}
                 </button>
+                </div>
               </div>
             )}
           </div>
@@ -1344,31 +1387,33 @@ function StepReview({ form }: { form: FormData }) {
               <div style={{ display: 'flex', gap: '20px', padding: '16px 20px 14px', background: 'white' }}>
                 {/* Left */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '22px', fontWeight: 400, color: '#111', margin: '0 0 8px', lineHeight: 1.1 }}>
+                  {/* Name: real page ~44px on 940px viewport → 44×0.5=22px; designations smaller */}
+                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '26px', fontWeight: 400, color: '#111', margin: '0 0 10px', lineHeight: 1.05 }}>
                     {fullName || 'Your Name'}
-                    {form.designations && <span style={{ fontSize: '14px', fontWeight: 300 }}>, {form.designations}</span>}
+                    {form.designations && <span style={{ fontSize: '16px', fontWeight: 300 }}>, {form.designations}</span>}
                   </h1>
-                  <p style={{ fontSize: '7.5px', color: '#333', lineHeight: 1.6, marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {/* Bio: real page ~16px on 940px → 16×0.5=8px */}
+                  <p style={{ fontSize: '8px', color: '#333', lineHeight: 1.65, marginBottom: '10px', display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {form.currentBio || 'Your bio will appear here...'}
                   </p>
                   {form.firstName && (
-                    <div style={{ marginBottom: '8px' }}>
-                      <div style={{ fontSize: '6.5px', fontWeight: 700, color: '#111', marginBottom: '3px', letterSpacing: '0.06em' }}>
+                    <div style={{ marginBottom: '10px' }}>
+                      <div style={{ fontSize: '7px', fontWeight: 700, color: '#111', marginBottom: '3px', letterSpacing: '0.06em' }}>
                         {(form.firstName || '').toUpperCase()}&apos;S TEAM:
                       </div>
-                      <span style={{ fontSize: '6.5px', color: '#333' }}>Savvy Investment Team</span>
+                      <span style={{ fontSize: '7px', color: '#333' }}>Savvy Investment Team</span>
                     </div>
                   )}
-                  <div style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
-                    <span style={{ fontSize: '6.5px', padding: '5px 10px', background: 'black', color: 'white', fontWeight: 500, borderRadius: '2px' }}>Schedule a call today</span>
-                    <span style={{ fontSize: '6.5px', padding: '5px 10px', border: '1px solid black', color: 'black', fontWeight: 500, borderRadius: '2px' }}>Send an email</span>
+                  <div style={{ display: 'flex', gap: '7px', marginTop: '12px' }}>
+                    <span style={{ fontSize: '7px', padding: '5px 12px', background: 'black', color: 'white', fontWeight: 500, borderRadius: '3px' }}>Schedule a call today</span>
+                    <span style={{ fontSize: '7px', padding: '5px 12px', border: '1.5px solid black', color: 'black', fontWeight: 500, borderRadius: '3px' }}>Send an email</span>
                   </div>
                 </div>
 
                 {/* Right: photo */}
                 <div style={{ width: '130px', flexShrink: 0 }}>
                   <div style={{ position: 'relative', marginBottom: '6px' }}>
-                    <div style={{ position: 'absolute', top: '-5px', right: '-5px', width: '88%', height: '88%', background: '#ebebea', zIndex: 0 }} />
+                    <div style={{ position: 'absolute', top: '-6px', right: '-6px', width: '90%', height: '90%', background: 'transparent', border: '1.5px solid #d0cfc9', zIndex: 0 }} />
                     <div style={{ position: 'relative', zIndex: 1, width: '120px', height: '145px', background: '#c8c8c4', overflow: 'hidden', borderRadius: '25px 0 0 0' }}>
                       {photoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element

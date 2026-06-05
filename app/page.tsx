@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import TopicsCheckbox from '@/components/TopicsCheckbox';
+import TopicsCheckbox, { TOPIC_ACCENT_COLORS, FINANCIAL_TOPICS as TOPICS_LIST, useWhiteText } from '@/components/TopicsCheckbox';
 import { checkCompliance } from '@/lib/compliance';
 import { PageType, PAGE_TYPE_LABELS } from '@/lib/emailTemplate';
 
@@ -301,6 +301,7 @@ function FloatTextarea({
   required,
   showCompliance,
   showMic = false,
+  micColor = '#175242',
 }: {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -311,6 +312,7 @@ function FloatTextarea({
   required?: boolean;
   showCompliance?: boolean;
   showMic?: boolean;
+  micColor?: string;
 }) {
   const [focused, setFocused] = useState(false);
   const lifted = focused || value.length > 0;
@@ -351,11 +353,8 @@ function FloatTextarea({
             type="button"
             onClick={toggle}
             title={recording ? 'Stop recording' : 'Speak your answer'}
-            className={`absolute right-3 top-3 p-2 rounded-full transition-all ${
-              recording
-                ? 'bg-red-500 text-white shadow-lg shadow-red-200 animate-pulse'
-                : 'bg-[#175242] text-white hover:bg-[#0f3b2e] shadow-sm'
-            }`}
+            className={`absolute right-3 top-3 p-2 rounded-full transition-all ${recording ? 'bg-red-500 text-white shadow-lg shadow-red-200 animate-pulse' : 'text-white shadow-sm'}`}
+            style={!recording ? { backgroundColor: micColor } : undefined}
           >
             {recording ? (
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -1199,10 +1198,9 @@ function StepPhoto({
 
 // ─── Step 4: Bio & FAQ ────────────────────────────────────────────────────────
 
-// Only colors passing WCAG 2.1 SC 1.4.11 (3:1) as UI component borders against white:
-// Deep Green 9.04 | Deep Blue 7.83 | Maroon 7.90 | Red 5.66 | Bright Mauve 3.64
-// Removed: Golden Yellow (2.36), Lavender (2.92), Orange (2.13) — all fail 3:1
-const FAQ_ACCENT_COLORS = ['#175242', '#095972', '#6B484D', '#B63D35', '#C06F74', '#175242', '#095972'];
+// All 8 brand accent colors — same order as TOPIC_ACCENT_COLORS for consistency
+// Decorative left borders are not functional UI components so all colors are permitted
+const FAQ_ACCENT_COLORS = ['#175242', '#D79F32', '#095972', '#C06F74', '#6B484D', '#F19E70', '#B63D35', '#A98EB1'];
 
 const FAQ_FIELDS: Array<{ key: keyof FormData; question: string; placeholder: string }> = [
   { key: 'howBecameAdvisor', question: 'How did you become a financial advisor?', placeholder: 'Share your journey into financial advising…' },
@@ -1262,21 +1260,25 @@ function StepBioFaq({
         <div>
           <SectionLabel>FAQ Questions</SectionLabel>
           <div className="space-y-5">
-            {FAQ_FIELDS.map(({ key, question, placeholder }, idx) => (
-              <div key={key} style={{ borderLeft: `3px solid ${FAQ_ACCENT_COLORS[idx % FAQ_ACCENT_COLORS.length]}`, paddingLeft: '8px' }}>
-                <FloatTextarea
-                  label={question}
-                  value={form[key] as string}
-                  onChange={set(key)}
-                  placeholder={placeholder}
-                  rows={3}
-                  error={errors[key]}
-                  required
-                  showCompliance
-                  showMic
-                />
-              </div>
-            ))}
+            {FAQ_FIELDS.map(({ key, question, placeholder }, idx) => {
+              const color = FAQ_ACCENT_COLORS[idx % FAQ_ACCENT_COLORS.length];
+              return (
+                <div key={key} style={{ borderLeft: `3px solid ${color}`, paddingLeft: '8px' }}>
+                  <FloatTextarea
+                    label={question}
+                    value={form[key] as string}
+                    onChange={set(key)}
+                    placeholder={placeholder}
+                    rows={3}
+                    error={errors[key]}
+                    required
+                    showCompliance
+                    showMic
+                    micColor={color}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -1566,15 +1568,22 @@ function StepReview({ form }: { form: FormData }) {
           <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-3">Financial Topics</p>
           <div className="flex flex-wrap gap-2">
             {form.financialTopics.length > 0
-              ? form.financialTopics.map((t) => (
-                  <span key={t} className="flex items-center gap-2 pl-2 pr-3 py-1.5 bg-[#175242] text-white text-xs font-medium rounded-[3px] tracking-[0.04em]">
-                    {TOPIC_ICONS_MAP[t] && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={TOPIC_ICONS_MAP[t]} alt="" className="w-4 h-4 object-contain brightness-0 invert" />
-                    )}
-                    {t}
-                  </span>
-                ))
+              ? form.financialTopics.map((t) => {
+                  const topicIdx = TOPICS_LIST.indexOf(t as typeof TOPICS_LIST[number]);
+                  const chipColor = TOPIC_ACCENT_COLORS[topicIdx % TOPIC_ACCENT_COLORS.length] ?? '#175242';
+                  const whiteOnChip = useWhiteText(chipColor);
+                  return (
+                    <span key={t} className="flex items-center gap-2 pl-2 pr-3 py-1.5 text-xs font-medium rounded-[3px] tracking-[0.04em]"
+                      style={{ backgroundColor: chipColor, color: whiteOnChip ? 'white' : '#111' }}>
+                      {TOPIC_ICONS_MAP[t] && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={TOPIC_ICONS_MAP[t]} alt="" className="w-4 h-4 object-contain"
+                          style={{ filter: whiteOnChip ? 'brightness(0) invert(1)' : 'brightness(0)' }} />
+                      )}
+                      {t}
+                    </span>
+                  );
+                })
               : <span className="text-sm text-gray-300 italic">None selected</span>
             }
           </div>

@@ -18,7 +18,7 @@ export const FINANCIAL_TOPICS = [
   'P&G Employee Services',
 ] as const;
 
-const TOPIC_ICONS: Record<string, string> = {
+export const TOPIC_ICONS: Record<string, string> = {
   'Investment Management':        '/icons/investment-management.svg',
   'Tax Optimization':             '/icons/tax-optimization.svg',
   'Direct Indexing':              '/icons/direct-indexing.svg',
@@ -33,9 +33,34 @@ const TOPIC_ICONS: Record<string, string> = {
   'P&G Employee Services':        '/icons/small-business-tax.svg',
 };
 
-// Only colors that pass WCAG AA (4.5:1) with white text
-// Deep Green 9.04 | Deep Blue 7.83 | Maroon 7.90 | Red 5.66
-const ACCENT_COLORS = ['#175242', '#095972', '#6B484D', '#B63D35'];
+// All 8 brand accent colors in a varied (non-sequential) order
+// Dark/light alternates so adjacent cards contrast nicely
+// Dark = white text (passes 4.5:1), Light = dark text (#111, passes 4.5:1)
+export const TOPIC_ACCENT_COLORS = [
+  '#175242', // Deep Green   — white text (9.04:1) ✅
+  '#D79F32', // Golden Yellow — dark text  (8.00:1) ✅
+  '#095972', // Deep Blue    — white text (7.83:1) ✅
+  '#C06F74', // Bright Mauve — dark text  (5.77:1) ✅
+  '#6B484D', // Maroon       — white text (7.90:1) ✅
+  '#F19E70', // Orange       — dark text  (9.87:1) ✅
+  '#B63D35', // Red          — white text (5.66:1) ✅
+  '#A98EB1', // Lavender     — dark text  (7.19:1) ✅
+];
+
+// Returns true if white text should be used on this background
+export function useWhiteText(hexColor: string): boolean {
+  const whiteContrast: Record<string, boolean> = {
+    '#175242': true,
+    '#D79F32': false,
+    '#095972': true,
+    '#C06F74': false,
+    '#6B484D': true,
+    '#F19E70': false,
+    '#B63D35': true,
+    '#A98EB1': false,
+  };
+  return whiteContrast[hexColor] ?? true;
+}
 
 interface TopicsCheckboxProps {
   selected: string[];
@@ -65,24 +90,17 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
           const isChecked = selected.includes(topic);
           const isDisabled = !isChecked && selected.length >= 4;
           const icon = TOPIC_ICONS[topic];
-          const accentColor = ACCENT_COLORS[index % ACCENT_COLORS.length];
+          const accentColor = TOPIC_ACCENT_COLORS[index % TOPIC_ACCENT_COLORS.length];
+          const whiteText = useWhiteText(accentColor);
+          const textColor = whiteText ? 'white' : '#111111';
 
           return (
             <label
               key={topic}
               className={`flex items-center gap-3 px-4 py-3.5 rounded-lg border cursor-pointer transition-all ${
-                isDisabled
-                  ? 'border-gray-100 opacity-40 cursor-not-allowed bg-white'
-                  : !isChecked
-                  ? 'border-gray-200 bg-white hover:border-gray-400 hover:bg-gray-50'
-                  : ''
-              }`}
-              style={isChecked ? {
-                backgroundColor: accentColor,
-                borderColor: accentColor,
-                borderWidth: '1px',
-                borderStyle: 'solid',
-              } : undefined}
+                isDisabled ? 'border-gray-100 opacity-40 cursor-not-allowed bg-white' : ''
+              } ${!isChecked && !isDisabled ? 'border-gray-200 bg-white hover:border-gray-400 hover:bg-gray-50' : ''}`}
+              style={isChecked ? { backgroundColor: accentColor, borderColor: accentColor } : undefined}
             >
               <input
                 type="checkbox"
@@ -92,7 +110,6 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
                 className="sr-only"
               />
 
-              {/* Icon — white when selected, muted when not */}
               {icon && (
                 <div className="shrink-0 w-7 h-7 flex items-center justify-center">
                   <Image
@@ -103,23 +120,30 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
                     className="w-7 h-7 object-contain transition-all"
                     style={{
                       filter: isChecked
-                        ? 'brightness(0) invert(1)'   // white icon
+                        ? whiteText ? 'brightness(0) invert(1)' : 'brightness(0)'
                         : 'opacity(0.45)',
                     }}
                   />
                 </div>
               )}
 
-              <span className={`text-sm leading-tight font-medium transition-colors ${
-                isChecked ? 'text-white' : 'text-gray-600'
-              }`}>
+              <span
+                className="text-sm leading-tight font-medium transition-colors"
+                style={{ color: isChecked ? textColor : undefined }}
+              >
                 {topic}
               </span>
 
-              {/* Checkmark */}
               {isChecked && (
-                <div className="ml-auto shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div
+                  className="ml-auto shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
+                  style={{ background: whiteText ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.15)' }}
+                >
+                  <svg
+                    className="w-3 h-3"
+                    style={{ color: textColor }}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>

@@ -1404,13 +1404,6 @@ function StepBioFaq({
 
       </div>
     </div>
-
-      {/* Answered count */}
-      <p className="text-center text-xs text-gray-400 mt-4">
-        {answered} of {total} questions answered
-        {answered === total && <span className="text-green-500 ml-1">✓ All done — click Next to review</span>}
-      </p>
-    </div>
   );
 }
 

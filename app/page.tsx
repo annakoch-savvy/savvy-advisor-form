@@ -1523,14 +1523,15 @@ function StepReview({ form }: { form: FormData }) {
       <div className="mb-8" style={{ order: 4 }}>
         <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-3">Your Page Preview</p>
 
-        {/* Device mockup — cropped to remove whitespace, content from 17.8% to 82.1% */}
-        <div className="relative" style={{ userSelect: 'none', overflow: 'hidden' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/device-mockup.jpg" alt="Device mockup" style={{ width: '100%', display: 'block', marginTop: '-17.8%', marginBottom: '-17.9%' }} />
+        {/* Device mockup — laptop content behind image (mix-blend), iPhone CSS-drawn in front */}
+        <div className="relative" style={{ userSelect: 'none', overflow: 'visible', paddingBottom: '62%' }}>
 
-          {/* ── LAPTOP SCREEN OVERLAY ── */}
-          {/* Recalculated: top=(22-17.8)/64.3*100=6.53%, height=41/64.3*100=63.8% */}
-          <div style={{ position: 'absolute', left: '16.2%', top: '6.53%', width: '67%', height: '63.8%', overflow: 'hidden', background: 'white' }}>
+          {/* ── Laptop image — multiply blend so screen area is transparent ── */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/device-mockup.jpg" alt="" aria-hidden="true" style={{ position: 'absolute', left: 0, top: '-17.8%', width: '100%', mixBlendMode: 'multiply', pointerEvents: 'none', zIndex: 2 }} />
+
+          {/* ── LAPTOP SCREEN CONTENT — sits behind the image ── */}
+          <div style={{ position: 'absolute', left: '16.2%', top: '6.53%', width: '67%', height: '63.8%', overflow: 'hidden', background: 'white', zIndex: 1 }}>
           <div style={{ width: '100%', height: '100%', overflowY: 'auto', fontFamily: "'Jost', sans-serif" }}>
 
               {/* Nav */}
@@ -1681,36 +1682,45 @@ function StepReview({ form }: { form: FormData }) {
             </div>
           </div>
 
-          {/* ── PHONE SCREEN OVERLAY ── */}
-          <div style={{ position: 'absolute', left: '79.8%', top: '49.5%', width: '13.2%', height: '49%', overflow: 'hidden', background: 'white', borderRadius: '4px', fontFamily: "'Jost', sans-serif" }}>
-            {/* Mobile nav */}
-            <div style={{ padding: '6px 10px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', position: 'sticky', top: 0, zIndex: 10 }}>
-              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '13px', fontWeight: 400 }}>Savvy</span>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#333', width: '14px' }} />)}
+          {/* ── CSS-drawn iPhone — above everything, fully visible, no clipping ── */}
+          <div style={{ position: 'absolute', left: '72%', top: '38%', width: '22%', zIndex: 10 }}>
+            {/* Phone outer shell */}
+            <div style={{ background: '#1a1a1a', borderRadius: '12% / 8%', padding: '3.5% 2.5%', boxShadow: '0 8px 32px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08)' }}>
+              {/* Notch */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3%' }}>
+                <div style={{ width: '30%', height: '7px', background: '#333', borderRadius: '4px' }} />
               </div>
-            </div>
-            {/* Mobile hero */}
-            <div style={{ padding: '12px 10px' }}>
-              {/* Photo */}
-              <div style={{ width: '100%', height: '90px', borderRadius: '20px 0 0 0', overflow: 'hidden', background: '#c8c8c4', marginBottom: '8px' }}>
-                {photoUrl && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
-                )}
+              {/* Screen */}
+              <div style={{ borderRadius: '4% / 3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif" }}>
+                {/* Mobile nav */}
+                <div style={{ padding: '5px 8px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white' }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '11px', fontWeight: 400 }}>Savvy</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5px' }}>
+                    {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#333', width: '12px' }} />)}
+                  </div>
+                </div>
+                {/* Content */}
+                <div style={{ padding: '10px 8px' }}>
+                  <div style={{ width: '100%', height: '80px', borderRadius: '16px 0 0 0', overflow: 'hidden', background: '#c8c8c4', marginBottom: '7px' }}>
+                    {photoUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                    )}
+                  </div>
+                  <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '14px', fontWeight: 400, color: '#111', marginBottom: '3px', lineHeight: 1.1 }}>
+                    {fullName || 'Your Name'}
+                  </div>
+                  <div style={{ fontSize: '7px', color: '#777', marginBottom: '5px' }}>{form.cityAndState}</div>
+                  <p style={{ fontSize: '7px', color: '#444', lineHeight: 1.5, margin: '0 0 7px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {form.currentBio}
+                  </p>
+                  <div style={{ fontSize: '7px', padding: '4px 8px', background: 'black', color: 'white', borderRadius: '2px', display: 'inline-block', fontWeight: 500 }}>Schedule a call</div>
+                </div>
               </div>
-              {/* Name */}
-              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '16px', fontWeight: 400, color: '#111', marginBottom: '4px', lineHeight: 1.1 }}>
-                {fullName || 'Your Name'}
+              {/* Home indicator */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }}>
+                <div style={{ width: '25%', height: '4px', background: '#444', borderRadius: '3px' }} />
               </div>
-              {/* Location */}
-              <div style={{ fontSize: '8px', color: '#777', marginBottom: '6px' }}>{form.cityAndState}</div>
-              {/* Bio */}
-              <p style={{ fontSize: '8px', color: '#444', lineHeight: 1.5, margin: '0 0 8px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                {form.currentBio}
-              </p>
-              {/* CTA */}
-              <div style={{ fontSize: '8px', padding: '5px 10px', background: 'black', color: 'white', borderRadius: '2px', display: 'inline-block', fontWeight: 500 }}>Schedule a call today</div>
             </div>
           </div>
 

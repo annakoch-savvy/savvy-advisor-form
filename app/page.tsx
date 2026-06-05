@@ -1684,8 +1684,8 @@ function StepReview({ form }: { form: FormData }) {
           </div>
           </div>{/* end overflow:hidden laptop */}
 
-          {/* ── CSS-drawn iPhone — outside the cropped laptop div, no clipping ── */}
-          <div style={{ position: 'absolute', right: '-2%', bottom: '-18%', width: '24%', zIndex: 10 }}>
+          {/* ── CSS-drawn iPhone — overlaps laptop bottom-right corner ── */}
+          <div style={{ position: 'absolute', right: '0%', top: '30%', width: '26%', zIndex: 10 }}>
             {/* Phone outer shell */}
             <div style={{ background: '#1a1a1a', borderRadius: '12% / 8%', padding: '3.5% 2.5%', boxShadow: '0 8px 32px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08)' }}>
               {/* Notch */}

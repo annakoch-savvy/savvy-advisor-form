@@ -964,11 +964,6 @@ export default function AdvisorForm() {
                     >
                       {s.label}
                     </p>
-                    {active && (
-                      <p className="text-[11px] leading-none text-white/65 truncate">
-                        {s.description}
-                      </p>
-                    )}
                   </div>
                 </div>
               );

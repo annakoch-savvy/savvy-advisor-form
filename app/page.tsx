@@ -1281,40 +1281,54 @@ function StepPhoto({
 }) {
   const previewUrl = form.photo ? URL.createObjectURL(form.photo) : null;
   return (
-    <div className="max-w-xl">
+    <div className="max-w-2xl">
       <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Profile Photo</h2>
-      <p className="text-sm text-gray-500 mb-8">Upload a professional headshot for your advisor page.</p>
+      <p className="text-sm text-gray-500 mb-6">Upload a professional headshot for your advisor page.</p>
 
-      <button
-        type="button"
-        onClick={() => photoInputRef.current?.click()}
-        className={`w-full rounded-xl border-2 border-dashed py-10 flex flex-col items-center gap-3 transition-all ${
-          errors.photo ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-[#175242] hover:bg-[#175242]/5'
-        }`}
-      >
-        {previewUrl ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={previewUrl} alt="Preview" className="w-32 h-32 rounded-lg object-cover shadow-md" />
-            <div className="text-center">
-              <p className="text-sm font-medium text-gray-700">{form.photo?.name}</p>
-              <p className="text-xs text-gray-400 mt-1">Click to change</p>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center">
-              <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      {previewUrl ? (
+        /* ── Photo uploaded: full-width preview with overlay actions ── */
+        <div className="relative rounded-xl overflow-hidden group cursor-pointer shadow-sm" onClick={() => photoInputRef.current?.click()}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={previewUrl} alt="Preview" className="w-full object-contain max-h-[420px] bg-gray-50" />
+          {/* Hover overlay */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+            <div className="bg-white rounded-full p-3 shadow-lg">
+              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <div className="text-center">
-              <p className="text-sm font-medium text-gray-600">Click to upload a photo</p>
-              <p className="text-xs text-gray-400 mt-1">JPG, PNG, GIF, or WebP</p>
-            </div>
-          </>
-        )}
-      </button>
+            <span className="text-white text-sm font-medium">Change photo</span>
+          </div>
+          {/* Filename badge */}
+          <div className="absolute bottom-3 left-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm">
+            {form.photo?.name}
+          </div>
+        </div>
+      ) : (
+        /* ── No photo: clean upload area ── */
+        <button
+          type="button"
+          onClick={() => photoInputRef.current?.click()}
+          className={`w-full rounded-xl border-2 border-dashed transition-all duration-200 ${
+            errors.photo
+              ? 'border-red-300 bg-red-50'
+              : 'border-gray-200 hover:border-[#175242] hover:bg-[#175242]/5'
+          }`}
+          style={{ minHeight: '280px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px' }}
+        >
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-medium text-gray-700">Click to upload your headshot</p>
+            <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP · No cropping — shown as uploaded</p>
+          </div>
+        </button>
+      )}
 
       <input
         ref={photoInputRef}
@@ -1688,56 +1702,59 @@ function StepReview({ form }: { form: FormData }) {
 
           {/* ── Phone screen content — same approach as laptop ── */}
           {/* Phone screen measured: left=78.6%, top=48.7%, width=14.4%, height=50% of container */}
-          {/* Phone screen — static, everything fits within frame, no scroll */}
+          {/* Phone screen — matches Chase Austin mobile screenshot exactly */}
           <div style={{ position: 'absolute', left: '78.0%', top: '43.7%', width: '15.4%', height: '56.3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3, display: 'flex', flexDirection: 'column' }}>
-            {/* Nav */}
-            <div style={{ padding: '2.5% 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0 }}>
+
+            {/* Nav — ~8% of screen height */}
+            <div style={{ height: '8%', padding: '0 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0 }}>
               <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '105%', fontWeight: 400 }}>Savvy</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '3%' }}>
-                <span style={{ fontSize: '52%', border: '0.5px solid #aaa', padding: '1% 3%', color: '#333', borderRadius: '1px' }}>Sign in</span>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-                  {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#333', width: '9px' }} />)}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4%' }}>
+                <span style={{ fontSize: '50%', border: '0.5px solid #999', padding: '1px 3px', color: '#333', borderRadius: '1px' }}>Sign in</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5px' }}>
+                  {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#222', width: '10px' }} />)}
                 </div>
               </div>
             </div>
 
-            {/* Photo — fixed height to leave room for content below */}
-            <div style={{ position: 'relative', flexShrink: 0 }}>
-              <div style={{ position: 'absolute', bottom: '-3px', right: '-3px', width: '83%', height: '83%', border: '0.8px solid #ddd', zIndex: 0 }} />
-              <div style={{ position: 'relative', zIndex: 1, width: '88%', height: '28%', minHeight: 0, overflow: 'hidden', background: '#c8c8c4', borderRadius: '14px 0 0 0' }}>
+            {/* Photo — ~52% of screen, full width, portrait, rounded top-left only */}
+            <div style={{ height: '52%', position: 'relative', flexShrink: 0 }}>
+              {/* White offset card — bottom-right, partially visible */}
+              <div style={{ position: 'absolute', bottom: 0, right: 0, width: '92%', height: '92%', background: 'white', border: '0.8px solid #e0e0e0', zIndex: 0 }} />
+              {/* Photo */}
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '95%', height: '97%', overflow: 'hidden', background: '#c8c8c4', borderRadius: '18px 0 0 0', zIndex: 1 }}>
                 {photoUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                  <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
                 )}
               </div>
             </div>
 
-            {/* Content — flex-grow fills remaining space */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '3% 4%', minHeight: 0 }}>
-              {/* Location */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '2%' }}>
-                  <svg style={{ width: '7px', height: '7px', color: '#888', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                  <span style={{ fontSize: '52%', color: '#666' }}>{form.cityAndState || 'Location'}</span>
-                </div>
-                <span style={{ fontSize: '52%', fontWeight: 700, color: '#0077b5', border: '0.5px solid #0077b5', padding: '0.5px 2px' }}>in</span>
+            {/* Location row — ~8% */}
+            <div style={{ height: '8%', padding: '0 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '2%' }}>
+                <svg style={{ width: '7px', height: '7px', color: '#777', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3"/></svg>
+                <span style={{ fontSize: '50%', color: '#555' }}>{form.cityAndState || 'Location'}</span>
               </div>
+              <span style={{ fontSize: '50%', fontWeight: 700, color: '#0077b5', border: '0.5px solid #0077b5', padding: '0.5px 2px', borderRadius: '1px' }}>in</span>
+            </div>
 
-              {/* Name */}
-              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '130%', fontWeight: 400, color: '#111', lineHeight: 1.1, marginBottom: '2%' }}>
-                {fullName || 'Your Name'}
-              </div>
+            {/* Name — ~12% */}
+            <div style={{ height: '12%', padding: '0 4%', display: 'flex', alignItems: 'center', flexShrink: 0, fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '140%', fontWeight: 400, color: '#111', lineHeight: 1.05 }}>
+              {fullName || 'Your Name'}
+            </div>
 
-              {/* Bio — clamped to fill remaining space */}
-              <p style={{ fontSize: '57%', color: '#333', lineHeight: 1.5, margin: 0, flex: 1, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}>
+            {/* Bio — fills remaining space */}
+            <div style={{ flex: 1, padding: '0 4% 2%', overflow: 'hidden' }}>
+              <p style={{ fontSize: '55%', color: '#333', lineHeight: 1.55, margin: 0, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {form.currentBio}
               </p>
             </div>
 
-            {/* CTA — pinned to bottom */}
-            <div style={{ padding: '3% 4%', background: 'black', flexShrink: 0, textAlign: 'center' }}>
-              <span style={{ fontSize: '62%', color: 'white', fontWeight: 500 }}>Schedule a call today</span>
+            {/* CTA bar — ~10%, full-width black */}
+            <div style={{ height: '10%', background: 'black', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: '58%', color: 'white', fontWeight: 500, letterSpacing: '0.02em' }}>Schedule a call today</span>
             </div>
+
           </div>
 
           </div>{/* end container */}

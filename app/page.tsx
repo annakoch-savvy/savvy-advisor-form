@@ -1310,7 +1310,7 @@ function StepPhoto({
         <button
           type="button"
           onClick={() => photoInputRef.current?.click()}
-          className={`w-full rounded-xl border-2 border-dashed transition-all duration-200 ${
+          className={`w-full rounded-xl border transition-all duration-200 ${
             errors.photo
               ? 'border-red-300 bg-red-50'
               : 'border-gray-200 hover:border-[#175242] hover:bg-[#175242]/5'

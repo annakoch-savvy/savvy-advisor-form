@@ -1526,15 +1526,13 @@ function StepReview({ form }: { form: FormData }) {
         {/* Device mockup */}
         <div className="relative" style={{ userSelect: 'none' }}>
 
-          {/* ── Laptop: image + screen content, uses padding-bottom for stable height ── */}
-          <div style={{ position: 'relative', paddingBottom: '64.3%', overflow: 'hidden' }}>
-            {/* Device image — shifted up to crop whitespace */}
+          {/* ── Device mockup: transparent PNG, pixel-measured screen coords ── */}
+          <div style={{ position: 'relative', paddingBottom: '60.9%', overflow: 'hidden' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {/* Image at z:2 — sits above laptop content, below phone content */}
-            <img src="/device-mockup.jpg" alt="" aria-hidden="true" style={{ position: 'absolute', top: '-27.7%', left: 0, width: '100%', zIndex: 2 }} />
+            <img src="/device-mockup.png" alt="" aria-hidden="true" style={{ position: 'absolute', top: '-34.8%', left: 0, width: '100%', zIndex: 2 }} />
 
-            {/* Laptop screen content — z:1, behind the image */}
-            <div style={{ position: 'absolute', left: '16.2%', top: '6.53%', width: '67%', height: '63.8%', overflow: 'hidden', background: 'white', zIndex: 1 }}>
+            {/* Laptop screen — z:1, behind the device frame */}
+            <div style={{ position: 'absolute', left: '14.9%', top: '0.8%', width: '68.1%', height: '67.6%', overflow: 'hidden', background: 'white', zIndex: 1 }}>
           <div style={{ width: '100%', height: '100%', overflowY: 'auto', fontFamily: "'Jost', sans-serif" }}>
 
               {/* Nav */}
@@ -1687,8 +1685,8 @@ function StepReview({ form }: { form: FormData }) {
 
           {/* ── Phone screen content — same approach as laptop ── */}
           {/* Phone screen measured: left=78.6%, top=48.7%, width=14.4%, height=50% of container */}
-          {/* Phone screen content — z:3, above the image */}
-          <div style={{ position: 'absolute', left: '78.6%', top: '48.7%', width: '14.4%', height: '50%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3 }}>
+          {/* Phone screen — z:3, above the device image */}
+          <div style={{ position: 'absolute', left: '78.0%', top: '43.7%', width: '15.4%', height: '56.3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3 }}>
             {/* Nav */}
             <div style={{ padding: '4% 5%', borderBottom: '0.5px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', position: 'sticky', top: 0 }}>
               <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '120%', fontWeight: 400 }}>Savvy</span>

@@ -1683,59 +1683,38 @@ function StepReview({ form }: { form: FormData }) {
 
             </div>
           </div>
-          </div>{/* end overflow:hidden laptop */}
 
-          {/* ── CSS iPhone — precisely matched to phone in mockup image ── */}
-          {/* Measured: frame x=77.3%–94%, width=16.7%, top y=47% → 45.4% of container */}
-          <div style={{ position: 'absolute', left: '77.3%', top: '45.4%', width: '16.7%', zIndex: 10 }}>
-            {/* Shell: iPhone aspect ratio ~9:19.5 */}
-            <div style={{ background: '#1a1a1a', borderRadius: '9%', padding: '2.5%', boxShadow: '0 12px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.1)', position: 'relative' }}>
-              {/* Side buttons */}
-              <div style={{ position: 'absolute', right: '-3px', top: '18%', width: '3px', height: '8%', background: '#333', borderRadius: '0 2px 2px 0' }} />
-              <div style={{ position: 'absolute', left: '-3px', top: '14%', width: '3px', height: '5%', background: '#333', borderRadius: '2px 0 0 2px' }} />
-              <div style={{ position: 'absolute', left: '-3px', top: '22%', width: '3px', height: '8%', background: '#333', borderRadius: '2px 0 0 2px' }} />
-              <div style={{ position: 'absolute', left: '-3px', top: '32%', width: '3px', height: '8%', background: '#333', borderRadius: '2px 0 0 2px' }} />
-
-              {/* Notch */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2%' }}>
-                <div style={{ width: '28%', height: '6px', background: '#333', borderRadius: '3px' }} />
-              </div>
-
-              {/* Screen */}
-              <div style={{ borderRadius: '5%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", aspectRatio: '9/19' }}>
-                {/* Nav */}
-                <div style={{ padding: '4% 5%', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '120%', fontWeight: 400 }}>Savvy</span>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                    {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#333', width: '14px' }} />)}
-                  </div>
-                </div>
-                {/* Photo */}
-                <div style={{ width: '100%', aspectRatio: '4/3', overflow: 'hidden', background: '#c8c8c4' }}>
-                  {photoUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
-                  )}
-                </div>
-                {/* Text content */}
-                <div style={{ padding: '4% 5%' }}>
-                  <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '130%', fontWeight: 400, color: '#111', marginBottom: '2%', lineHeight: 1.1 }}>
-                    {fullName || 'Your Name'}
-                  </div>
-                  <div style={{ fontSize: '65%', color: '#777', marginBottom: '3%' }}>{form.cityAndState}</div>
-                  <p style={{ fontSize: '65%', color: '#444', lineHeight: 1.5, marginBottom: '4%', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    {form.currentBio}
-                  </p>
-                  <div style={{ fontSize: '65%', padding: '3% 6%', background: 'black', color: 'white', borderRadius: '2px', display: 'inline-block', fontWeight: 500 }}>Schedule a call</div>
-                </div>
-              </div>
-
-              {/* Home bar */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2%' }}>
-                <div style={{ width: '28%', height: '4px', background: '#555', borderRadius: '3px' }} />
+          {/* ── Phone screen content — same approach as laptop ── */}
+          {/* Phone screen measured: left=78.6%, top=48.7%, width=14.4%, height=50% of container */}
+          <div style={{ position: 'absolute', left: '78.6%', top: '48.7%', width: '14.4%', height: '50%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif" }}>
+            {/* Nav */}
+            <div style={{ padding: '4% 5%', borderBottom: '0.5px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', position: 'sticky', top: 0 }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '120%', fontWeight: 400 }}>Savvy</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5px' }}>
+                {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#333', width: '12px' }} />)}
               </div>
             </div>
+            {/* Photo */}
+            <div style={{ width: '100%', aspectRatio: '4/3', overflow: 'hidden', background: '#c8c8c4' }}>
+              {photoUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+              )}
+            </div>
+            {/* Text */}
+            <div style={{ padding: '4% 5%' }}>
+              <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '130%', fontWeight: 400, color: '#111', marginBottom: '2%', lineHeight: 1.1 }}>
+                {fullName || 'Your Name'}
+              </div>
+              <div style={{ fontSize: '65%', color: '#777', marginBottom: '3%' }}>{form.cityAndState}</div>
+              <p style={{ fontSize: '65%', color: '#444', lineHeight: 1.5, marginBottom: '4%', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                {form.currentBio}
+              </p>
+              <div style={{ fontSize: '65%', padding: '2% 5%', background: 'black', color: 'white', borderRadius: '2px', display: 'inline-block', fontWeight: 500 }}>Schedule a call</div>
+            </div>
           </div>
+
+          </div>{/* end container */}
 
         </div>
         <div className="mt-4 text-center space-y-1">

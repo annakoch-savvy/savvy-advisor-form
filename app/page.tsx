@@ -1530,10 +1530,11 @@ function StepReview({ form }: { form: FormData }) {
           <div style={{ position: 'relative', paddingBottom: '64.3%', overflow: 'hidden' }}>
             {/* Device image — shifted up to crop whitespace */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/device-mockup.jpg" alt="" aria-hidden="true" style={{ position: 'absolute', top: '-27.7%', left: 0, width: '100%' }} />
+            {/* Image at z:2 — sits above laptop content, below phone content */}
+            <img src="/device-mockup.jpg" alt="" aria-hidden="true" style={{ position: 'absolute', top: '-27.7%', left: 0, width: '100%', zIndex: 2 }} />
 
-            {/* Laptop screen content — percentages relative to this container */}
-            <div style={{ position: 'absolute', left: '16.2%', top: '6.53%', width: '67%', height: '63.8%', overflow: 'hidden', background: 'white' }}>
+            {/* Laptop screen content — z:1, behind the image */}
+            <div style={{ position: 'absolute', left: '16.2%', top: '6.53%', width: '67%', height: '63.8%', overflow: 'hidden', background: 'white', zIndex: 1 }}>
           <div style={{ width: '100%', height: '100%', overflowY: 'auto', fontFamily: "'Jost', sans-serif" }}>
 
               {/* Nav */}
@@ -1686,7 +1687,8 @@ function StepReview({ form }: { form: FormData }) {
 
           {/* ── Phone screen content — same approach as laptop ── */}
           {/* Phone screen measured: left=78.6%, top=48.7%, width=14.4%, height=50% of container */}
-          <div style={{ position: 'absolute', left: '78.6%', top: '48.7%', width: '14.4%', height: '50%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif" }}>
+          {/* Phone screen content — z:3, above the image */}
+          <div style={{ position: 'absolute', left: '78.6%', top: '48.7%', width: '14.4%', height: '50%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3 }}>
             {/* Nav */}
             <div style={{ padding: '4% 5%', borderBottom: '0.5px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', position: 'sticky', top: 0 }}>
               <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '120%', fontWeight: 400 }}>Savvy</span>

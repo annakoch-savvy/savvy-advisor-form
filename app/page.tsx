@@ -1842,21 +1842,21 @@ function StepReview({ form }: { form: FormData }) {
             icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>}
             summary={form.financialTopics.length > 0 ? form.financialTopics.join(' · ') : 'None selected'}
           >
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col gap-2">
               {form.financialTopics.map((t) => {
                 const topicIdx = TOPICS_LIST.indexOf(t as typeof TOPICS_LIST[number]);
                 const chipColor = TOPIC_ACCENT_COLORS[topicIdx % TOPIC_ACCENT_COLORS.length] ?? '#175242';
                 const whiteOnChip = useWhiteText(chipColor);
                 return (
-                  <span key={t} className="flex items-center gap-2 pl-2 pr-3 py-1.5 text-xs font-medium rounded-[3px]"
+                  <div key={t} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium"
                     style={{ backgroundColor: chipColor, color: whiteOnChip ? 'white' : '#111' }}>
                     {TOPIC_ICONS_MAP[t] && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={TOPIC_ICONS_MAP[t]} alt="" className="w-4 h-4 object-contain"
+                      <img src={TOPIC_ICONS_MAP[t]} alt="" className="w-5 h-5 object-contain shrink-0"
                         style={{ filter: whiteOnChip ? 'brightness(0) invert(1)' : 'brightness(0)' }} />
                     )}
                     {t}
-                  </span>
+                  </div>
                 );
               })}
             </div>

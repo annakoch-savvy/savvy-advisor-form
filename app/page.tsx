@@ -452,6 +452,7 @@ export default function AdvisorForm() {
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [errors, setErrors] = useState<Errors>({});
+  const [gateError, setGateError] = useState('');
   const [draftBanner, setDraftBanner] = useState<{ draft: DraftData } | null>(null);
   const [draftSavedAt, setDraftSavedAt] = useState<string>('');
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -525,7 +526,15 @@ export default function AdvisorForm() {
   // ── Gate submit ─────────────────────────────────────────────────────────────
 
   const handleGateSubmit = async () => {
-    if (!gateEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gateEmail)) return;
+    if (!gateEmail.trim()) {
+      setGateError('Please enter your email address.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gateEmail)) {
+      setGateError('Please enter a valid email address.');
+      return;
+    }
+    setGateError('');
     setGateLoading(true);
     try {
       const draft = loadDraft(gateEmail);
@@ -708,18 +717,21 @@ export default function AdvisorForm() {
               Enter your email and we&apos;ll pull up your profile to get you started.
             </p>
             <div className="space-y-4">
-              <input
-                type="email"
-                value={gateEmail}
-                onChange={(e) => setGateEmail(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleGateSubmit(); }}
-                placeholder="Enter your email address"
-                className="w-full px-4 py-3.5 rounded-lg border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition-all"
-              />
+              <div>
+                <input
+                  type="email"
+                  value={gateEmail}
+                  onChange={(e) => { setGateEmail(e.target.value); if (gateError) setGateError(''); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleGateSubmit(); }}
+                  placeholder="Enter your email address"
+                  className={`w-full px-4 py-3.5 rounded-lg border text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition-all ${gateError ? 'border-red-400' : 'border-gray-200'}`}
+                />
+                {gateError && <p className="text-xs text-red-500 mt-1.5 pl-1">{gateError}</p>}
+              </div>
               <button
                 type="button"
                 onClick={handleGateSubmit}
-                disabled={gateLoading || !gateEmail.trim()}
+                disabled={gateLoading}
                 className="w-full py-3.5 rounded-[3px] text-sm font-medium tracking-[0.06em] uppercase transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{ backgroundColor: '#C9A84C', color: '#0A1628' }}
               >
@@ -815,17 +827,20 @@ export default function AdvisorForm() {
 
           {/* Email + CTA combined */}
           <div className="w-full max-w-sm flex flex-col gap-3">
+            <div>
             <input
               type="email"
               value={gateEmail}
-              onChange={(e) => setGateEmail(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && gateEmail.trim()) { setIntroFading(true); } }}
+              onChange={(e) => { setGateEmail(e.target.value); if (gateError) setGateError(''); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') { if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gateEmail.trim())) { setIntroFading(true); } else { setGateError(gateEmail.trim() ? 'Please enter a valid email address.' : 'Please enter your email address.'); } } }}
               placeholder="Enter your email address"
               className="w-full px-4 py-3.5 rounded-[3px] text-sm text-gray-800 placeholder-gray-400 bg-white/95 border-0 focus:outline-none focus:ring-2 focus:ring-white/40"
             />
+            {gateError && <p className="text-xs text-red-300 mt-1.5 pl-1 text-left">{gateError}</p>}
+            </div>
             <button
               type="button"
-              onClick={() => { if (gateEmail.trim()) setIntroFading(true); }}
+              onClick={() => { if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gateEmail.trim())) { setGateError(''); setIntroFading(true); } else { setGateError(gateEmail.trim() ? 'Please enter a valid email address.' : 'Please enter your email address.'); } }}
               onMouseEnter={() => setBtnHover(true)}
               onMouseLeave={() => setBtnHover(false)}
               disabled={!gateEmail.trim()}

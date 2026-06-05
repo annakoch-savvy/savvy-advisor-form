@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { waitUntil } from '@vercel/functions';
 import { supabaseAdmin } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
@@ -164,22 +165,39 @@ export async function POST(req: NextRequest) {
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://savvy-advisor-form-delta.vercel.app';
 
-    // Notify Slack (non-blocking)
-    notifySlack({
-      fullName,
-      email,
-      pageType: submissionData.page_type,
-      topics: financialTopics,
-      submissionId,
-      isUpdate,
-    }).catch((e) => console.error('Slack notification failed:', e));
+    // Use waitUntil() so these run after the response is sent but are tracked by Vercel's
+    // infrastructure — the function will not be killed mid-flight the way a bare
+    // fire-and-forget fetch would be on Vercel serverless.
+    waitUntil((async () => {
+      try {
+        await notifySlack({
+          fullName,
+          email,
+          pageType: submissionData.page_type,
+          topics: financialTopics,
+          submissionId,
+          isUpdate,
+        });
+      } catch (e) {
+        console.error('Slack notification failed:', e);
+      }
+    })());
 
-    // Auto-trigger processing in background (separate serverless invocation)
-    fetch(`${baseUrl}/api/process`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: submissionId }),
-    }).catch((e) => console.error('Process trigger failed:', e));
+    waitUntil((async () => {
+      try {
+        const res = await fetch(`${baseUrl}/api/process`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: submissionId }),
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Process trigger returned non-OK:', res.status, text);
+        }
+      } catch (e) {
+        console.error('Process trigger failed:', e);
+      }
+    })());
 
     return NextResponse.json({ success: true, id: submissionId, updated: isUpdate });
   } catch (err: unknown) {

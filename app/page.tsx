@@ -1534,8 +1534,8 @@ function StepReview({ form }: { form: FormData }) {
       <p className="text-sm text-gray-500 mb-6">Take a moment to review before we build your page.</p>
 
       {/* ── Page mockup preview — order:4 puts it after Bio (order:3) and before FAQ (order:5) ── */}
-      <div className="mb-8 mt-6" style={{ order: 4 }}>
-        <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-4">Your Page Preview</p>
+      <div className="mb-8 mt-10" style={{ order: 4 }}>
+        <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-6">Your Page Preview</p>
 
         {/* Device mockup */}
         <div className="relative" style={{ userSelect: 'none' }}>

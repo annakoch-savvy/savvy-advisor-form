@@ -1705,23 +1705,22 @@ function StepReview({ form }: { form: FormData }) {
           {/* Phone screen — matches Chase Austin mobile screenshot exactly */}
           <div style={{ position: 'absolute', left: '78.0%', top: '43.7%', width: '15.4%', height: '56.3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3, display: 'flex', flexDirection: 'column' }}>
 
-            {/* Nav — ~8% of screen height */}
-            <div style={{ height: '8%', padding: '0 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0 }}>
-              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '105%', fontWeight: 400 }}>Savvy</span>
+            {/* Nav: Savvy + Sign in (black) + hamburger — matches Cindy Alvarez mobile */}
+            <div style={{ padding: '3% 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0, borderBottom: '0.5px solid #f0f0f0' }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '120%', fontWeight: 400 }}>Savvy</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4%' }}>
-                <span style={{ fontSize: '50%', border: '0.5px solid #999', padding: '1px 3px', color: '#333', borderRadius: '1px' }}>Sign in</span>
+                <span style={{ fontSize: '48%', padding: '2px 5px', background: 'black', color: 'white', fontWeight: 600, borderRadius: '2px' }}>Sign in</span>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5px' }}>
                   {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#222', width: '10px' }} />)}
                 </div>
               </div>
             </div>
 
-            {/* Photo — ~52% of screen, full width, portrait, rounded top-left only */}
-            <div style={{ height: '52%', position: 'relative', flexShrink: 0 }}>
-              {/* White offset card — bottom-right, partially visible */}
-              <div style={{ position: 'absolute', bottom: 0, right: 0, width: '92%', height: '92%', background: 'white', border: '0.8px solid #e0e0e0', zIndex: 0 }} />
-              {/* Photo */}
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '95%', height: '97%', overflow: 'hidden', background: '#c8c8c4', borderRadius: '18px 0 0 0', zIndex: 1 }}>
+            {/* Photo — full width, large, rounded top-left corner only */}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              {/* Offset white card behind photo */}
+              <div style={{ position: 'absolute', top: '4%', right: 0, width: '88%', height: '90%', background: 'white', border: '0.8px solid #e8e8e4' }} />
+              <div style={{ width: '92%', aspectRatio: '4/3.2', overflow: 'hidden', background: '#c8c8c4', borderRadius: '16px 0 0 0', position: 'relative', zIndex: 1 }}>
                 {photoUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
@@ -1729,30 +1728,30 @@ function StepReview({ form }: { form: FormData }) {
               </div>
             </div>
 
-            {/* Location row — ~8% */}
-            <div style={{ height: '8%', padding: '0 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '2%' }}>
-                <svg style={{ width: '7px', height: '7px', color: '#777', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3"/></svg>
-                <span style={{ fontSize: '50%', color: '#555' }}>{form.cityAndState || 'Location'}</span>
+            {/* Location + LinkedIn row */}
+            <div style={{ padding: '3% 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '3%' }}>
+                <svg style={{ width: '8px', height: '8px', color: '#666', flexShrink: 0 }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                <span style={{ fontSize: '52%', color: '#444' }}>{form.cityAndState || 'Location'}</span>
               </div>
-              <span style={{ fontSize: '50%', fontWeight: 700, color: '#0077b5', border: '0.5px solid #0077b5', padding: '0.5px 2px', borderRadius: '1px' }}>in</span>
+              <span style={{ fontSize: '52%', fontWeight: 700, color: '#0077b5', border: '0.8px solid #0077b5', padding: '1px 3px', borderRadius: '1px' }}>in</span>
             </div>
 
-            {/* Name — ~12% */}
-            <div style={{ height: '12%', padding: '0 4%', display: 'flex', alignItems: 'center', flexShrink: 0, fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '140%', fontWeight: 400, color: '#111', lineHeight: 1.05 }}>
+            {/* Name */}
+            <div style={{ padding: '0 4% 2%', fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '155%', fontWeight: 400, color: '#111', lineHeight: 1.05, flexShrink: 0 }}>
               {fullName || 'Your Name'}
             </div>
 
-            {/* Bio — fills remaining space */}
+            {/* Bio */}
             <div style={{ flex: 1, padding: '0 4% 2%', overflow: 'hidden' }}>
               <p style={{ fontSize: '55%', color: '#333', lineHeight: 1.55, margin: 0, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {form.currentBio}
               </p>
             </div>
 
-            {/* CTA bar — ~10%, full-width black */}
-            <div style={{ height: '10%', background: 'black', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: '58%', color: 'white', fontWeight: 500, letterSpacing: '0.02em' }}>Schedule a call today</span>
+            {/* CTA — full-width black bar */}
+            <div style={{ background: 'black', flexShrink: 0, padding: '4% 4%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: '60%', color: 'white', fontWeight: 600, letterSpacing: '0.01em' }}>Schedule a call today</span>
             </div>
 
           </div>

@@ -59,6 +59,11 @@ interface FormData {
   favoritePartWorking: string;
   likesAboutSavvy: string;
   designations: string;
+  title: string;
+  aum: string;
+  households: string;
+  blogPost: string;
+  anythingElse: string;
 }
 
 type Errors = Partial<Record<string, string>>;
@@ -534,6 +539,11 @@ export default function AdvisorForm() {
     favoritePartWorking: '',
     likesAboutSavvy: '',
     designations: '',
+    title: '',
+    aum: '',
+    households: '',
+    blogPost: '',
+    anythingElse: '',
   });
 
   // Auto-save draft whenever form changes (debounced 1.5s), keyed by email
@@ -698,6 +708,11 @@ export default function AdvisorForm() {
       fd.append('favoritePartWorking', form.favoritePartWorking);
       fd.append('likesAboutSavvy', form.likesAboutSavvy);
       fd.append('designations', form.designations);
+      fd.append('title', form.title);
+      fd.append('aum', form.aum);
+      fd.append('households', form.households);
+      fd.append('blogPost', form.blogPost);
+      fd.append('anythingElse', form.anythingElse);
       if (form.photo) {
         const compressed = await compressImage(form.photo);
         fd.append('photo', compressed);
@@ -1266,6 +1281,25 @@ function StepBasicInfo({
             {isDbaPageType(form.pageType) && (
               <FloatInput label="Firm / Brand Name" value={form.firmName} onChange={set('firmName')} error={errors.firmName} required />
             )}
+            <FloatInput label="Your Title / Role" value={form.title} onChange={set('title')} />
+            <div>
+              <FloatInput
+                label="Designations"
+                value={form.designations}
+                onChange={set('designations')}
+              />
+              <p className="text-xs text-gray-400 mt-1 pl-1">If joining as a team, list each member: e.g. "Steven Harp, CFP®, ChFC®"</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <FloatInput label="Approximate AUM" value={form.aum} onChange={set('aum')} />
+                <p className="text-xs text-gray-400 mt-1 pl-1">Optional — e.g. "$150 million"</p>
+              </div>
+              <div>
+                <FloatInput label="Households Served" value={form.households} onChange={set('households')} />
+                <p className="text-xs text-gray-400 mt-1 pl-1">Optional — e.g. "approximately 200"</p>
+              </div>
+            </div>
           </FieldGroup>
         </div>
       </div>
@@ -1404,7 +1438,8 @@ const ALL_BIO_FAQ: Array<{ key: keyof FormData; question: string; placeholder: s
   { key: 'uniqueApproach', question: 'Is there a unique approach that sets you apart?', placeholder: 'What makes your advisory style different?', rows: 4 },
   { key: 'favoritePartWorking', question: 'What is your favorite part about working with clients?', placeholder: 'What do you enjoy most about your work?', rows: 4 },
   { key: 'likesAboutSavvy', question: 'What do you like about working with Savvy?', placeholder: 'Share what you value about the Savvy platform…', rows: 4 },
-  { key: 'designations', question: 'Do you have any designations or memberships?', placeholder: 'e.g. CFP®, CFA, NAPFA member, Genius Network…', rows: 3 },
+  { key: 'blogPost', question: 'Would you like to be featured in a blog post on savvywealth.com?', placeholder: '', rows: 1 },
+  { key: 'anythingElse', question: 'Anything else you\'d like us to include or know about?', placeholder: 'Share anything you\'d like us to know…', rows: 4 },
 ];
 
 function StepBioFaq({
@@ -1479,6 +1514,30 @@ function StepBioFaq({
       <div className="bg-white px-10 py-8">
 
 
+          {/* Blog post question uses radio buttons */}
+          {current.key === 'blogPost' ? (
+            <div className="space-y-2">
+              {[
+                'Yes, publish my announcement',
+                "Yes, but I'd like to review the draft before it goes live",
+                'No, I\'d prefer to opt out',
+              ].map((option) => (
+                <label key={option} className={`flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer transition-all ${
+                  form.blogPost === option ? 'border-[#175242] bg-[#175242]/5' : 'border-gray-200 hover:border-gray-300'
+                }`}>
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                    form.blogPost === option ? 'border-[#175242]' : 'border-gray-300'
+                  }`}>
+                    {form.blogPost === option && <div className="w-2 h-2 rounded-full bg-[#175242]" />}
+                  </div>
+                  <input type="radio" className="sr-only" checked={form.blogPost === option}
+                    onChange={() => { const e = { target: { value: option } } as React.ChangeEvent<HTMLTextAreaElement>; set('blogPost')(e); }} />
+                  <span className="text-sm text-gray-700">{option}</span>
+                </label>
+              ))}
+              {errors.blogPost && <p className="text-xs text-red-500 mt-1">{errors.blogPost}</p>}
+            </div>
+          ) : (
           <FloatTextarea
             label=""
             value={form[current.key] as string}
@@ -1491,6 +1550,7 @@ function StepBioFaq({
             showMic
             micColor={accentColor}
           />
+          )}
 
           {current.hint && (
             <p className="text-xs text-gray-400 mt-2">{current.hint}</p>

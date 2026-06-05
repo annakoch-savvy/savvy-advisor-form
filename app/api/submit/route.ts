@@ -132,6 +132,11 @@ export async function POST(req: NextRequest) {
       favorite_part_working: String(formData.get('favoritePartWorking') || ''),
       likes_about_savvy: String(formData.get('likesAboutSavvy') || ''),
       designations: String(formData.get('designations') || ''),
+      title: String(formData.get('title') || ''),
+      aum: String(formData.get('aum') || ''),
+      households: String(formData.get('households') || ''),
+      blog_post: String(formData.get('blogPost') || ''),
+      anything_else: String(formData.get('anythingElse') || ''),
       ...(photoUrl && { photo_url: photoUrl }),
       status: 'pending',
     };

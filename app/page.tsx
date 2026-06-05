@@ -79,11 +79,56 @@ function isDbaPageType(pt: PageType) {
 // ─── Step configs ─────────────────────────────────────────────────────────────
 
 const STEPS = [
-  { number: 1, label: 'Basic Info' },
-  { number: 2, label: 'Topics' },
-  { number: 3, label: 'Photo' },
-  { number: 4, label: 'Bio & FAQ' },
-  { number: 5, label: 'Review' },
+  {
+    number: 1, label: 'Basic Info',
+    description: 'Your contact details and page type',
+    color: '#175242',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+    ),
+  },
+  {
+    number: 2, label: 'Topics',
+    description: 'Your areas of financial expertise',
+    color: '#095972',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+    ),
+  },
+  {
+    number: 3, label: 'Photo',
+    description: 'Your professional headshot',
+    color: '#6B484D',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>
+      </svg>
+    ),
+  },
+  {
+    number: 4, label: 'Bio & FAQ',
+    description: 'Your story and advisor approach',
+    color: '#B63D35',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+      </svg>
+    ),
+  },
+  {
+    number: 5, label: 'Review',
+    description: 'Confirm everything looks right',
+    color: '#8a6320',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+      </svg>
+    ),
+  },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -918,20 +963,51 @@ export default function AdvisorForm() {
         <div className="flex-1 flex flex-col">
 
           {/* Mobile header */}
-          <div className="md:hidden flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
+          <div className="md:hidden flex items-center justify-between px-6 pt-6 pb-3 border-b border-gray-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/savvy-logo-black.svg" alt="Savvy" className="h-6" />
-            <span className="text-xs text-gray-400">Step {step} of {STEPS.length} — {STEPS[step - 1].label}</span>
           </div>
-          {/* Mobile progress */}
-          <div className="md:hidden px-6 pt-3 pb-1">
-            <div className="h-1 bg-gray-100 rounded-full">
-              <div
-                className="h-1 bg-[#D79F32] rounded-full transition-all duration-500"
-                style={{ width: `${(step / STEPS.length) * 100}%` }}
-              />
-            </div>
-          </div>
+
+          {/* ── Pill progress bar — visible on all screen sizes ── */}
+          {(() => {
+            const s = STEPS[step - 1];
+            const pct = Math.round((step / STEPS.length) * 100);
+            return (
+              <div className="px-6 md:px-10 pt-4 pb-0">
+                <div
+                  className="flex items-center gap-3 rounded-full px-2 py-2 pr-5 transition-all duration-500 shadow-sm"
+                  style={{ backgroundColor: s.color }}
+                >
+                  {/* Icon circle */}
+                  <div className="shrink-0 w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                    <span className="w-5 h-5" style={{ color: s.color }}>{s.icon}</span>
+                  </div>
+
+                  {/* Label + description */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-semibold text-sm leading-none mb-0.5">{s.label}</p>
+                    <p className="text-white/65 text-xs leading-none truncate">{s.description}</p>
+                  </div>
+
+                  {/* Progress line + dot */}
+                  <div className="relative flex items-center w-24 shrink-0">
+                    <div className="w-full h-px bg-white/25 rounded-full" />
+                    <div
+                      className="absolute h-px bg-white/80 rounded-full transition-all duration-500"
+                      style={{ width: `${pct}%` }}
+                    />
+                    <div
+                      className="absolute w-2 h-2 rounded-full bg-white transition-all duration-500"
+                      style={{ left: `calc(${pct}% - 4px)` }}
+                    />
+                  </div>
+
+                  {/* Percent */}
+                  <span className="text-white/70 text-xs font-medium shrink-0 w-8 text-right">{pct}%</span>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Content — pt matches sidebar logo height (h-7 = 28px) + p-10 top so headings align */}
           <div className="flex-1 px-8 md:px-10 pt-[46px] pb-8 md:pb-10 overflow-y-auto">

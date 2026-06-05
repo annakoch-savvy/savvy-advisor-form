@@ -1523,15 +1523,16 @@ function StepReview({ form }: { form: FormData }) {
       <div className="mb-8" style={{ order: 4 }}>
         <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-3">Your Page Preview</p>
 
-        {/* Device mockup — laptop content behind image (mix-blend), iPhone CSS-drawn in front */}
-        <div className="relative" style={{ userSelect: 'none', overflow: 'visible', paddingBottom: '62%' }}>
+        {/* Device mockup */}
+        <div className="relative" style={{ userSelect: 'none' }}>
 
-          {/* ── Laptop image — multiply blend so screen area is transparent ── */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/device-mockup.jpg" alt="" aria-hidden="true" style={{ position: 'absolute', left: 0, top: '-17.8%', width: '100%', mixBlendMode: 'multiply', pointerEvents: 'none', zIndex: 2 }} />
+          {/* ── Laptop portion: overflow hidden crops whitespace ── */}
+          <div style={{ overflow: 'hidden', position: 'relative' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/device-mockup.jpg" alt="" aria-hidden="true" style={{ width: '100%', display: 'block', marginTop: '-17.8%', marginBottom: '-17.9%' }} />
 
-          {/* ── LAPTOP SCREEN CONTENT — sits behind the image ── */}
-          <div style={{ position: 'absolute', left: '16.2%', top: '6.53%', width: '67%', height: '63.8%', overflow: 'hidden', background: 'white', zIndex: 1 }}>
+            {/* Laptop screen content */}
+            <div style={{ position: 'absolute', left: '16.2%', top: '6.53%', width: '67%', height: '63.8%', overflow: 'hidden', background: 'white' }}>
           <div style={{ width: '100%', height: '100%', overflowY: 'auto', fontFamily: "'Jost', sans-serif" }}>
 
               {/* Nav */}
@@ -1681,9 +1682,10 @@ function StepReview({ form }: { form: FormData }) {
 
             </div>
           </div>
+          </div>{/* end overflow:hidden laptop */}
 
-          {/* ── CSS-drawn iPhone — above everything, fully visible, no clipping ── */}
-          <div style={{ position: 'absolute', left: '72%', top: '38%', width: '22%', zIndex: 10 }}>
+          {/* ── CSS-drawn iPhone — outside the cropped laptop div, no clipping ── */}
+          <div style={{ position: 'absolute', right: '-2%', bottom: '-18%', width: '24%', zIndex: 10 }}>
             {/* Phone outer shell */}
             <div style={{ background: '#1a1a1a', borderRadius: '12% / 8%', padding: '3.5% 2.5%', boxShadow: '0 8px 32px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08)' }}>
               {/* Notch */}

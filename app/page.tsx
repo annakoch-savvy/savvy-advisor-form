@@ -1685,44 +1685,53 @@ function StepReview({ form }: { form: FormData }) {
           </div>
           </div>{/* end overflow:hidden laptop */}
 
-          {/* ── CSS-drawn iPhone — overlaps laptop bottom-right corner ── */}
-          <div style={{ position: 'absolute', right: '0%', top: '30%', width: '26%', zIndex: 10 }}>
-            {/* Phone outer shell */}
-            <div style={{ background: '#1a1a1a', borderRadius: '12% / 8%', padding: '3.5% 2.5%', boxShadow: '0 8px 32px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08)' }}>
+          {/* ── CSS iPhone — proper aspect ratio, fills template ── */}
+          <div style={{ position: 'absolute', right: '0%', top: '28%', width: '27%', zIndex: 10 }}>
+            {/* Shell: iPhone aspect ratio ~9:19.5 */}
+            <div style={{ background: '#1a1a1a', borderRadius: '9%', padding: '2.5%', boxShadow: '0 12px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.1)', position: 'relative' }}>
+              {/* Side buttons */}
+              <div style={{ position: 'absolute', right: '-3px', top: '18%', width: '3px', height: '8%', background: '#333', borderRadius: '0 2px 2px 0' }} />
+              <div style={{ position: 'absolute', left: '-3px', top: '14%', width: '3px', height: '5%', background: '#333', borderRadius: '2px 0 0 2px' }} />
+              <div style={{ position: 'absolute', left: '-3px', top: '22%', width: '3px', height: '8%', background: '#333', borderRadius: '2px 0 0 2px' }} />
+              <div style={{ position: 'absolute', left: '-3px', top: '32%', width: '3px', height: '8%', background: '#333', borderRadius: '2px 0 0 2px' }} />
+
               {/* Notch */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3%' }}>
-                <div style={{ width: '30%', height: '7px', background: '#333', borderRadius: '4px' }} />
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2%' }}>
+                <div style={{ width: '28%', height: '6px', background: '#333', borderRadius: '3px' }} />
               </div>
-              {/* Screen */}
-              <div style={{ borderRadius: '4% / 3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif" }}>
-                {/* Mobile nav */}
-                <div style={{ padding: '5px 8px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white' }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '11px', fontWeight: 400 }}>Savvy</span>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5px' }}>
-                    {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#333', width: '12px' }} />)}
+
+              {/* Screen — explicit aspect ratio so content fills it */}
+              <div style={{ borderRadius: '5%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", aspectRatio: '9/17' }}>
+                {/* Nav */}
+                <div style={{ padding: '4% 5%', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '120%', fontWeight: 400 }}>Savvy</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    {[0,1,2].map(i => <div key={i} style={{ height: '1px', background: '#333', width: '14px' }} />)}
                   </div>
                 </div>
-                {/* Content */}
-                <div style={{ padding: '10px 8px' }}>
-                  <div style={{ width: '100%', height: '80px', borderRadius: '16px 0 0 0', overflow: 'hidden', background: '#c8c8c4', marginBottom: '7px' }}>
-                    {photoUrl && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
-                    )}
-                  </div>
-                  <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '14px', fontWeight: 400, color: '#111', marginBottom: '3px', lineHeight: 1.1 }}>
+                {/* Photo */}
+                <div style={{ width: '100%', aspectRatio: '4/3', overflow: 'hidden', background: '#c8c8c4' }}>
+                  {photoUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={photoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                  )}
+                </div>
+                {/* Text content */}
+                <div style={{ padding: '4% 5%' }}>
+                  <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '130%', fontWeight: 400, color: '#111', marginBottom: '2%', lineHeight: 1.1 }}>
                     {fullName || 'Your Name'}
                   </div>
-                  <div style={{ fontSize: '7px', color: '#777', marginBottom: '5px' }}>{form.cityAndState}</div>
-                  <p style={{ fontSize: '7px', color: '#444', lineHeight: 1.5, margin: '0 0 7px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  <div style={{ fontSize: '65%', color: '#777', marginBottom: '3%' }}>{form.cityAndState}</div>
+                  <p style={{ fontSize: '65%', color: '#444', lineHeight: 1.5, marginBottom: '4%', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {form.currentBio}
                   </p>
-                  <div style={{ fontSize: '7px', padding: '4px 8px', background: 'black', color: 'white', borderRadius: '2px', display: 'inline-block', fontWeight: 500 }}>Schedule a call</div>
+                  <div style={{ fontSize: '65%', padding: '3% 6%', background: 'black', color: 'white', borderRadius: '2px', display: 'inline-block', fontWeight: 500 }}>Schedule a call</div>
                 </div>
               </div>
-              {/* Home indicator */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }}>
-                <div style={{ width: '25%', height: '4px', background: '#444', borderRadius: '3px' }} />
+
+              {/* Home bar */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2%' }}>
+                <div style={{ width: '28%', height: '4px', background: '#555', borderRadius: '3px' }} />
               </div>
             </div>
           </div>

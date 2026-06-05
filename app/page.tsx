@@ -827,7 +827,7 @@ export default function AdvisorForm() {
         className="fixed inset-0 w-full h-full"
         style={{ objectFit: 'cover', objectPosition: 'center', filter: 'blur(8px)', transform: 'scale(1.1)', transformOrigin: 'center' }}
       />
-      <div className="fixed inset-0" style={{ backgroundColor: intro || introFading ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.08)', transition: 'background-color 1200ms ease' }} />
+      <div className="fixed inset-0" style={{ backgroundColor: intro || introFading ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.35)', transition: 'background-color 1200ms ease' }} />
 
       {/* ── Intro overlay — transparent, form card hidden behind it ── */}
       {(intro || introFading) && (

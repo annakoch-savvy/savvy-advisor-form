@@ -99,7 +99,9 @@ export async function POST(req: NextRequest) {
     const photoFile = formData.get('photo') as File | null;
     if (photoFile) {
       const photoBuffer = Buffer.from(await photoFile.arrayBuffer());
-      const photoPath = `${email.replace('@', '_').replace('.', '_')}/${Date.now()}_${photoFile.name}`;
+      const safeEmail = email.replace(/[@.]/g, '_');
+      const safeFilename = photoFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const photoPath = `${safeEmail}/${Date.now()}_${safeFilename}`;
       const { error: uploadError } = await supabaseAdmin.storage
         .from('advisor-photos')
         .upload(photoPath, photoBuffer, { contentType: photoFile.type || 'image/jpeg', upsert: true });

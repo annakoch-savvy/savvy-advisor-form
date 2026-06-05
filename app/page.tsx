@@ -41,7 +41,9 @@ interface FormData {
   email: string;
   phone: string;
   firmName: string;
-  fullName: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
   cityAndState: string;
   linkedIn: string;
   yearsOfExperience: string;
@@ -468,7 +470,9 @@ export default function AdvisorForm() {
     email: '',
     phone: '',
     firmName: '',
-    fullName: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
     cityAndState: '',
     linkedIn: '',
     yearsOfExperience: '',
@@ -546,7 +550,8 @@ export default function AdvisorForm() {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       e.email = 'Please enter a valid email address.';
     }
-    if (!form.fullName.trim()) e.fullName = 'Full name is required.';
+    if (!form.firstName.trim()) e.firstName = 'First name is required.';
+    if (!form.lastName.trim()) e.lastName = 'Last name is required.';
     if (!form.cityAndState.trim()) e.cityAndState = 'City and state is required.';
     if (!form.linkedIn.trim()) {
       e.linkedIn = 'LinkedIn URL is required.';
@@ -619,7 +624,8 @@ export default function AdvisorForm() {
       fd.append('email', form.email);
       fd.append('phone', form.phone);
       fd.append('firmName', form.firmName);
-      fd.append('fullName', form.fullName);
+      const fullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ');
+      fd.append('fullName', fullName);
       fd.append('cityAndState', form.cityAndState);
       fd.append('linkedIn', normalizeUrl(form.linkedIn));
       fd.append('yearsOfExperience', form.yearsOfExperience);
@@ -641,7 +647,7 @@ export default function AdvisorForm() {
       const res = await fetch('/api/submit', { method: 'POST', body: fd });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Submission failed.');
-      try { localStorage.setItem(LS_KEY, form.email || form.fullName); } catch { /* ignore */ }
+      try { localStorage.setItem(LS_KEY, form.email || form.firstName); } catch { /* ignore */ }
       clearDraft(form.email);
       setSubmitted(true);
     } catch (err: unknown) {
@@ -742,7 +748,7 @@ export default function AdvisorForm() {
           <img src="/savvy-logo-white.svg" alt="Savvy" className="h-8 mb-16 opacity-90" />
 
           <h1 className="text-[3.25rem] sm:text-[4rem] font-serif font-light tracking-[-0.04em] text-white leading-[1.05] mb-6">
-            Thank you,<br />{form.fullName.split(' ')[0] || 'there'}!
+            Thank you,<br />{form.firstName || 'there'}!
           </h1>
 
           <p className="text-white/70 text-base sm:text-lg font-light leading-relaxed max-w-lg mb-4">
@@ -795,15 +801,15 @@ export default function AdvisorForm() {
 
           <ul className="flex flex-col sm:flex-row gap-4 sm:gap-8 mb-8 text-sm text-white/60">
             <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <svg className="w-4 h-4 shrink-0" style={{ color: '#D79F32' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               Continuously updated
             </li>
             <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <svg className="w-4 h-4 shrink-0" style={{ color: '#095972' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               Optimized for SEO &amp; GEO
             </li>
             <li className="flex items-center gap-2">
-              <svg className="w-4 h-4 text-[#C7BCA1] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <svg className="w-4 h-4 shrink-0" style={{ color: '#175242' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
               Grows your digital presence
             </li>
           </ul>
@@ -907,7 +913,7 @@ export default function AdvisorForm() {
           <div className="md:hidden px-6 pt-3 pb-1">
             <div className="h-1 bg-gray-100 rounded-full">
               <div
-                className="h-1 bg-[#175242] rounded-full transition-all duration-500"
+                className="h-1 bg-[#D79F32] rounded-full transition-all duration-500"
                 style={{ width: `${(step / STEPS.length) * 100}%` }}
               />
             </div>
@@ -1090,7 +1096,11 @@ function StepBasicInfo({
               </div>
             )}
             <FloatInput label="Phone Number" value={form.phone} onChange={set('phone')} type="tel" />
-            <FloatInput label="Full Name" value={form.fullName} onChange={set('fullName')} error={errors.fullName} required />
+            <div className="grid grid-cols-3 gap-3">
+              <FloatInput label="First Name" value={form.firstName} onChange={set('firstName')} error={errors.firstName} required />
+              <FloatInput label="Middle Name / Initial" value={form.middleName} onChange={set('middleName')} />
+              <FloatInput label="Last Name" value={form.lastName} onChange={set('lastName')} error={errors.lastName} required />
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <FloatInput label="City, State" value={form.cityAndState} onChange={set('cityAndState')} error={errors.cityAndState} required />
               <FloatInput label="Years of Experience" value={form.yearsOfExperience} onChange={set('yearsOfExperience')} error={errors.yearsOfExperience} required />
@@ -1189,6 +1199,8 @@ function StepPhoto({
 
 // ─── Step 4: Bio & FAQ ────────────────────────────────────────────────────────
 
+const FAQ_ACCENT_COLORS = ['#175242', '#095972', '#D79F32', '#6B484D', '#A98EB1', '#B63D35', '#F19E70'];
+
 const FAQ_FIELDS: Array<{ key: keyof FormData; question: string; placeholder: string }> = [
   { key: 'howBecameAdvisor', question: 'How did you become a financial advisor?', placeholder: 'Share your journey into financial advising…' },
   { key: 'clientTypes', question: 'What types of clients do you work with?', placeholder: 'Describe the clients you typically serve…' },
@@ -1247,19 +1259,20 @@ function StepBioFaq({
         <div>
           <SectionLabel>FAQ Questions</SectionLabel>
           <div className="space-y-5">
-            {FAQ_FIELDS.map(({ key, question, placeholder }) => (
-              <FloatTextarea
-                key={key}
-                label={question}
-                value={form[key] as string}
-                onChange={set(key)}
-                placeholder={placeholder}
-                rows={3}
-                error={errors[key]}
-                required
-                showCompliance
-                showMic
-              />
+            {FAQ_FIELDS.map(({ key, question, placeholder }, idx) => (
+              <div key={key} style={{ borderLeft: `3px solid ${FAQ_ACCENT_COLORS[idx % FAQ_ACCENT_COLORS.length]}`, paddingLeft: '8px' }}>
+                <FloatTextarea
+                  label={question}
+                  value={form[key] as string}
+                  onChange={set(key)}
+                  placeholder={placeholder}
+                  rows={3}
+                  error={errors[key]}
+                  required
+                  showCompliance
+                  showMic
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -1289,7 +1302,8 @@ const TOPIC_ICONS_MAP: Record<string, string> = {
 
 function StepReview({ form }: { form: FormData }) {
   const photoUrl = form.photo ? URL.createObjectURL(form.photo) : null;
-  const firstName = form.fullName.split(' ')[0] || 'your';
+  const fullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ');
+  const firstName = form.firstName || 'your';
 
   return (
     <div className="max-w-3xl">
@@ -1327,15 +1341,15 @@ function StepReview({ form }: { form: FormData }) {
                 {/* Left */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '28px', fontWeight: 300, color: '#111', margin: '0 0 10px', lineHeight: 1.1 }}>
-                    {form.fullName || 'Your Name'}
+                    {fullName || 'Your Name'}
                   </h1>
                   <p style={{ fontSize: '8.5px', color: '#444', lineHeight: 1.6, marginBottom: '12px', display: '-webkit-box', WebkitLineClamp: 6, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {form.currentBio || 'Your bio will appear here...'}
                   </p>
-                  {form.fullName && (
+                  {fullName && (
                     <div style={{ marginBottom: '10px' }}>
                       <div style={{ fontSize: '7.5px', fontWeight: 600, color: '#111', marginBottom: '4px', letterSpacing: '0.05em' }}>
-                        {form.fullName.split(' ')[0].toUpperCase()}&apos;S TEAM:
+                        {(form.firstName || '').toUpperCase()}&apos;S TEAM:
                       </div>
                       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                         {['Savvy Investment Team'].map(t => (
@@ -1359,7 +1373,7 @@ function StepReview({ form }: { form: FormData }) {
                     <div style={{ position: 'relative', zIndex: 1, borderRadius: '0 0 0 60px', overflow: 'hidden', width: '130px', height: '148px', background: '#d0d0cc' }}>
                       {photoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={photoUrl} alt={form.fullName} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                        <img src={photoUrl} alt={fullName} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
                       ) : (
                         <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <svg style={{ width: '32px', height: '32px', color: '#aaa' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
@@ -1383,14 +1397,14 @@ function StepReview({ form }: { form: FormData }) {
                 <div style={{ padding: '18px 28px', background: '#f5f0e8', borderTop: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
                   <div>
                     <div style={{ fontSize: '7.5px', fontWeight: 600, color: '#888', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '4px' }}>
-                      How {form.fullName.split(' ')[0]} works with clients
+                      How {form.firstName || 'your advisor'} works with clients
                     </div>
                     <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '13px', fontStyle: 'italic', color: '#222', margin: 0, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                       &ldquo;{form.uniqueApproach}&rdquo;
                     </p>
                   </div>
                   <span style={{ fontSize: '7px', padding: '5px 10px', background: '#f0ebe0', color: '#333', borderRadius: '4px', whiteSpace: 'nowrap', flexShrink: 0, border: '1px solid #ddd' }}>
-                    Meet with {form.fullName.split(' ')[0]}
+                    Meet with {form.firstName || 'your advisor'}
                   </span>
                 </div>
               )}
@@ -1431,7 +1445,7 @@ function StepReview({ form }: { form: FormData }) {
               {/* Get to Know */}
               <div style={{ padding: '20px 28px', background: '#faf8f5', borderTop: '1px solid #eee' }}>
                 <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '20px', fontWeight: 300, color: '#111', margin: '0 0 8px' }}>
-                  Get to know {form.fullName.split(' ')[0] || 'your advisor'}
+                  Get to know {form.firstName || 'your advisor'}
                 </h2>
                 <p style={{ fontSize: '8px', color: '#555', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                   {form.currentBio || 'Your bio will appear here...'}
@@ -1480,7 +1494,7 @@ function StepReview({ form }: { form: FormData }) {
               </div>
               {/* Name */}
               <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: '7px', fontWeight: 300, color: '#111', marginBottom: '2px', lineHeight: 1.1 }}>
-                {form.fullName || 'Your Name'}
+                {fullName || 'Your Name'}
               </div>
               {/* Location */}
               <div style={{ fontSize: '4px', color: '#888', marginBottom: '2px' }}>{form.cityAndState}</div>
@@ -1503,7 +1517,7 @@ function StepReview({ form }: { form: FormData }) {
       <div className="space-y-5">
 
         {/* Profile card */}
-        <div className="rounded-xl border border-gray-100 overflow-hidden">
+        <div className="rounded-xl border border-gray-100 overflow-hidden" style={{ borderLeft: '3px solid #175242' }}>
           {/* Header with photo */}
           <div className="bg-[#175242] px-6 py-5 flex items-center gap-5">
             {form.photo ? (
@@ -1515,7 +1529,7 @@ function StepReview({ form }: { form: FormData }) {
               </div>
             )}
             <div>
-              <p className="text-white font-medium text-lg leading-tight">{form.fullName || '—'}</p>
+              <p className="text-white font-medium text-lg leading-tight">{fullName || '—'}</p>
               <p className="text-white/60 text-sm mt-0.5">{form.cityAndState || '—'}</p>
               <p className="text-white/50 text-xs mt-1">{form.yearsOfExperience ? `${form.yearsOfExperience} years of experience` : ''}{form.designations ? ` · ${form.designations}` : ''}</p>
             </div>
@@ -1553,7 +1567,7 @@ function StepReview({ form }: { form: FormData }) {
         </div>
 
         {/* Topics */}
-        <div className="rounded-xl border border-gray-100 px-5 py-4">
+        <div className="rounded-xl border border-gray-100 px-5 py-4" style={{ borderLeft: '3px solid #D79F32' }}>
           <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-3">Financial Topics</p>
           <div className="flex flex-wrap gap-2">
             {form.financialTopics.length > 0
@@ -1572,13 +1586,13 @@ function StepReview({ form }: { form: FormData }) {
         </div>
 
         {/* Bio */}
-        <div className="rounded-xl border border-gray-100 px-5 py-4">
+        <div className="rounded-xl border border-gray-100 px-5 py-4" style={{ borderLeft: '3px solid #095972' }}>
           <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400 mb-2">Bio</p>
           <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{form.currentBio || <span className="text-gray-300 italic">Not provided</span>}</p>
         </div>
 
         {/* FAQ */}
-        <div className="rounded-xl border border-gray-100 overflow-hidden">
+        <div className="rounded-xl border border-gray-100 overflow-hidden" style={{ borderLeft: '3px solid #6B484D' }}>
           <div className="px-5 py-3 border-b border-gray-50">
             <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-gray-400">FAQ</p>
           </div>

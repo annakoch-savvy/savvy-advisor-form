@@ -33,6 +33,8 @@ const TOPIC_ICONS: Record<string, string> = {
   'P&G Employee Services':      '/icons/small-business-tax.svg',
 };
 
+const ACCENT_COLORS = ['#175242', '#095972', '#6B484D', '#D79F32'];
+
 interface TopicsCheckboxProps {
   selected: string[];
   onChange: (selected: string[]) => void;
@@ -57,21 +59,23 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
       </p>
 
       <div className="grid grid-cols-2 gap-2">
-        {FINANCIAL_TOPICS.map((topic) => {
+        {FINANCIAL_TOPICS.map((topic, index) => {
           const isChecked = selected.includes(topic);
           const isDisabled = !isChecked && selected.length >= 4;
           const icon = TOPIC_ICONS[topic];
+          const accentColor = ACCENT_COLORS[index % ACCENT_COLORS.length];
 
           return (
             <label
               key={topic}
               className={`flex items-center gap-3 px-4 py-3.5 rounded-lg border cursor-pointer transition-all ${
-                isChecked
-                  ? 'border-[#8E7E57] bg-[#F5F0E6]'
-                  : isDisabled
+                isDisabled
                   ? 'border-gray-100 opacity-40 cursor-not-allowed bg-white'
+                  : isChecked
+                  ? 'bg-[#F5F0E6]'
                   : 'border-gray-200 bg-white hover:border-[#8E7E57]/50 hover:bg-[#FAF7F2]'
               }`}
+              style={isChecked ? { borderColor: accentColor, borderWidth: '1px', borderStyle: 'solid' } : undefined}
             >
               <input
                 type="checkbox"
@@ -103,7 +107,7 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
 
               {/* Checkmark */}
               {isChecked && (
-                <div className="ml-auto shrink-0 w-4 h-4 rounded-full bg-[#8E7E57] flex items-center justify-center">
+                <div className="ml-auto shrink-0 w-4 h-4 rounded-full flex items-center justify-center" style={{ backgroundColor: accentColor }}>
                   <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>

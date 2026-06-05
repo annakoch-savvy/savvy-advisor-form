@@ -1292,53 +1292,53 @@ function StepBioFaq({
   const answered = ALL_BIO_FAQ.filter(q => (form[q.key] as string)?.trim()).length;
 
   return (
-    <div className="w-full">
+    <div className="-mx-8 md:-mx-10 -mt-[46px] -mb-8 md:-mb-10 flex flex-col" style={{ minHeight: 'calc(100% + 46px + 40px)' }}>
 
-      {/* Large accordion-style card — accent color fills the top, white box below */}
-      <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-300">
+      {/* ── Colored section — question + interview note + dots ── */}
+      <div className="flex-1 flex flex-col px-10 pt-10 pb-8 transition-colors duration-300" style={{ backgroundColor: accentColor }}>
 
-        {/* ── Colored header — question only, full bleed ── */}
-        <div className="px-8 pt-10 pb-8 transition-colors duration-300" style={{ backgroundColor: accentColor }}>
-          <h2 className="text-[2rem] font-serif font-light leading-tight tracking-[-0.02em] text-white mb-6">
-            {current.question}
-          </h2>
-
-          {/* Dot nav */}
-          <div className="flex items-center gap-2">
-            {ALL_BIO_FAQ.map((q, i) => {
-              const isAnswered = !!(form[q.key] as string)?.trim();
-              const isActive = i === qIdx;
-              return (
-                <button
-                  key={q.key}
-                  type="button"
-                  onClick={() => setQIdx(i)}
-                  className="rounded-full transition-all duration-200"
-                  style={{
-                    width: isActive ? '28px' : '8px',
-                    height: '8px',
-                    backgroundColor: isActive ? 'rgba(255,255,255,0.95)' : isAnswered ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.2)',
-                  }}
-                  title={q.question}
-                />
-              );
-            })}
-          </div>
+        {/* Interview style note */}
+        <div className="flex items-center gap-2 mb-8">
+          <svg className="w-4 h-4 text-white/60 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
+          </svg>
+          <p className="text-white/60 text-xs">
+            Answer like you&apos;re being interviewed — speak naturally, we&apos;ll handle the writing.
+          </p>
         </div>
 
-        {/* ── White answer section ── */}
-        <div className="bg-white px-8 py-6">
+        {/* Question — takes remaining space */}
+        <h2 className="flex-1 text-[2.25rem] font-serif font-light leading-tight tracking-[-0.02em] text-white mb-8">
+          {current.question}
+        </h2>
 
-          {/* Speak hint row */}
-          <div className="flex items-center gap-2 mb-4">
-            <svg className="w-4 h-4 shrink-0" style={{ color: accentColor }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
-            </svg>
-            <p className="text-xs text-gray-400">
-              Tap the mic to speak your answer — just talk naturally.
-            </p>
-          </div>
+        {/* Dot nav */}
+        <div className="flex items-center gap-2">
+          {ALL_BIO_FAQ.map((q, i) => {
+            const isAnswered = !!(form[q.key] as string)?.trim();
+            const isActive = i === qIdx;
+            return (
+              <button
+                key={q.key}
+                type="button"
+                onClick={() => setQIdx(i)}
+                className="rounded-full transition-all duration-200"
+                style={{
+                  width: isActive ? '28px' : '8px',
+                  height: '8px',
+                  backgroundColor: isActive ? 'rgba(255,255,255,0.95)' : isAnswered ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.2)',
+                }}
+                title={q.question}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── White answer section ── */}
+      <div className="bg-white px-10 py-8">
+
 
           <FloatTextarea
             label=""
@@ -1385,9 +1385,8 @@ function StepBioFaq({
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
             </button>
           </div>
-        </div>
-
       </div>
+
     </div>
   );
 }

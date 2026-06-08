@@ -1890,7 +1890,7 @@ function StepReview({ form }: { form: FormData }) {
 
             {/* Bio */}
             <div style={{ flex: 1, padding: '0 4%', overflow: 'hidden', minHeight: 0 }}>
-              <p style={{ fontSize: '4.5px', color: '#333', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              <p style={{ fontSize: '5.5px', color: '#333', lineHeight: 1.6, margin: 0, display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {form.currentBio}
               </p>
             </div>

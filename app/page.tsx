@@ -1848,7 +1848,7 @@ function StepReview({ form }: { form: FormData }) {
 
           {/* ── Phone screen content — same approach as laptop ── */}
           {/* Phone screen — recalculated for -28.1% image offset */}
-          <div style={{ position: 'absolute', left: '78.0%', top: '46.6%', width: '15.4%', height: '52.3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3, display: 'flex', flexDirection: 'column', borderRadius: '6%' }}>
+          <div style={{ position: 'absolute', left: '78.0%', top: '48.6%', width: '15.4%', height: '50.3%', overflow: 'hidden', background: 'white', fontFamily: "'Jost', sans-serif", zIndex: 3, display: 'flex', flexDirection: 'column', borderRadius: '6%' }}>
 
             {/* Nav — Savvy + Sign in (plain text) + Find an Advisor (black pill) */}
             <div style={{ padding: '2% 4%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'white', flexShrink: 0 }}>

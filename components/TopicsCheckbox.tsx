@@ -4,62 +4,70 @@ import React from 'react';
 import Image from 'next/image';
 
 export const FINANCIAL_TOPICS = [
-  'Investment Management',
-  'Tax Optimization',
-  'Direct Indexing',
-  'Retirement Planning',
-  'Trust & Estate Planning',
-  'Risk Management',
-  'Business Succession Planning',
-  'Education Planning',
+  'Alternatives Investing',
+  'Budget and Debt Management',
+  'Employer-Sponsored Plans',
+  'Environment, Social and Governance (ESG) Investing',
+  'Equity Compensation',
+  'Estate & Trust Planning',
+  'Executive Compensation Planning',
   'Financial Planning & Analysis',
-  'Alternative Investments',
-  '401(k) for Businesses',
-  'P&G Employee Services',
+  'Income Planning',
+  'Investing for Women',
+  'Investment Management',
+  'Late-Stage College Planning',
+  'Legacy & Charitable Planning',
+  'LGBTQIA Planning',
+  'Personal Direct Indexing',
+  'Real Estate Investment Planning',
+  'Retirement Planning',
+  'Risk Management',
+  'Small Business Tax',
+  'Structured Planning',
+  'Succession Planning',
+  'Tax Optimization',
 ] as const;
 
 export const TOPIC_ICONS: Record<string, string> = {
-  'Investment Management':        '/icons/investment-management.svg',
-  'Tax Optimization':             '/icons/tax-optimization.svg',
-  'Direct Indexing':              '/icons/direct-indexing.svg',
-  'Retirement Planning':          '/icons/retirement-planning.svg',
-  'Trust & Estate Planning':      '/icons/trust-estate.svg',
-  'Risk Management':              '/icons/financial-planning.svg',
-  'Business Succession Planning': '/icons/succession-planning.svg',
-  'Education Planning':           '/icons/education-planning.svg',
-  'Financial Planning & Analysis':'/icons/financial-planning.svg',
-  'Alternative Investments':      '/icons/alternative-investments.svg',
-  '401(k) for Businesses':        '/icons/401k.svg',
-  'P&G Employee Services':        '/icons/small-business-tax.svg',
+  'Alternatives Investing':                          '/icons/alternative-investments.svg',
+  'Budget and Debt Management':                      '/icons/financial-planning.svg',
+  'Employer-Sponsored Plans':                        '/icons/401k.svg',
+  'Environment, Social and Governance (ESG) Investing': '/icons/financial-planning.svg',
+  'Equity Compensation':                             '/icons/financial-planning.svg',
+  'Estate & Trust Planning':                         '/icons/trust-estate.svg',
+  'Executive Compensation Planning':                 '/icons/financial-planning.svg',
+  'Financial Planning & Analysis':                   '/icons/financial-planning.svg',
+  'Income Planning':                                 '/icons/financial-planning.svg',
+  'Investing for Women':                             '/icons/financial-planning.svg',
+  'Investment Management':                           '/icons/investment-management.svg',
+  'Late-Stage College Planning':                     '/icons/education-planning.svg',
+  'Legacy & Charitable Planning':                    '/icons/trust-estate.svg',
+  'LGBTQIA Planning':                                '/icons/financial-planning.svg',
+  'Personal Direct Indexing':                        '/icons/direct-indexing.svg',
+  'Real Estate Investment Planning':                 '/icons/financial-planning.svg',
+  'Retirement Planning':                             '/icons/retirement-planning.svg',
+  'Risk Management':                                 '/icons/financial-planning.svg',
+  'Small Business Tax':                              '/icons/small-business-tax.svg',
+  'Structured Planning':                             '/icons/financial-planning.svg',
+  'Succession Planning':                             '/icons/succession-planning.svg',
+  'Tax Optimization':                                '/icons/tax-optimization.svg',
 };
 
-// All 8 brand accent colors in a varied (non-sequential) order
-// Dark/light alternates so adjacent cards contrast nicely
-// Dark = white text (passes 4.5:1), Light = dark text (#111, passes 4.5:1)
+// All 8 brand accent colors — cycle for any list length
 export const TOPIC_ACCENT_COLORS = [
-  '#175242', // Deep Green   — white text (9.04:1) ✅
-  '#D79F32', // Golden Yellow — dark text  (8.00:1) ✅
-  '#095972', // Deep Blue    — white text (7.83:1) ✅
-  '#C06F74', // Bright Mauve — dark text  (5.77:1) ✅
-  '#6B484D', // Maroon       — white text (7.90:1) ✅
-  '#F19E70', // Orange       — dark text  (9.87:1) ✅
-  '#B63D35', // Red          — white text (5.66:1) ✅
-  '#A98EB1', // Lavender     — dark text  (7.19:1) ✅
+  '#175242', // Deep Green
+  '#8a6320', // Dark Gold
+  '#095972', // Deep Blue
+  '#8a4045', // Dark Mauve
+  '#6B484D', // Maroon
+  '#b55518', // Dark Orange
+  '#B63D35', // Red
+  '#5c3d75', // Dark Lavender
 ];
 
-// Returns true if white text should be used on this background
-export function useWhiteText(hexColor: string): boolean {
-  const whiteContrast: Record<string, boolean> = {
-    '#175242': true,
-    '#D79F32': false,
-    '#095972': true,
-    '#C06F74': false,
-    '#6B484D': true,
-    '#F19E70': false,
-    '#B63D35': true,
-    '#A98EB1': false,
-  };
-  return whiteContrast[hexColor] ?? true;
+export function useWhiteText(_hexColor: string): boolean {
+  // All FAQ_CARD_COLORS pass WCAG AA with white text
+  return true;
 }
 
 interface TopicsCheckboxProps {
@@ -91,8 +99,6 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
           const isDisabled = !isChecked && selected.length >= 4;
           const icon = TOPIC_ICONS[topic];
           const accentColor = TOPIC_ACCENT_COLORS[index % TOPIC_ACCENT_COLORS.length];
-          // Always use white text/icons on colored backgrounds — design decision
-          const textColor = 'white';
 
           return (
             <label
@@ -119,31 +125,20 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
                     height={28}
                     className="w-7 h-7 object-contain transition-all"
                     style={{
-                      filter: isChecked
-                        ? 'brightness(0) invert(1)'
-                        : 'opacity(0.45)',
+                      filter: isChecked ? 'brightness(0) invert(1)' : 'opacity(0.45)',
                     }}
                   />
                 </div>
               )}
 
-              <span
-                className="text-sm leading-tight font-medium transition-colors"
-                style={{ color: isChecked ? textColor : undefined }}
-              >
+              <span className="text-sm leading-tight font-medium transition-colors"
+                style={{ color: isChecked ? 'white' : undefined }}>
                 {topic}
               </span>
 
               {isChecked && (
-                <div
-                  className="ml-auto shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
-                  style={{ background: 'rgba(255,255,255,0.25)' }}
-                >
-                  <svg
-                    className="w-3 h-3"
-                    style={{ color: textColor }}
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                  >
+                <div className="ml-auto shrink-0 w-5 h-5 rounded-full bg-white/25 flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>

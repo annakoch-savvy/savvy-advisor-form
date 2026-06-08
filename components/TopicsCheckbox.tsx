@@ -77,12 +77,15 @@ interface TopicsCheckboxProps {
 }
 
 export default function TopicsCheckbox({ selected, onChange, error }: TopicsCheckboxProps) {
+  // Filter out any stale topics not in current list (e.g. from old drafts)
+  const validSelected = selected.filter(t => (FINANCIAL_TOPICS as readonly string[]).includes(t));
+
   const handleToggle = (topic: string) => {
-    if (selected.includes(topic)) {
-      onChange(selected.filter((t) => t !== topic));
+    if (validSelected.includes(topic)) {
+      onChange(validSelected.filter((t) => t !== topic));
     } else {
-      if (selected.length >= 4) return;
-      onChange([...selected, topic]);
+      if (validSelected.length >= 4) return;
+      onChange([...validSelected, topic]);
     }
   };
 
@@ -90,13 +93,13 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
     <div>
       <p className="text-sm text-gray-500 mb-5">
         Select <strong>3–4 topics</strong> that best describe your expertise.
-        <span className="ml-2 text-xs text-gray-400">{selected.length}/4 selected</span>
+        <span className="ml-2 text-xs text-gray-400">{validSelected.length}/4 selected</span>
       </p>
 
       <div className="grid grid-cols-2 gap-2">
         {FINANCIAL_TOPICS.map((topic, index) => {
-          const isChecked = selected.includes(topic);
-          const isDisabled = !isChecked && selected.length >= 4;
+          const isChecked = validSelected.includes(topic);
+          const isDisabled = !isChecked && validSelected.length >= 4;
           const icon = TOPIC_ICONS[topic];
           const accentColor = TOPIC_ACCENT_COLORS[index % TOPIC_ACCENT_COLORS.length];
 

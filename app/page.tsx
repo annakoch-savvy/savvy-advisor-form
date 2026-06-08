@@ -105,22 +105,22 @@ const STEPS = [
     ),
   },
   {
-    number: 3, label: 'Photo',
-    description: 'Your professional headshot',
-    color: '#6B484D',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>
-      </svg>
-    ),
-  },
-  {
-    number: 4, label: 'Bio & FAQ',
+    number: 3, label: 'Bio & FAQ',
     description: 'Your story and advisor approach',
     color: '#B63D35',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+      </svg>
+    ),
+  },
+  {
+    number: 4, label: 'Photo',
+    description: 'Optional — or email us later',
+    color: '#6B484D',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>
       </svg>
     ),
   },
@@ -636,15 +636,8 @@ export default function AdvisorForm() {
     return Object.keys(e).length === 0;
   };
 
+  // Step 3 = Bio & FAQ
   const validateStep3 = (): boolean => {
-    const e: Errors = {};
-    if (!form.photo) e.photo = 'A photo is required.';
-    else if (!isImageFile(form.photo)) e.photo = 'File must be an image (JPG, PNG, GIF, or WebP).';
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
-
-  const validateStep4 = (): boolean => {
     const e: Errors = {};
     const textFields: Array<[keyof FormData, string]> = [
       ['currentBio', 'Current bio is required.'],
@@ -655,12 +648,19 @@ export default function AdvisorForm() {
       ['uniqueApproach', 'This field is required.'],
       ['favoritePartWorking', 'This field is required.'],
       ['likesAboutSavvy', 'This field is required.'],
-      ['designations', 'This field is required.'],
     ];
     textFields.forEach(([field, msg]) => {
       const val = form[field];
       if (typeof val === 'string' && !val.trim()) e[field] = msg;
     });
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  // Step 4 = Photo — optional, only validate format if a file was provided
+  const validateStep4 = (): boolean => {
+    const e: Errors = {};
+    if (form.photo && !isImageFile(form.photo)) e.photo = 'File must be an image (JPG, PNG, GIF, or WebP).';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -1042,10 +1042,10 @@ export default function AdvisorForm() {
               <StepTopics form={form} errors={errors} setVal={setVal} />
             )}
             {step === 3 && (
-              <StepPhoto form={form} errors={errors} photoInputRef={photoInputRef} setVal={setVal} />
+              <StepBioFaq form={form} errors={errors} set={set} />
             )}
             {step === 4 && (
-              <StepBioFaq form={form} errors={errors} set={set} />
+              <StepPhoto form={form} errors={errors} photoInputRef={photoInputRef} setVal={setVal} />
             )}
             {step === 5 && (
               <StepReview form={form} />
@@ -1342,8 +1342,16 @@ function StepPhoto({
   const previewUrl = form.photo ? URL.createObjectURL(form.photo) : null;
   return (
     <div className="max-w-2xl">
-      <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Profile Photo</h2>
-      <p className="text-sm text-gray-500 mb-6">Upload a professional headshot for your advisor page.</p>
+      <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Profile Photo <span className="text-base font-sans font-light text-gray-400 tracking-normal">— Optional</span></h2>
+      <p className="text-sm text-gray-500 mb-3">Upload a professional headshot for your advisor page, or skip for now.</p>
+      <div className="flex items-start gap-2 mb-6 px-4 py-3 bg-[#175242]/5 rounded-lg border border-[#175242]/15">
+        <svg className="w-4 h-4 text-[#175242] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <p className="text-sm text-gray-600">
+          No photo handy? Feel free to email it to{' '}
+          <a href="mailto:marketing@savvywealth.com" className="text-[#175242] font-medium hover:underline">marketing@savvywealth.com</a>
+          {' '}and we&apos;ll add it to your page.
+        </p>
+      </div>
 
       {previewUrl ? (
         /* ── Photo uploaded: full-width preview with overlay actions ── */
@@ -1385,7 +1393,7 @@ function StepPhoto({
           </div>
           <div className="text-center">
             <p className="text-sm font-medium text-gray-700">Click to upload your headshot</p>
-            <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP · No cropping — shown as uploaded</p>
+            <p className="text-xs text-gray-400 mt-1">JPG, PNG, or WebP · Or skip and email it later</p>
           </div>
         </button>
       )}

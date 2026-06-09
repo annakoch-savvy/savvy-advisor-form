@@ -68,6 +68,7 @@ export async function GET(req: NextRequest) {
       title: data.title || '',
       blogPost: data.blog_post || '',
       anythingElse: data.anything_else || '',
+      photoPath: data.photo_url || '',
       savedAt: data.updated_at || data.created_at,
     },
   });

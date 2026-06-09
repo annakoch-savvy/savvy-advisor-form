@@ -119,7 +119,6 @@ export async function POST(req: NextRequest) {
       full_name: fullName,
       phone: String(formData.get('phone') || ''),
       city_and_state: String(formData.get('cityAndState') || ''),
-      linkedin: String(formData.get('linkedIn') || ''),
       years_of_experience: String(formData.get('yearsOfExperience') || ''),
       page_type: String(formData.get('pageType') || 'solo_savvy'),
       firm_name: String(formData.get('firmName') || '') || String(formData.get('dbaName') || ''),

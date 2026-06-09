@@ -45,7 +45,6 @@ interface FormData {
   middleName: string;
   lastName: string;
   cityAndState: string;
-  linkedIn: string;
   yearsOfExperience: string;
   dbaName: string;
   financialTopics: string[];
@@ -60,8 +59,6 @@ interface FormData {
   likesAboutSavvy: string;
   designations: string;
   title: string;
-  aum: string;
-  households: string;
   blogPost: string;
   anythingElse: string;
 }
@@ -525,7 +522,6 @@ export default function AdvisorForm() {
     middleName: '',
     lastName: '',
     cityAndState: '',
-    linkedIn: '',
     yearsOfExperience: '',
     dbaName: '',
     financialTopics: [],
@@ -540,8 +536,6 @@ export default function AdvisorForm() {
     likesAboutSavvy: '',
     designations: '',
     title: '',
-    aum: '',
-    households: '',
     blogPost: '',
     anythingElse: '',
   });
@@ -637,11 +631,6 @@ export default function AdvisorForm() {
     if (!form.firstName.trim()) e.firstName = 'First name is required.';
     if (!form.lastName.trim()) e.lastName = 'Last name is required.';
     if (!form.cityAndState.trim()) e.cityAndState = 'City and state is required.';
-    if (!form.linkedIn.trim()) {
-      e.linkedIn = 'LinkedIn URL is required.';
-    } else if (!isValidUrl(normalizeUrl(form.linkedIn))) {
-      e.linkedIn = 'Please enter a valid URL.';
-    }
     if (!form.yearsOfExperience.trim()) e.yearsOfExperience = 'Years of experience is required.';
     if (isDbaPageType(form.pageType) && !form.firmName.trim()) e.firmName = 'Firm / Brand Name is required.';
     setErrors(e);
@@ -715,7 +704,6 @@ export default function AdvisorForm() {
       const fullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ');
       fd.append('fullName', fullName);
       fd.append('cityAndState', form.cityAndState);
-      fd.append('linkedIn', normalizeUrl(form.linkedIn));
       fd.append('yearsOfExperience', form.yearsOfExperience);
       fd.append('dbaName', form.firmName);
       fd.append('financialTopics', JSON.stringify(form.financialTopics));
@@ -729,8 +717,6 @@ export default function AdvisorForm() {
       fd.append('likesAboutSavvy', form.likesAboutSavvy);
       fd.append('designations', form.designations);
       fd.append('title', form.title);
-      fd.append('aum', form.aum);
-      fd.append('households', form.households);
       fd.append('blogPost', form.blogPost);
       fd.append('anythingElse', form.anythingElse);
       if (form.photo) {
@@ -1136,7 +1122,6 @@ export default function AdvisorForm() {
                       fd.append('fullName', fullName2);
                       fd.append('email', form.email);
                       fd.append('cityAndState', form.cityAndState);
-                      fd.append('linkedIn', form.linkedIn);
                       fd.append('yearsOfExperience', form.yearsOfExperience);
                       fd.append('pageType', form.pageType);
                       fd.append('firmName', form.firmName);
@@ -1297,7 +1282,6 @@ function StepBasicInfo({
               <FloatInput label="City, State" value={form.cityAndState} onChange={set('cityAndState')} error={errors.cityAndState} required />
               <FloatInput label="Years of Experience" value={form.yearsOfExperience} onChange={set('yearsOfExperience')} error={errors.yearsOfExperience} required />
             </div>
-            <FloatInput label="LinkedIn URL" value={form.linkedIn} onChange={set('linkedIn')} type="url" error={errors.linkedIn} required />
             {isDbaPageType(form.pageType) && (
               <FloatInput label="Firm / Brand Name" value={form.firmName} onChange={set('firmName')} error={errors.firmName} required />
             )}
@@ -1309,16 +1293,6 @@ function StepBasicInfo({
                 onChange={set('designations')}
               />
               <p className="text-xs text-gray-400 mt-1 pl-1">If joining as a team, list each member: e.g. "Steven Harp, CFP®, ChFC®"</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <FloatInput label="Approximate AUM" value={form.aum} onChange={set('aum')} />
-                <p className="text-xs text-gray-400 mt-1 pl-1">Optional — e.g. "$150 million"</p>
-              </div>
-              <div>
-                <FloatInput label="Households Served" value={form.households} onChange={set('households')} />
-                <p className="text-xs text-gray-400 mt-1 pl-1">Optional — e.g. "approximately 200"</p>
-              </div>
             </div>
           </FieldGroup>
         </div>
@@ -1944,12 +1918,9 @@ function StepReview({ form }: { form: FormData }) {
                 ['Email', form.email],
                 ['Phone', form.phone],
                 ['Location', form.cityAndState],
-                ['LinkedIn', form.linkedIn],
                 ['Experience', form.yearsOfExperience ? `${form.yearsOfExperience} years` : ''],
                 ['Page Type', PAGE_TYPE_LABELS[form.pageType]],
                 ['Designations', form.designations],
-                ['Approx. AUM', form.aum],
-                ['Households Served', form.households],
                 ...(isDbaPageType(form.pageType) ? [['Firm / Brand', form.firmName]] : []),
               ].map(([label, value]) => value ? (
                 <div key={label}>

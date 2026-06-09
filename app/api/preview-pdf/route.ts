@@ -34,7 +34,6 @@ export async function POST(req: NextRequest) {
       fullName:           String(formData.get('fullName') || ''),
       email:              String(formData.get('email') || ''),
       cityAndState:       String(formData.get('cityAndState') || ''),
-      linkedIn:           String(formData.get('linkedIn') || ''),
       yearsOfExperience:  String(formData.get('yearsOfExperience') || ''),
       pageType:           String(formData.get('pageType') || 'solo_savvy'),
       firmName:           String(formData.get('firmName') || ''),
@@ -119,7 +118,6 @@ export async function POST(req: NextRequest) {
     drawField('Name', data.fullName);
     drawField('Email', data.email);
     drawField('Location', data.cityAndState);
-    drawField('LinkedIn', data.linkedIn);
     drawField('Experience', data.yearsOfExperience + ' years');
     drawField('Designations', data.designations);
     drawField('Page Type', PAGE_TYPE_LABELS[data.pageType as keyof typeof PAGE_TYPE_LABELS] || data.pageType);

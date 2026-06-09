@@ -2009,33 +2009,14 @@ function StepReview({ form }: { form: FormData }) {
           </AccordionSection>
         </div>
 
-        {/* FAQ — order 5, after mockup */}
-        <div style={{ order: 5 }}>
-          <AccordionSection
-            title={`FAQ · ${[form.howBecameAdvisor, form.clientTypes, form.areasOfExpertise, form.strategies, form.uniqueApproach, form.favoritePartWorking, form.likesAboutSavvy, form.blogPost, form.anythingElse].filter(Boolean).length} of 9 answered`}
-            color="#6B484D"
-            icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>}
-            summary="Click to review your answers"
-          >
-            <div className="space-y-4">
-              {[
-                { q: 'How did you become a financial advisor?', v: form.howBecameAdvisor },
-                { q: 'What types of clients do you work with?', v: form.clientTypes },
-                { q: 'What areas of expertise do you have?', v: form.areasOfExpertise },
-                { q: 'What strategies do you help clients with?', v: form.strategies },
-                { q: 'What sets you apart?', v: form.uniqueApproach },
-                { q: 'Favorite part about working with clients?', v: form.favoritePartWorking },
-                { q: 'What do you like about working with Savvy?', v: form.likesAboutSavvy },
-                { q: 'Blog post on savvywealth.com?', v: form.blogPost },
-                { q: 'Anything else to include?', v: form.anythingElse },
-              ].map(({ q, v }) => (
-                <div key={q}>
-                  <p className="text-xs font-medium text-gray-400 mb-1">{q}</p>
-                  <p className="text-sm text-gray-700 leading-relaxed">{v || <span className="italic text-gray-300">Not provided</span>}</p>
-                </div>
-              ))}
-            </div>
-          </AccordionSection>
+        {/* Recap notice — order 5 */}
+        <div style={{ order: 5 }} className="flex items-start gap-3 px-5 py-4 rounded-full bg-[#175242]/8">
+          <svg className="w-5 h-5 text-[#175242] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          <p className="text-sm text-[#175242]">
+            <span className="font-medium">You&apos;ll receive a recap of your submission</span> to <span className="font-medium">{form.email}</span> once it&apos;s been reviewed by the Savvy team.
+          </p>
         </div>
 
       </div>

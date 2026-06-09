@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import TopicsCheckbox, { TOPIC_ACCENT_COLORS, FINANCIAL_TOPICS as TOPICS_LIST, useWhiteText } from '@/components/TopicsCheckbox';
 import { checkCompliance } from '@/lib/compliance';
 import { PageType, PAGE_TYPE_LABELS } from '@/lib/emailTemplate';
@@ -280,7 +280,12 @@ function FloatInput({
 }
 
 function ComplianceWarning({ text }: { text: string }) {
-  const terms = checkCompliance(text);
+  const [debouncedText, setDebouncedText] = useState(text);
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedText(text), 600);
+    return () => clearTimeout(t);
+  }, [text]);
+  const terms = checkCompliance(debouncedText);
   if (terms.length === 0) return null;
   return (
     <div className="mt-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
@@ -606,49 +611,56 @@ export default function AdvisorForm() {
     setGateError('');
     setGateLoading(true);
     try {
-      // Look up saved draft from Supabase (works on any device)
-      const res = await fetch(`/api/lookup-draft?email=${encodeURIComponent(gateEmailRef.current.trim())}`);
-      const { draft } = res.ok ? await res.json() : { draft: null };
+      const email = gateEmailRef.current.trim();
+      setForm((prev) => ({ ...prev, email }));
 
-      setForm((prev) => ({ ...prev, email: gateEmailRef.current }));
+      const cacheKey = `savvy_lookup_${email}`;
+      let draft: DraftData | null = null;
+      let advisor: Record<string, string> | null = null;
+
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        draft = parsed.draft;
+        advisor = parsed.advisor;
+      } else {
+        // Fire Supabase + Airtable lookups simultaneously
+        const [draftRes, airtableRes] = await Promise.all([
+          fetch(`/api/lookup-draft?email=${encodeURIComponent(email)}`).then(r => r.ok ? r.json() : { draft: null }).catch(() => ({ draft: null })),
+          fetch(`/api/lookup-airtable?email=${encodeURIComponent(email)}`).then(r => r.ok ? r.json() : { advisor: null }).catch(() => ({ advisor: null })),
+        ]);
+        draft = draftRes.draft;
+        advisor = airtableRes.advisor;
+        sessionStorage.setItem(cacheKey, JSON.stringify({ draft, advisor }));
+      }
 
       if (draft) {
-        // Supabase draft takes priority — pre-fill everything
-        setForm((prev) => ({ ...prev, ...draft, email: gateEmailRef.current, photo: null }));
-        setDraftBanner({ draft: { ...draft, savedAt: draft.savedAt || new Date().toISOString() } });
+        // Supabase draft takes priority
+        setForm((prev) => ({ ...prev, ...draft, email, photo: null }));
+        setDraftBanner({ draft: { ...draft, savedAt: (draft as DraftData).savedAt || new Date().toISOString() } });
+      } else if (advisor) {
+        // Airtable pre-fill
+        setForm((prev) => ({
+          ...prev,
+          email,
+          firstName: advisor!.firstName || prev.firstName,
+          middleName: advisor!.middleName || prev.middleName,
+          lastName: advisor!.lastName || prev.lastName,
+          phone: advisor!.phone || prev.phone,
+          cityAndState: advisor!.cityAndState || prev.cityAndState,
+          firmName: advisor!.firmName || prev.firmName,
+          designations: advisor!.designations || prev.designations,
+          currentBio: advisor!.currentBio || prev.currentBio,
+          yearsOfExperience: advisor!.yearsOfExperience || prev.yearsOfExperience,
+          linkedIn: advisor!.linkedIn || prev.linkedIn,
+        }));
       } else {
-        // No Supabase draft — check Airtable for existing advisor record
-        let airtableApplied = false;
-        try {
-          const atRes = await fetch(`/api/lookup-airtable?email=${encodeURIComponent(gateEmailRef.current.trim())}`);
-          const { advisor } = atRes.ok ? await atRes.json() : { advisor: null };
-          if (advisor) {
-            setForm((prev) => ({
-              ...prev,
-              email: gateEmailRef.current,
-              firstName: advisor.firstName || prev.firstName,
-              middleName: advisor.middleName || prev.middleName,
-              lastName: advisor.lastName || prev.lastName,
-              phone: advisor.phone || prev.phone,
-              cityAndState: advisor.cityAndState || prev.cityAndState,
-              firmName: advisor.firmName || prev.firmName,
-              designations: advisor.designations || prev.designations,
-              currentBio: advisor.currentBio || prev.currentBio,
-              yearsOfExperience: advisor.yearsOfExperience || prev.yearsOfExperience,
-              linkedIn: advisor.linkedIn || prev.linkedIn,
-            }));
-            airtableApplied = true;
-          }
-        } catch { /* Airtable lookup is best-effort */ }
-
-        // Fall back to localStorage draft if nothing else
-        if (!airtableApplied) {
-          const localDraft = loadDraft(gateEmailRef.current);
-          if (localDraft) {
-            const { savedAt: _s, ...fields } = localDraft;
-            setForm((prev) => ({ ...prev, ...fields, email: gateEmailRef.current }));
-            setDraftBanner({ draft: localDraft });
-          }
+        // localStorage fallback
+        const localDraft = loadDraft(email);
+        if (localDraft) {
+          const { savedAt: _s, ...fields } = localDraft;
+          setForm((prev) => ({ ...prev, ...fields, email }));
+          setDraftBanner({ draft: localDraft });
         }
       }
       setEmailGate(false);
@@ -1890,12 +1902,7 @@ function StepReview({ form }: { form: FormData }) {
   const fullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ');
   const firstName = form.firstName || 'your';
 
-  return (
-    <div className="max-w-3xl">
-      <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Almost there.</h2>
-      <p className="text-sm text-gray-500 mb-6">Take a moment to review before we build your page.</p>
-
-      {/* ── Page mockup preview — order:4 puts it after Bio (order:3) and before FAQ (order:5) ── */}
+  const mockupPreview = useMemo(() => (
       <div className="mb-8 mt-10" style={{ order: 4 }}>
         <p className="text-[10px] font-medium tracking-[0.14em] uppercase text-gray-400 mb-6">Your Page Preview</p>
 
@@ -2122,6 +2129,14 @@ function StepReview({ form }: { form: FormData }) {
           <p className="text-[10px] text-gray-400">Our designers and writers will review all your information and refine the content before your page goes live on savvywealth.com.</p>
         </div>
       </div>
+  ), [fullName, form.firstName, form.currentBio, form.cityAndState, form.financialTopics, form.designations, form.uniqueApproach, photoUrl]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <div className="max-w-3xl">
+      <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Almost there.</h2>
+      <p className="text-sm text-gray-500 mb-6">Take a moment to review before we build your page.</p>
+
+      {mockupPreview}
 
       <div className="space-y-2" style={{ display: 'flex', flexDirection: 'column' }}>
 

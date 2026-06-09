@@ -76,6 +76,52 @@ interface TopicsCheckboxProps {
   error?: string;
 }
 
+interface TopicCardProps {
+  topic: string;
+  index: number;
+  isChecked: boolean;
+  isDisabled: boolean;
+  onToggle: (topic: string) => void;
+}
+
+const TopicCard = React.memo(function TopicCard({ topic, index, isChecked, isDisabled, onToggle }: TopicCardProps) {
+  const icon = TOPIC_ICONS[topic];
+  const accentColor = TOPIC_ACCENT_COLORS[index % TOPIC_ACCENT_COLORS.length];
+  return (
+    <label
+      key={topic}
+      className={`flex items-center gap-3 px-4 py-3.5 rounded-lg border cursor-pointer transition-all ${
+        isDisabled ? 'border-gray-100 opacity-40 cursor-not-allowed bg-white' : ''
+      } ${!isChecked && !isDisabled ? 'border-gray-200 bg-white hover:border-gray-400 hover:bg-gray-50' : ''}`}
+      style={isChecked ? { backgroundColor: accentColor, borderColor: accentColor } : undefined}
+    >
+      <input
+        type="checkbox"
+        checked={isChecked}
+        disabled={isDisabled}
+        onChange={() => onToggle(topic)}
+        className="sr-only"
+      />
+      {icon && (
+        <div className="shrink-0 w-7 h-7 flex items-center justify-center">
+          <Image src={icon} alt="" width={28} height={28} className="w-7 h-7 object-contain transition-all"
+            style={{ filter: isChecked ? 'brightness(0) invert(1)' : 'opacity(0.45)' }} />
+        </div>
+      )}
+      <span className="text-sm leading-tight font-medium transition-colors" style={{ color: isChecked ? 'white' : undefined }}>
+        {topic}
+      </span>
+      {isChecked && (
+        <div className="ml-auto shrink-0 w-5 h-5 rounded-full bg-white/25 flex items-center justify-center">
+          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      )}
+    </label>
+  );
+});
+
 export default function TopicsCheckbox({ selected, onChange, error }: TopicsCheckboxProps) {
   // Filter out any stale topics not in current list (e.g. from old drafts)
   const validSelected = selected.filter(t => (FINANCIAL_TOPICS as readonly string[]).includes(t));
@@ -100,53 +146,16 @@ export default function TopicsCheckbox({ selected, onChange, error }: TopicsChec
         {FINANCIAL_TOPICS.map((topic, index) => {
           const isChecked = validSelected.includes(topic);
           const isDisabled = !isChecked && validSelected.length >= 4;
-          const icon = TOPIC_ICONS[topic];
-          const accentColor = TOPIC_ACCENT_COLORS[index % TOPIC_ACCENT_COLORS.length];
 
           return (
-            <label
+            <TopicCard
               key={topic}
-              className={`flex items-center gap-3 px-4 py-3.5 rounded-lg border cursor-pointer transition-all ${
-                isDisabled ? 'border-gray-100 opacity-40 cursor-not-allowed bg-white' : ''
-              } ${!isChecked && !isDisabled ? 'border-gray-200 bg-white hover:border-gray-400 hover:bg-gray-50' : ''}`}
-              style={isChecked ? { backgroundColor: accentColor, borderColor: accentColor } : undefined}
-            >
-              <input
-                type="checkbox"
-                checked={isChecked}
-                disabled={isDisabled}
-                onChange={() => handleToggle(topic)}
-                className="sr-only"
-              />
-
-              {icon && (
-                <div className="shrink-0 w-7 h-7 flex items-center justify-center">
-                  <Image
-                    src={icon}
-                    alt=""
-                    width={28}
-                    height={28}
-                    className="w-7 h-7 object-contain transition-all"
-                    style={{
-                      filter: isChecked ? 'brightness(0) invert(1)' : 'opacity(0.45)',
-                    }}
-                  />
-                </div>
-              )}
-
-              <span className="text-sm leading-tight font-medium transition-colors"
-                style={{ color: isChecked ? 'white' : undefined }}>
-                {topic}
-              </span>
-
-              {isChecked && (
-                <div className="ml-auto shrink-0 w-5 h-5 rounded-full bg-white/25 flex items-center justify-center">
-                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-              )}
-            </label>
+              topic={topic}
+              index={index}
+              isChecked={isChecked}
+              isDisabled={isDisabled}
+              onToggle={handleToggle}
+            />
           );
         })}
       </div>

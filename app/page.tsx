@@ -1690,7 +1690,7 @@ function StepBioFaq({
         {/* Halfway encouragement banner */}
         {showMomentum && (
           <div className="mb-4 flex items-center gap-2 bg-white/15 rounded-lg px-3 py-2">
-            <span className="text-white text-sm">🎉</span>
+            <svg className="w-4 h-4 text-white/80 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
             <p className="text-white/80 text-xs leading-snug">
               You&apos;re over halfway — the rest of these help us write an even stronger page.
             </p>

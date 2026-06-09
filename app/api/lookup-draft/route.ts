@@ -18,13 +18,37 @@ export async function GET(req: NextRequest) {
 
   if (!data) return NextResponse.json({ draft: null });
 
+  // Smart name splitting: "Anna T. Koch" → first="Anna", middle="T.", last="Koch"
+  // Single initial (1-2 chars ending in .) in middle position = middle name
+  const nameParts = (data.full_name || '').trim().split(/\s+/).filter(Boolean);
+  let firstName = '', middleName = '', lastName = '';
+  if (nameParts.length === 1) {
+    firstName = nameParts[0];
+  } else if (nameParts.length === 2) {
+    firstName = nameParts[0];
+    lastName = nameParts[1];
+  } else if (nameParts.length >= 3) {
+    firstName = nameParts[0];
+    const possibleMiddle = nameParts[1];
+    // Middle initial: 1-2 chars, optionally ending with period
+    const isInitial = /^[A-Za-z]{1,2}\.?$/.test(possibleMiddle);
+    if (isInitial) {
+      middleName = possibleMiddle;
+      lastName = nameParts.slice(2).join(' ');
+    } else {
+      // Multi-word last name with no middle: "Mary Jane Watson"
+      middleName = '';
+      lastName = nameParts.slice(1).join(' ');
+    }
+  }
+
   // Map snake_case back to camelCase for the form
   return NextResponse.json({
     draft: {
       email: data.email,
-      firstName: (data.full_name || '').split(' ')[0] || '',
-      middleName: '',
-      lastName: (data.full_name || '').split(' ').slice(1).join(' ') || '',
+      firstName,
+      middleName,
+      lastName,
       phone: data.phone || '',
       cityAndState: data.city_and_state || '',
       linkedIn: data.linkedin || data.linked_in || '',

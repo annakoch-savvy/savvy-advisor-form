@@ -11,7 +11,8 @@ export async function POST(req: NextRequest) {
 
     const draft = {
       email,
-      full_name: body.fullName || '',
+      // Reconstruct full name from parts if fullName not provided
+      full_name: body.fullName || [body.firstName, body.middleName, body.lastName].filter(Boolean).join(' '),
       phone: body.phone || '',
       city_and_state: body.cityAndState || '',
       linkedin: body.linkedIn || '',

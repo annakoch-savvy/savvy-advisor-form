@@ -561,7 +561,10 @@ export default function AdvisorForm() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...form, fullName }),
         });
-        setDraftSavedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+        const now = new Date();
+        const dateStr = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        setDraftSavedAt(`${dateStr} at ${timeStr}`);
       } catch { /* silent — draft save is best-effort */ }
     }, 2000);
     return () => { if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); };
@@ -1097,7 +1100,7 @@ export default function AdvisorForm() {
           {draftSavedAt && form.email && (
             <div className="px-8 md:px-10 py-1.5 flex items-center gap-1.5 bg-gray-50 border-t border-gray-100">
               <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-              <span className="text-xs text-gray-400">Draft saved</span>
+              <span className="text-xs text-gray-400">Last saved {draftSavedAt}</span>
             </div>
           )}
 

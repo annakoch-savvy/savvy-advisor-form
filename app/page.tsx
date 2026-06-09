@@ -507,6 +507,7 @@ export default function AdvisorForm() {
   const [draftSavedAt, setDraftSavedAt] = useState<string>('');
   const photoInputRef = useRef<HTMLInputElement>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const gateEmailRef = useRef('');
 
   // Check localStorage on mount
   useEffect(() => {
@@ -514,6 +515,8 @@ export default function AdvisorForm() {
       if (localStorage.getItem(LS_KEY)) setAlreadySubmitted(true);
     } catch { /* ignore */ }
   }, []);
+
+  useEffect(() => { gateEmailRef.current = gateEmail; }, [gateEmail]);
 
   const [form, setForm] = useState<FormData>({
     pageType: 'solo_savvy',
@@ -587,11 +590,11 @@ export default function AdvisorForm() {
   // ── Gate submit ─────────────────────────────────────────────────────────────
 
   const handleGateSubmit = async () => {
-    if (!gateEmail.trim()) {
+    if (!gateEmailRef.current.trim()) {
       setGateError('Please enter your email address.');
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gateEmail)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gateEmailRef.current)) {
       setGateError('Please enter a valid email address.');
       return;
     }
@@ -599,25 +602,25 @@ export default function AdvisorForm() {
     setGateLoading(true);
     try {
       // Look up saved draft from Supabase (works on any device)
-      const res = await fetch(`/api/lookup-draft?email=${encodeURIComponent(gateEmail.trim())}`);
+      const res = await fetch(`/api/lookup-draft?email=${encodeURIComponent(gateEmailRef.current.trim())}`);
       const { draft } = res.ok ? await res.json() : { draft: null };
 
-      setForm((prev) => ({ ...prev, email: gateEmail }));
+      setForm((prev) => ({ ...prev, email: gateEmailRef.current }));
 
       if (draft) {
         // Supabase draft takes priority — pre-fill everything
-        setForm((prev) => ({ ...prev, ...draft, email: gateEmail, photo: null }));
+        setForm((prev) => ({ ...prev, ...draft, email: gateEmailRef.current, photo: null }));
         setDraftBanner({ draft: { ...draft, savedAt: draft.savedAt || new Date().toISOString() } });
       } else {
         // No Supabase draft — check Airtable for existing advisor record
         let airtableApplied = false;
         try {
-          const atRes = await fetch(`/api/lookup-airtable?email=${encodeURIComponent(gateEmail.trim())}`);
+          const atRes = await fetch(`/api/lookup-airtable?email=${encodeURIComponent(gateEmailRef.current.trim())}`);
           const { advisor } = atRes.ok ? await atRes.json() : { advisor: null };
           if (advisor) {
             setForm((prev) => ({
               ...prev,
-              email: gateEmail,
+              email: gateEmailRef.current,
               firstName: advisor.firstName || prev.firstName,
               middleName: advisor.middleName || prev.middleName,
               lastName: advisor.lastName || prev.lastName,
@@ -635,10 +638,10 @@ export default function AdvisorForm() {
 
         // Fall back to localStorage draft if nothing else
         if (!airtableApplied) {
-          const localDraft = loadDraft(gateEmail);
+          const localDraft = loadDraft(gateEmailRef.current);
           if (localDraft) {
             const { savedAt: _s, ...fields } = localDraft;
-            setForm((prev) => ({ ...prev, ...fields, email: gateEmail }));
+            setForm((prev) => ({ ...prev, ...fields, email: gateEmailRef.current }));
             setDraftBanner({ draft: localDraft });
           }
         }
@@ -1382,7 +1385,13 @@ function StepPhoto({
   photoInputRef: React.RefObject<HTMLInputElement>;
   setVal: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
 }) {
-  const previewUrl = form.photo ? URL.createObjectURL(form.photo) : null;
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!form.photo) { setPreviewUrl(null); return; }
+    const url = URL.createObjectURL(form.photo);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [form.photo]);
   return (
     <div className="max-w-2xl">
       <h2 className="text-[2rem] font-serif font-light tracking-[-0.03em] text-gray-900 leading-tight mb-1">Profile Photo <span className="text-base font-sans font-light text-gray-400 tracking-normal">— Optional</span></h2>
@@ -1711,7 +1720,13 @@ function AccordionSection({ title, color, icon, summary, children, defaultOpen =
 }
 
 function StepReview({ form }: { form: FormData }) {
-  const photoUrl = form.photo ? URL.createObjectURL(form.photo) : null;
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!form.photo) { setPhotoUrl(null); return; }
+    const url = URL.createObjectURL(form.photo);
+    setPhotoUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [form.photo]);
   const fullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ');
   const firstName = form.firstName || 'your';
 

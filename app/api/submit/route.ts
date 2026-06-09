@@ -99,16 +99,22 @@ export async function POST(req: NextRequest) {
     let photoUrl: string | null = null;
     const photoFile = formData.get('photo') as File | null;
     if (photoFile) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+      if (!allowedTypes.includes(photoFile.type)) {
+        return NextResponse.json({ error: `Invalid photo type. Must be JPG, PNG, WebP, or GIF.` }, { status: 400 });
+      }
       const photoBuffer = Buffer.from(await photoFile.arrayBuffer());
+      if (photoBuffer.length > 10 * 1024 * 1024) {
+        return NextResponse.json({ error: `Photo too large. Maximum is 10MB.` }, { status: 400 });
+      }
+      // Use photoBuffer for upload (already read, don't call arrayBuffer() again)
       const safeEmail = email.replace(/[@.]/g, '_');
       const safeFilename = photoFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-      const photoPath = `${safeEmail}/${Date.now()}_${safeFilename}`;
+      const photoPath = `${safeEmail}/${safeFilename}`;
       const { error: uploadError } = await supabaseAdmin.storage
         .from('advisor-photos')
-        .upload(photoPath, photoBuffer, { contentType: photoFile.type || 'image/jpeg', upsert: true });
-
+        .upload(photoPath, photoBuffer, { contentType: photoFile.type, upsert: true });
       if (!uploadError) {
-        // Store the storage path so we can generate signed URLs on demand
         photoUrl = photoPath;
       }
     }

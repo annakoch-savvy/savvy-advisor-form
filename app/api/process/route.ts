@@ -51,7 +51,9 @@ async function findOnboardingProject(advisorFolderId: string): Promise<string | 
 }
 
 async function findContactId(name: string): Promise<string | null> {
-  const data = await wrikeFetch(`/contacts?fields=[]`);
+  const envId = process.env.WRIKE_ASSIGNEE_CONTACT_ID;
+  if (envId) return envId;
+  const data = await wrikeFetch('/contacts?fields=[]');
   const contacts: Array<{ id: string; firstName: string; lastName: string }> = data.data ?? [];
   const lower = name.trim().toLowerCase();
   const match = contacts.find(
@@ -164,10 +166,16 @@ async function createHubSpotForm(advisorName: string): Promise<{ formId: string;
   const firstName = advisorName.split(' ')[0];
   const expectedName = `${advisorName} - Calendly Routing`;
 
-  // Check if a form already exists for this advisor
-  const existing = await hubspotFetch(`/marketing/v3/forms?limit=100`);
-  const forms: Array<{ id: string; name: string; portalId?: number }> = existing.results ?? [];
-  const match = forms.find(
+  // Check if a form already exists for this advisor (paginated)
+  let allForms: Array<{ id: string; name: string; portalId?: number }> = [];
+  let after: string | undefined;
+  do {
+    const url = `/marketing/v3/forms?limit=100${after ? '&after=' + after : ''}`;
+    const page = await hubspotFetch(url);
+    allForms = allForms.concat(page.results ?? []);
+    after = page.paging?.next?.after;
+  } while (after);
+  const match = allForms.find(
     (f) => f.name.trim().toLowerCase() === expectedName.trim().toLowerCase()
   );
   if (match) {
@@ -844,31 +852,26 @@ export async function POST(req: NextRequest) {
     const advisorEmail: string = row.email ?? '';
     const photoUrl: string | null = row.photo_url ?? null;
 
-    // Clean submission text with AI
-    const cleaned = await cleanSubmission(submission);
+    // Step 1: Verify Wrike folder exists before expensive AI work
+    const folderId = await findAdvisorFolder(submission.fullName);
+    if (!folderId) {
+      await supabaseAdmin.from('advisor_submissions').update({ status: 'failed', error_message: `No Wrike folder for "${submission.fullName}"` }).eq('id', submissionId);
+      return NextResponse.json({ error: `No Wrike folder found for "${submission.fullName}"` }, { status: 404 });
+    }
+    const onboardingId = await findOnboardingProject(folderId);
+    if (!onboardingId) {
+      await supabaseAdmin.from('advisor_submissions').update({ status: 'failed', error_message: `No Onboarding project found` }).eq('id', submissionId);
+      return NextResponse.json({ error: `No Onboarding project found` }, { status: 404 });
+    }
 
-    const [hubspot, calendly, folderId, assigneeId, dueDate] = await Promise.all([
+    // Step 2: Run AI cleanup + other lookups in parallel
+    const cleaned = await cleanSubmission(submission);
+    const [hubspot, calendly, assigneeId, dueDate] = await Promise.all([
       createHubSpotForm(submission.fullName),
       getCalendlyEmbed(submission.fullName),
-      findAdvisorFolder(submission.fullName),
       findContactId('Gonzalo Silva Corcelet'),
       Promise.resolve(formatDate(addBusinessDays(new Date(), 3))),
     ]);
-
-    if (!folderId) {
-      const errMsg = `No Wrike folder found for advisor "${submission.fullName}".`;
-      await supabaseAdmin.from('advisor_submissions').update({ status: 'failed', error_message: errMsg }).eq('id', submissionId);
-      await sendSlackNotification(cleaned, null, false, errMsg);
-      return NextResponse.json({ error: errMsg }, { status: 404 });
-    }
-
-    const onboardingId = await findOnboardingProject(folderId);
-    if (!onboardingId) {
-      const errMsg = `No "Onboarding" project found for "${submission.fullName}".`;
-      await supabaseAdmin.from('advisor_submissions').update({ status: 'failed', error_message: errMsg }).eq('id', submissionId);
-      await sendSlackNotification(cleaned, null, false, errMsg);
-      return NextResponse.json({ error: errMsg }, { status: 404 });
-    }
 
     // Generate AI webpage draft and create Wrike task
     const description = await generateWebpageDraft(

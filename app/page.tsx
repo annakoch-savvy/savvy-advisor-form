@@ -601,16 +601,41 @@ export default function AdvisorForm() {
       setForm((prev) => ({ ...prev, email: gateEmail }));
 
       if (draft) {
-        // Pre-fill all fields from Supabase draft
+        // Supabase draft takes priority — pre-fill everything
         setForm((prev) => ({ ...prev, ...draft, email: gateEmail, photo: null }));
         setDraftBanner({ draft: { ...draft, savedAt: draft.savedAt || new Date().toISOString() } });
       } else {
-        // Fall back to localStorage draft if no Supabase draft
-        const localDraft = loadDraft(gateEmail);
-        if (localDraft) {
-          const { savedAt: _s, ...fields } = localDraft;
-          setForm((prev) => ({ ...prev, ...fields, email: gateEmail }));
-          setDraftBanner({ draft: localDraft });
+        // No Supabase draft — check Airtable for existing advisor record
+        let airtableApplied = false;
+        try {
+          const atRes = await fetch(`/api/lookup-airtable?email=${encodeURIComponent(gateEmail.trim())}`);
+          const { advisor } = atRes.ok ? await atRes.json() : { advisor: null };
+          if (advisor) {
+            setForm((prev) => ({
+              ...prev,
+              email: gateEmail,
+              firstName: advisor.firstName || prev.firstName,
+              middleName: advisor.middleName || prev.middleName,
+              lastName: advisor.lastName || prev.lastName,
+              phone: advisor.phone || prev.phone,
+              cityAndState: advisor.cityAndState || prev.cityAndState,
+              firmName: advisor.firmName || prev.firmName,
+              designations: advisor.designations || prev.designations,
+              currentBio: advisor.currentBio || prev.currentBio,
+              yearsOfExperience: advisor.yearsOfExperience || prev.yearsOfExperience,
+            }));
+            airtableApplied = true;
+          }
+        } catch { /* Airtable lookup is best-effort */ }
+
+        // Fall back to localStorage draft if nothing else
+        if (!airtableApplied) {
+          const localDraft = loadDraft(gateEmail);
+          if (localDraft) {
+            const { savedAt: _s, ...fields } = localDraft;
+            setForm((prev) => ({ ...prev, ...fields, email: gateEmail }));
+            setDraftBanner({ draft: localDraft });
+          }
         }
       }
       setEmailGate(false);

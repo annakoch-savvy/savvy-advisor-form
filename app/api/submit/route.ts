@@ -95,10 +95,12 @@ export async function POST(req: NextRequest) {
       .limit(1)
       .single();
 
-    // Upload photo to Supabase Storage if provided
-    let photoUrl: string | null = null;
+    // Use pre-uploaded photo path if available (from background upload in StepPhoto)
+    let photoUrl: string | null = String(formData.get('photoPath') || '') || null;
+
+    // Fallback: upload now if background upload didn't happen
     const photoFile = formData.get('photo') as File | null;
-    if (photoFile) {
+    if (!photoUrl && photoFile) {
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
       if (!allowedTypes.includes(photoFile.type)) {
         return NextResponse.json({ error: `Invalid photo type. Must be JPG, PNG, WebP, or GIF.` }, { status: 400 });

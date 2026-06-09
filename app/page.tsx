@@ -50,6 +50,7 @@ interface FormData {
   dbaName: string;
   financialTopics: string[];
   photo: File | null;
+  photoPath: string; // Supabase storage path after background upload
   currentBio: string;
   howBecameAdvisor: string;
   clientTypes: string;
@@ -532,6 +533,7 @@ export default function AdvisorForm() {
     dbaName: '',
     financialTopics: [],
     photo: null,
+    photoPath: '',
     currentBio: '',
     howBecameAdvisor: '',
     clientTypes: '',
@@ -748,7 +750,11 @@ export default function AdvisorForm() {
       fd.append('title', form.title);
       fd.append('blogPost', form.blogPost);
       fd.append('anythingElse', form.anythingElse);
-      if (form.photo) {
+      if (form.photoPath) {
+        // Already uploaded in background — just pass the path
+        fd.append('photoPath', form.photoPath);
+      } else if (form.photo) {
+        // Fallback: upload now if background upload didn't complete
         const compressed = await compressImage(form.photo);
         fd.append('photo', compressed);
       }
@@ -1379,11 +1385,44 @@ function StepPhoto({
   setVal: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
 }) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'done' | 'error'>('idle');
+
+  // Revoke old blob URL and create new one
   useEffect(() => {
     if (!form.photo) { setPreviewUrl(null); return; }
     const url = URL.createObjectURL(form.photo);
     setPreviewUrl(url);
     return () => URL.revokeObjectURL(url);
+  }, [form.photo]);
+
+  // Background upload to Supabase as soon as photo is selected
+  useEffect(() => {
+    if (!form.photo || !form.email) return;
+    // Skip if already uploaded this file
+    if (form.photoPath) { setUploadStatus('done'); return; }
+
+    setUploadStatus('uploading');
+    (async () => {
+      try {
+        const compressed = await compressImage(form.photo!);
+        const fd = new FormData();
+        fd.append('photo', compressed);
+        fd.append('email', form.email);
+        const res = await fetch('/api/upload-photo', { method: 'POST', body: fd });
+        const json = await res.json();
+        if (res.ok && json.photoPath) {
+          setVal('photoPath', json.photoPath);
+          setUploadStatus('done');
+        } else {
+          console.error('Photo upload failed:', json.error);
+          setUploadStatus('error');
+        }
+      } catch (err) {
+        console.error('Photo upload error:', err);
+        setUploadStatus('error');
+      }
+    })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.photo]);
   return (
     <div className="max-w-2xl">
@@ -1413,9 +1452,28 @@ function StepPhoto({
             </div>
             <span className="text-white text-sm font-medium">Change photo</span>
           </div>
-          {/* Filename badge */}
-          <div className="absolute bottom-3 left-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm">
-            {form.photo?.name}
+          {/* Filename + upload status badge */}
+          <div className="absolute bottom-3 left-3 flex items-center gap-2">
+            <div className="bg-black/60 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm">
+              {form.photo?.name}
+            </div>
+            {uploadStatus === 'uploading' && (
+              <div className="bg-[#175242]/90 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm flex items-center gap-1.5">
+                <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                Saving…
+              </div>
+            )}
+            {uploadStatus === 'done' && (
+              <div className="bg-[#175242]/90 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm flex items-center gap-1">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Saved
+              </div>
+            )}
+            {uploadStatus === 'error' && (
+              <div className="bg-red-500/80 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm">
+                Will upload on submit
+              </div>
+            )}
           </div>
         </div>
       ) : (

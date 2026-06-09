@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       status: 'draft',
     };
 
-    // Check if a non-draft (submitted) record already exists for this email
+    // Check if any record already exists for this email
     const { data: existing } = await supabaseAdmin
       .from('advisor_submissions')
       .select('id, status')
@@ -42,22 +42,32 @@ export async function POST(req: NextRequest) {
       .limit(1)
       .single();
 
-    // Don't overwrite a submitted record with a draft
+    // Don't overwrite a submitted/complete record with a draft
     if (existing && existing.status !== 'draft') {
       return NextResponse.json({ skipped: true, reason: 'submission_exists' });
     }
 
     if (existing) {
-      // Update existing draft
-      await supabaseAdmin
+      // Update existing draft — check for errors
+      const { error } = await supabaseAdmin
         .from('advisor_submissions')
         .update(draft)
         .eq('id', existing.id);
+
+      if (error) {
+        console.error('Draft update error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
     } else {
-      // Insert new draft
-      await supabaseAdmin
+      // Insert new draft — check for errors
+      const { error } = await supabaseAdmin
         .from('advisor_submissions')
         .insert(draft);
+
+      if (error) {
+        console.error('Draft insert error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
     }
 
     return NextResponse.json({ success: true });

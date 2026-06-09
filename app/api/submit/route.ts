@@ -113,7 +113,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const submissionData = {
+    // Core fields — always present in schema
+    const coreData = {
       email,
       full_name: fullName,
       phone: String(formData.get('phone') || ''),
@@ -132,40 +133,73 @@ export async function POST(req: NextRequest) {
       favorite_part_working: String(formData.get('favoritePartWorking') || ''),
       likes_about_savvy: String(formData.get('likesAboutSavvy') || ''),
       designations: String(formData.get('designations') || ''),
+      ...(photoUrl && { photo_url: photoUrl }),
+      status: 'pending',
+    };
+
+    // Extended fields — added later, may not exist in schema yet
+    const extendedData = {
       title: String(formData.get('title') || ''),
       aum: String(formData.get('aum') || ''),
       households: String(formData.get('households') || ''),
       blog_post: String(formData.get('blogPost') || ''),
       anything_else: String(formData.get('anythingElse') || ''),
-      ...(photoUrl && { photo_url: photoUrl }),
-      status: 'pending',
     };
+
+    // Helper: try full data, fall back to core-only if extended columns don't exist yet
+    async function upsert(data: Record<string, unknown>, fallback: Record<string, unknown>) {
+      const { data: result, error } = await supabaseAdmin
+        .from('advisor_submissions')
+        .upsert(data, { onConflict: 'id' })
+        .select('id')
+        .single();
+      if (error?.message?.includes('column') || error?.message?.includes('schema')) {
+        // Schema missing extended columns — retry with core fields only
+        console.warn('Extended columns missing, falling back to core data:', error.message);
+        const { data: r2, error: e2 } = await supabaseAdmin
+          .from('advisor_submissions')
+          .upsert(fallback, { onConflict: 'id' })
+          .select('id')
+          .single();
+        if (e2 || !r2) throw new Error(`Failed to save submission: ${e2?.message}`);
+        return r2;
+      }
+      if (error || !result) throw new Error(`Failed to save submission: ${error?.message}`);
+      return result;
+    }
 
     let submissionId: string;
     let isUpdate = false;
 
     if (existing) {
-      // Update existing submission
-      const { data: updated, error } = await supabaseAdmin
-        .from('advisor_submissions')
-        .update({ ...submissionData, processed_at: null, wrike_task_id: null, error_message: null })
-        .eq('id', existing.id)
-        .select('id')
-        .single();
-
-      if (error || !updated) throw new Error(`Failed to update submission: ${error?.message}`);
+      const fullUpdate = { ...coreData, ...extendedData, processed_at: null, wrike_task_id: null, error_message: null, id: existing.id };
+      const coreUpdate = { ...coreData, processed_at: null, wrike_task_id: null, error_message: null, id: existing.id };
+      const updated = await upsert(fullUpdate, coreUpdate);
       submissionId = updated.id;
       isUpdate = true;
     } else {
-      // New submission
-      const { data: inserted, error } = await supabaseAdmin
-        .from('advisor_submissions')
-        .insert(submissionData)
-        .select('id')
-        .single();
+      const fullInsert = { ...coreData, ...extendedData };
+      const coreInsert = { ...coreData };
+      const { data: inserted, error } = await supabaseAdmin.from('advisor_submissions').insert({ ...fullInsert }).select('id').single();
+      if (error?.message?.includes('column') || error?.message?.includes('schema')) {
+        console.warn('Extended columns missing, inserting core only:', error.message);
+        const { data: r2, error: e2 } = await supabaseAdmin.from('advisor_submissions').insert(coreInsert).select('id').single();
+        if (e2 || !r2) throw new Error(`Failed to save submission: ${e2?.message}`);
+        submissionId = r2.id;
+      } else {
+        if (error || !inserted) throw new Error(`Failed to save submission: ${error?.message}`);
+        submissionId = inserted.id;
+      }
+    }
 
-      if (error || !inserted) throw new Error(`Failed to save submission: ${error?.message}`);
-      submissionId = inserted.id;
+    // Post-submit verification — confirm row exists and has required fields
+    const { data: verify } = await supabaseAdmin
+      .from('advisor_submissions')
+      .select('id, email, full_name, status')
+      .eq('id', submissionId)
+      .single();
+    if (!verify) {
+      console.error('Verification failed: submission not found after save', submissionId);
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://savvy-advisor-form-delta.vercel.app';

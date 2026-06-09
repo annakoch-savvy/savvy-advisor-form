@@ -1870,12 +1870,23 @@ function AccordionSection({ title, color, icon, summary, children, defaultOpen =
 
 function StepReview({ form }: { form: FormData }) {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+
+  // Local file blob URL
   useEffect(() => {
-    if (!form.photo) { setPhotoUrl(null); return; }
+    if (!form.photo) { if (!form.photoPath) setPhotoUrl(null); return; }
     const url = URL.createObjectURL(form.photo);
     setPhotoUrl(url);
     return () => URL.revokeObjectURL(url);
-  }, [form.photo]);
+  }, [form.photo, form.photoPath]);
+
+  // Fallback: load from Supabase Storage when draft is restored without a local file
+  useEffect(() => {
+    if (form.photo || !form.photoPath) return;
+    fetch(`/api/photo-url?path=${encodeURIComponent(form.photoPath)}`)
+      .then(r => r.json())
+      .then(({ url }) => { if (url) setPhotoUrl(url); })
+      .catch(() => {});
+  }, [form.photoPath, form.photo]);
   const fullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ');
   const firstName = form.firstName || 'your';
 

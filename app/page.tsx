@@ -887,10 +887,10 @@ export default function AdvisorForm() {
           style={{ opacity: introFading ? 0 : 1, transition: 'opacity 1200ms ease', pointerEvents: introFading ? 'none' : 'auto' }}
           onTransitionEnd={() => {
             if (introFading) {
-              const draft = loadDraft(gateEmail);
-              setForm((prev) => ({ ...prev, email: gateEmail, ...(draft ? (({ savedAt: _s, ...f }) => f)(draft) : {}) }));
               setIntro(false);
               setIntroFading(false);
+              // Run full lookup (Supabase draft → Airtable → localStorage)
+              handleGateSubmit();
             }
           }}
         >

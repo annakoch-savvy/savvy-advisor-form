@@ -1155,7 +1155,7 @@ export default function AdvisorForm() {
                     onChange={(e) => setVal('confirmed', e.target.checked)}
                   />
                   <span className="text-xs text-gray-500 leading-snug">
-                    I confirm this information is accurate and ready for the Savvy team to review.
+                    This information is accurate — send it to the Savvy team and email a recap to <span className="font-medium">{form.email}</span>.
                   </span>
                 </label>
                 {submitError && <p className="text-sm text-red-500">{submitError}</p>}
@@ -2200,15 +2200,6 @@ function StepReview({ form }: { form: FormData }) {
           </AccordionSection>
         </div>
 
-        {/* Recap notice — order 5 */}
-        <div style={{ order: 5 }} className="flex items-start gap-3 px-5 py-4 rounded-full bg-[#175242]/8">
-          <svg className="w-5 h-5 text-[#175242] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-          </svg>
-          <p className="text-sm text-[#175242]">
-            <span className="font-medium">You&apos;ll receive a recap of your submission</span> to <span className="font-medium">{form.email}</span> once it&apos;s been reviewed by the Savvy team.
-          </p>
-        </div>
 
       </div>
     </div>

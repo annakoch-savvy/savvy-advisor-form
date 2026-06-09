@@ -1081,7 +1081,7 @@ export default function AdvisorForm() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[#175242]">Saved draft found</p>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Last saved {new Date(draftBanner.draft.savedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })} at {new Date(draftBanner.draft.savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  Last saved {new Date(draftBanner.draft.savedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })} at {new Date(draftBanner.draft.savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
                 </p>
               </div>
               <div className="flex gap-2 shrink-0">
@@ -1315,7 +1315,7 @@ function StepBasicInfo({
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[#175242]">Saved draft found</p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Last saved {new Date(draftBanner.draft.savedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })} at {new Date(draftBanner.draft.savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    Last saved {new Date(draftBanner.draft.savedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })} at {new Date(draftBanner.draft.savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
                   </p>
                 </div>
                 <div className="flex gap-2 shrink-0">

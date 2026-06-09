@@ -20,20 +20,36 @@ export async function GET(req: NextRequest) {
   if (!email) return NextResponse.json({ advisor: null });
 
   try {
-    // Search by Personal Email Address OR Savvy Email
-    const formula = encodeURIComponent(
-      `OR(LOWER({Personal Email Address})="${email}", LOWER({Savvy Email})="${email}")`
-    );
     const fields = [
       'Advisor Name', 'Personal Email Address', 'Savvy Email',
       'Personal Phone Number', 'City', 'State', 'Designations',
       'Areas of Specialization', 'Professional Bio', 'Brand Name',
-      'Start Date', 'AUM', 'Team Type',
+      'Start Date', 'Team Type',
     ].map(f => `fields[]=${encodeURIComponent(f)}`).join('&');
 
-    const data = await airtableFetch(
-      `${AIRTABLE_BASE}/${AIRTABLE_TABLE}?filterByFormula=${formula}&${fields}&maxRecords=1`
+    // Try 1: match by stored email fields
+    const emailFormula = encodeURIComponent(
+      `OR(LOWER(TRIM({Personal Email Address}))="${email}", LOWER(TRIM({Savvy Email}))="${email}")`
     );
+    let data = await airtableFetch(
+      `${AIRTABLE_BASE}/${AIRTABLE_TABLE}?filterByFormula=${emailFormula}&${fields}&maxRecords=1`
+    );
+
+    // Try 2: if Savvy email (@savvyadvisors.com), derive name and search by Advisor Name
+    if (!data.records?.length && email.endsWith('@savvyadvisors.com')) {
+      const namePart = email.replace('@savvyadvisors.com', ''); // e.g. "rahul.sarin"
+      const nameParts = namePart.split('.');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts[nameParts.length - 1] || '';
+      if (firstName && lastName && firstName !== lastName) {
+        const nameFormula = encodeURIComponent(
+          `AND(FIND(LOWER("${firstName}"), LOWER({Advisor Name}))>0, FIND(LOWER("${lastName}"), LOWER({Advisor Name}))>0)`
+        );
+        data = await airtableFetch(
+          `${AIRTABLE_BASE}/${AIRTABLE_TABLE}?filterByFormula=${nameFormula}&${fields}&maxRecords=1`
+        );
+      }
+    }
 
     const record = data.records?.[0];
     if (!record) return NextResponse.json({ advisor: null });

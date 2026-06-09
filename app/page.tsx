@@ -62,6 +62,7 @@ interface FormData {
   title: string;
   blogPost: string;
   anythingElse: string;
+  confirmed: boolean;
 }
 
 type Errors = Partial<Record<string, string>>;
@@ -540,6 +541,7 @@ export default function AdvisorForm() {
     title: '',
     blogPost: '',
     anythingElse: '',
+    confirmed: false,
   });
 
   // Auto-save draft to Supabase (debounced 2s) — saves after every edit
@@ -721,6 +723,8 @@ export default function AdvisorForm() {
   // ── Submit ──────────────────────────────────────────────────────────────────
 
   const handleSubmit = async () => {
+    // Cancel any pending auto-save to prevent race condition with submission
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     setSubmitting(true);
     setSubmitError('');
     try {
@@ -1145,8 +1149,8 @@ export default function AdvisorForm() {
                   <input
                     type="checkbox"
                     className="w-4 h-4 rounded border-gray-300 accent-[#175242] shrink-0"
-                    checked={!!form.blogPost}
-                    onChange={(e) => setVal('blogPost', e.target.checked ? 'yes' : '')}
+                    checked={form.confirmed}
+                    onChange={(e) => setVal('confirmed', e.target.checked)}
                   />
                   <span className="text-xs text-gray-500 leading-snug">
                     I confirm this information is accurate and ready for the Savvy team to review.

@@ -276,17 +276,16 @@ async function generateWebpageDraft(
   hubspotEmbedCode: string,
   calendlyUrl?: string,
   calendlyEmbedCode?: string,
-  advisorEmail?: string
+  advisorEmail?: string,
+  phone?: string,
+  linkedIn?: string,
+  title?: string
 ): Promise<string> {
   const key = process.env.ANTHROPIC_API_KEY;
 
   // Build the data table section (always included regardless of AI key)
   const DISCLOSURE = 'Neither Savvy Wealth, nor Savvy Advisors compensates directly for testimonials or endorsements provided herein, by advisers. However advisors may have an indirect financial incentive to provide testimonials.';
   const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-  const phone: string = row.phone ?? '';
-  const linkedIn: string = row.linkedin ?? row.linked_in ?? s.linkedIn ?? '';
-  const title: string = row.title ?? '';
 
   const dataTable = [
     '<b>━━━ ADVISOR DATA TABLE ━━━</b>',
@@ -872,7 +871,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate AI webpage draft and create Wrike task
-    const description = await generateWebpageDraft(cleaned, hubspot.formId, hubspot.embedCode, calendly?.schedulingUrl, calendly?.embedCode, advisorEmail);
+    const description = await generateWebpageDraft(
+      cleaned, hubspot.formId, hubspot.embedCode,
+      calendly?.schedulingUrl, calendly?.embedCode, advisorEmail,
+      row.phone ?? '',
+      row.linkedin ?? row.linked_in ?? cleaned.linkedIn ?? '',
+      row.title ?? ''
+    );
     const taskData = await wrikeFetch(`/folders/${onboardingId}/tasks`, {
       method: 'POST',
       body: JSON.stringify({

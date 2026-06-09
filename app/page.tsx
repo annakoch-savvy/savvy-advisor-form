@@ -546,14 +546,21 @@ export default function AdvisorForm() {
     anythingElse: '',
   });
 
-  // Auto-save draft whenever form changes (debounced 1.5s), keyed by email
+  // Auto-save draft to Supabase (debounced 5s) — persists across any device
   useEffect(() => {
     if (!form.email.trim()) return;
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
-    autoSaveTimerRef.current = setTimeout(() => {
-      saveDraft(form.email, form);
-      setDraftSavedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    }, 1500);
+    autoSaveTimerRef.current = setTimeout(async () => {
+      try {
+        const fullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ');
+        await fetch('/api/save-draft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...form, fullName }),
+        });
+        setDraftSavedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      } catch { /* silent — draft save is best-effort */ }
+    }, 5000);
     return () => { if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form]);
@@ -593,11 +600,24 @@ export default function AdvisorForm() {
     setGateError('');
     setGateLoading(true);
     try {
-      const draft = loadDraft(gateEmail);
+      // Look up saved draft from Supabase (works on any device)
+      const res = await fetch(`/api/lookup-draft?email=${encodeURIComponent(gateEmail.trim())}`);
+      const { draft } = res.ok ? await res.json() : { draft: null };
+
       setForm((prev) => ({ ...prev, email: gateEmail }));
+
       if (draft) {
-        const { savedAt: _s, ...fields } = draft;
-        setForm((prev) => ({ ...prev, ...fields, email: gateEmail }));
+        // Pre-fill all fields from Supabase draft
+        setForm((prev) => ({ ...prev, ...draft, email: gateEmail, photo: null }));
+        setDraftBanner({ draft: { ...draft, savedAt: draft.savedAt || new Date().toISOString() } });
+      } else {
+        // Fall back to localStorage draft if no Supabase draft
+        const localDraft = loadDraft(gateEmail);
+        if (localDraft) {
+          const { savedAt: _s, ...fields } = localDraft;
+          setForm((prev) => ({ ...prev, ...fields, email: gateEmail }));
+          setDraftBanner({ draft: localDraft });
+        }
       }
       setEmailGate(false);
     } finally {

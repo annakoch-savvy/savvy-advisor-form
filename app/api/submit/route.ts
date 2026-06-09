@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
     };
 
     // Helper: try full data, fall back to core-only if extended columns don't exist yet
-    async function upsert(data: Record<string, unknown>, fallback: Record<string, unknown>) {
+    const upsert = async (data: Record<string, unknown>, fallback: Record<string, unknown>) => {
       const { data: result, error } = await supabaseAdmin
         .from('advisor_submissions')
         .upsert(data, { onConflict: 'id' })
@@ -212,7 +212,7 @@ export async function POST(req: NextRequest) {
         await notifySlack({
           fullName,
           email,
-          pageType: submissionData.page_type,
+          pageType: coreData.page_type,
           topics: financialTopics,
           submissionId,
           isUpdate,

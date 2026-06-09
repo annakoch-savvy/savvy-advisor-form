@@ -47,27 +47,50 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ skipped: true, reason: 'submission_exists' });
     }
 
+    // Core draft fields — always safe to save
+    const coreDraft = {
+      email: draft.email,
+      full_name: draft.full_name,
+      phone: draft.phone,
+      city_and_state: draft.city_and_state,
+      years_of_experience: draft.years_of_experience,
+      page_type: draft.page_type,
+      firm_name: draft.firm_name,
+      financial_topics: draft.financial_topics,
+      current_bio: draft.current_bio,
+      how_became_advisor: draft.how_became_advisor,
+      client_types: draft.client_types,
+      areas_of_expertise: draft.areas_of_expertise,
+      strategies: draft.strategies,
+      unique_approach: draft.unique_approach,
+      favorite_part_working: draft.favorite_part_working,
+      likes_about_savvy: draft.likes_about_savvy,
+      designations: draft.designations,
+      status: 'draft' as const,
+    };
+
+    const tryUpsert = async (data: Record<string, unknown>, id?: string) => {
+      if (id) {
+        const { error } = await supabaseAdmin.from('advisor_submissions').update(data).eq('id', id);
+        if (error?.message?.includes('column') || error?.message?.includes('schema')) {
+          // Extended columns missing — retry with core only
+          const { error: e2 } = await supabaseAdmin.from('advisor_submissions').update(coreDraft).eq('id', id);
+          if (e2) throw new Error(e2.message);
+        } else if (error) throw new Error(error.message);
+      } else {
+        const { error } = await supabaseAdmin.from('advisor_submissions').insert(data);
+        if (error?.message?.includes('column') || error?.message?.includes('schema')) {
+          // Extended columns missing — retry with core only
+          const { error: e2 } = await supabaseAdmin.from('advisor_submissions').insert(coreDraft);
+          if (e2) throw new Error(e2.message);
+        } else if (error) throw new Error(error.message);
+      }
+    };
+
     if (existing) {
-      // Update existing draft — check for errors
-      const { error } = await supabaseAdmin
-        .from('advisor_submissions')
-        .update(draft)
-        .eq('id', existing.id);
-
-      if (error) {
-        console.error('Draft update error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
-      }
+      await tryUpsert(draft, existing.id);
     } else {
-      // Insert new draft — check for errors
-      const { error } = await supabaseAdmin
-        .from('advisor_submissions')
-        .insert(draft);
-
-      if (error) {
-        console.error('Draft insert error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
-      }
+      await tryUpsert(draft);
     }
 
     return NextResponse.json({ success: true });

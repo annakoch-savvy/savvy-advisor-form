@@ -679,21 +679,14 @@ export default function AdvisorForm() {
   };
 
   // Step 3 = Bio & FAQ
+  // Step 3 = Bio & FAQ — only the 3 required questions must be answered
   const validateStep3 = (): boolean => {
     const e: Errors = {};
-    const textFields: Array<[keyof FormData, string]> = [
-      ['currentBio', 'Current bio is required.'],
-      ['howBecameAdvisor', 'This field is required.'],
-      ['clientTypes', 'This field is required.'],
-      ['areasOfExpertise', 'This field is required.'],
-      ['strategies', 'This field is required.'],
-      ['uniqueApproach', 'This field is required.'],
-      ['favoritePartWorking', 'This field is required.'],
-      ['likesAboutSavvy', 'This field is required.'],
-    ];
-    textFields.forEach(([field, msg]) => {
-      const val = form[field];
-      if (typeof val === 'string' && !val.trim()) e[field] = msg;
+    ALL_BIO_FAQ.filter(q => q.required).forEach(({ key }) => {
+      const val = form[key];
+      if (typeof val === 'string' && !val.trim()) {
+        e[key as string] = 'This field is required.';
+      }
     });
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -1084,7 +1077,7 @@ export default function AdvisorForm() {
               <StepTopics form={form} errors={errors} setVal={setVal} />
             )}
             {step === 3 && (
-              <StepBioFaq form={form} errors={errors} set={set} />
+              <StepBioFaq form={form} errors={errors} set={set} setVal={setVal} />
             )}
             {step === 4 && (
               <StepPhoto form={form} errors={errors} photoInputRef={photoInputRef} setVal={setVal} />
@@ -1488,161 +1481,273 @@ const FAQ_FIELDS: Array<{ key: keyof FormData; question: string; placeholder: st
   { key: 'designations', question: 'Do you have any designations or organizations you are a part of?', placeholder: 'e.g. CFP®, CFA, NAPFA member…' },
 ];
 
-// All questions combined into one linear flow
-const ALL_BIO_FAQ: Array<{ key: keyof FormData; question: string; placeholder: string; hint?: string; rows?: number }> = [
-  { key: 'currentBio', question: 'Tell us about yourself.', placeholder: 'Share a bit about your background, what you do, and who you help…', hint: 'This will appear in the hero section of your advisor page.', rows: 6 },
-  { key: 'howBecameAdvisor', question: 'How did you become a financial advisor?', placeholder: 'Share your journey into financial advising…', rows: 4 },
-  { key: 'clientTypes', question: 'What types of clients do you work with?', placeholder: 'Describe the clients you typically serve…', rows: 4 },
-  { key: 'areasOfExpertise', question: 'What areas of expertise do you have?', placeholder: 'Describe your specializations…', rows: 4 },
-  { key: 'strategies', question: 'What strategies do you usually help clients with?', placeholder: 'Describe the strategies you most commonly use…', rows: 4 },
-  { key: 'uniqueApproach', question: 'Is there a unique approach that sets you apart?', placeholder: 'What makes your advisory style different?', rows: 4 },
-  { key: 'favoritePartWorking', question: 'What is your favorite part about working with clients?', placeholder: 'What do you enjoy most about your work?', rows: 4 },
-  { key: 'likesAboutSavvy', question: 'What do you like about working with Savvy?', placeholder: 'Share what you value about the Savvy platform…', rows: 4 },
-  { key: 'anythingElse', question: 'Anything else you\'d like us to include or know about?', placeholder: 'Share anything you\'d like us to know…', rows: 4 },
+// Streamlined Bio & FAQ — 6 questions (merged from 10), 3 required
+const ALL_BIO_FAQ: Array<{
+  key: keyof FormData;
+  question: string;
+  placeholder: string;
+  hint: string;
+  rows?: number;
+  required: boolean;
+  // when this field is answered, also mirror to these fields for Wrike draft continuity
+  mirrors?: Array<keyof FormData>;
+}> = [
+  {
+    key: 'currentBio',
+    question: 'Tell us about yourself.',
+    placeholder: 'Share a bit about your background, what you do, and who you help…',
+    hint: '2–3 sentences is plenty. This appears in the hero section of your advisor page.',
+    rows: 6,
+    required: true,
+  },
+  {
+    key: 'howBecameAdvisor',
+    question: 'How did you become a financial advisor?',
+    placeholder: 'Share your journey — what drew you to this work…',
+    hint: '2–3 sentences is plenty.',
+    rows: 4,
+    required: true,
+  },
+  {
+    key: 'clientTypes',
+    question: 'Who do you work with?',
+    placeholder: 'Describe the clients you serve and the situations you help them navigate…',
+    hint: 'A sentence or two is fine.',
+    rows: 4,
+    required: true,
+  },
+  {
+    key: 'areasOfExpertise',
+    question: 'What do you specialize in and how do you help clients?',
+    placeholder: 'Describe your specializations, strategies, and the types of problems you solve…',
+    hint: '2–4 sentences. Combine your areas of expertise and the strategies you use.',
+    rows: 5,
+    required: false,
+    mirrors: ['strategies'],
+  },
+  {
+    key: 'uniqueApproach',
+    question: 'What makes your approach different — and why do you love this work?',
+    placeholder: 'What sets you apart, and what energizes you most about working with clients…',
+    hint: '2–3 sentences is plenty.',
+    rows: 4,
+    required: false,
+    mirrors: ['favoritePartWorking'],
+  },
+  {
+    key: 'anythingElse',
+    question: 'Anything else you\'d like us to know or include?',
+    placeholder: 'Awards, community involvement, personal detail, anything that didn\'t fit above…',
+    hint: 'Totally optional — but great details make a stronger page.',
+    rows: 4,
+    required: false,
+  },
 ];
 
 function StepBioFaq({
-  form, errors, set,
+  form, errors, set, setVal,
 }: {
   form: FormData;
   errors: Errors;
   set: (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  setVal: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
 }) {
   const [qIdx, setQIdx] = useState(0);
+  const [skipped, setSkipped] = useState<Set<string>>(new Set());
+  const [nextPulsing, setNextPulsing] = useState(false);
   const total = ALL_BIO_FAQ.length;
+  const requiredCount = ALL_BIO_FAQ.filter(q => q.required).length;
   const current = ALL_BIO_FAQ[qIdx];
   const accentColor = FAQ_ACCENT_COLORS[qIdx % FAQ_ACCENT_COLORS.length];
+  const currentValue = (form[current.key] as string) || '';
   const answered = ALL_BIO_FAQ.filter(q => (form[q.key] as string)?.trim()).length;
+  const requiredAnswered = ALL_BIO_FAQ.filter(q => q.required && (form[q.key] as string)?.trim()).length;
+  const isOptional = !current.required;
+  const isSkipped = skipped.has(current.key);
+  const halfwayIdx = Math.floor(total / 2);
+  const showMomentum = qIdx === halfwayIdx && requiredAnswered > 0;
+
+  // Pulse Next button 3s after user starts typing (if field has content)
+  const pulseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (pulseTimerRef.current) clearTimeout(pulseTimerRef.current);
+    if (currentValue.trim().length > 20) {
+      pulseTimerRef.current = setTimeout(() => setNextPulsing(true), 3000);
+    } else {
+      setNextPulsing(false);
+    }
+    return () => { if (pulseTimerRef.current) clearTimeout(pulseTimerRef.current); };
+  }, [currentValue]);
+
+  // Handle answer change — also mirror to secondary fields
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    set(current.key)(e);
+    // Mirror answer to merged fields for Wrike draft continuity
+    if (current.mirrors) {
+      const syntheticEvent = { target: { value: e.target.value } } as React.ChangeEvent<HTMLTextAreaElement>;
+      current.mirrors.forEach(mirrorKey => set(mirrorKey)(syntheticEvent));
+    }
+  };
+
+  const goNext = () => {
+    setNextPulsing(false);
+    setQIdx(i => Math.min(total - 1, i + 1));
+  };
+
+  const skipQuestion = () => {
+    setSkipped(prev => new Set(prev).add(current.key));
+    goNext();
+  };
 
   return (
     <div className="-mx-8 md:-mx-10 -mt-[46px] -mb-8 md:-mb-10 flex flex-col" style={{ minHeight: 'calc(100% + 46px + 40px)' }}>
 
-      {/* ── Colored section — question + interview note + dots ── */}
-      <div className="flex-1 flex flex-col px-10 pt-10 pb-8 transition-colors duration-300" style={{ backgroundColor: accentColor }}>
+      {/* ── Colored header ── */}
+      <div className="flex-1 flex flex-col px-10 pt-8 pb-8 transition-colors duration-300" style={{ backgroundColor: accentColor }}>
 
-        {/* Interview option — pill button */}
-        <div className="inline-flex mb-8">
-          <div className="flex items-center gap-2.5 bg-white/15 hover:bg-white/22 border border-white/25 rounded-full px-4 py-2 cursor-pointer transition-all"
+        {/* Top row: required badge + mic CTA */}
+        <div className="flex items-center justify-between mb-6">
+          {current.required ? (
+            <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-white/60">Required</span>
+          ) : (
+            <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-white/40">Optional</span>
+          )}
+          {/* Mic as primary action */}
+          <button
+            type="button"
+            className="mic-trigger-btn flex items-center gap-2 bg-white/20 hover:bg-white/30 border border-white/30 rounded-full px-3 py-1.5 transition-all"
             onClick={() => {
-              // Find the mic button in the white section and trigger it
-              const micBtn = document.querySelector<HTMLButtonElement>('.mic-trigger-btn');
+              const micBtn = document.querySelector<HTMLButtonElement>('.bio-mic-btn');
               micBtn?.click();
             }}
           >
-            <svg className="w-3.5 h-3.5 text-white shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
             </svg>
-            <span className="text-white text-xs font-medium">Prefer to talk it out?</span>
-            <span className="text-white/60 text-xs">Tap to speak your answer</span>
-            <svg className="w-3 h-3 text-white/50 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
+            <span className="text-white text-xs font-medium">Speak your answer</span>
+          </button>
         </div>
 
-        {/* Question — takes remaining space */}
-        <h2 className="flex-1 text-[2.25rem] font-serif font-light leading-tight tracking-[-0.02em] text-white mb-8">
+        {/* Halfway encouragement banner */}
+        {showMomentum && (
+          <div className="mb-4 flex items-center gap-2 bg-white/15 rounded-lg px-3 py-2">
+            <span className="text-white text-sm">🎉</span>
+            <p className="text-white/80 text-xs leading-snug">
+              You&apos;re over halfway — the rest of these help us write an even stronger page.
+            </p>
+          </div>
+        )}
+
+        {/* Question */}
+        <h2 className="flex-1 text-[2rem] font-serif font-light leading-tight tracking-[-0.02em] text-white mb-6">
           {current.question}
         </h2>
 
-        {/* Dot nav */}
-        <div className="flex items-center gap-2">
-          {ALL_BIO_FAQ.map((q, i) => {
-            const isAnswered = !!(form[q.key] as string)?.trim();
-            const isActive = i === qIdx;
-            return (
-              <button
-                key={q.key}
-                type="button"
-                onClick={() => setQIdx(i)}
-                className="rounded-full transition-all duration-200"
-                style={{
-                  width: isActive ? '28px' : '8px',
-                  height: '8px',
-                  backgroundColor: isActive ? 'rgba(255,255,255,0.95)' : isAnswered ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.2)',
-                }}
-                title={q.question}
-              />
-            );
-          })}
+        {/* Progress: answered count + dots */}
+        <div className="flex items-center gap-3">
+          <span className="text-white/55 text-xs shrink-0">
+            {requiredAnswered}/{requiredCount} required
+            {answered > requiredAnswered && <span className="ml-1 text-white/40">· {answered - requiredAnswered} bonus</span>}
+          </span>
+          <div className="flex items-center gap-1.5 flex-1">
+            {ALL_BIO_FAQ.map((q, i) => {
+              const isAnswered = !!(form[q.key] as string)?.trim();
+              const isActive = i === qIdx;
+              const wasSkipped = skipped.has(q.key);
+              return (
+                <button
+                  key={q.key}
+                  type="button"
+                  onClick={() => { setNextPulsing(false); setQIdx(i); }}
+                  className="rounded-full transition-all duration-200 shrink-0"
+                  style={{
+                    width: isActive ? '24px' : '7px',
+                    height: '7px',
+                    backgroundColor: isActive
+                      ? 'rgba(255,255,255,0.95)'
+                      : isAnswered
+                      ? 'rgba(255,255,255,0.55)'
+                      : wasSkipped
+                      ? 'rgba(255,255,255,0.15)'
+                      : q.required
+                      ? 'rgba(255,255,255,0.3)'
+                      : 'rgba(255,255,255,0.15)',
+                    outline: isActive ? 'none' : q.required && !isAnswered ? '1px solid rgba(255,255,255,0.35)' : 'none',
+                  }}
+                  title={q.question}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* ── White answer section ── */}
-      <div className="bg-white px-10 py-8">
+      <div className="bg-white px-10 py-7">
 
+        <FloatTextarea
+          label=""
+          value={currentValue}
+          onChange={handleChange}
+          placeholder={current.placeholder}
+          rows={current.rows ?? 5}
+          error={errors[current.key]}
+          required={current.required}
+          showCompliance
+          showMic
+          micColor={accentColor}
+        />
 
-          {/* Blog post question uses radio buttons */}
-          {current.key === 'blogPost' ? (
-            <div className="space-y-2">
-              {[
-                'Yes, publish my announcement',
-                "Yes, but I'd like to review the draft before it goes live",
-                'No, I\'d prefer to opt out',
-              ].map((option) => (
-                <label key={option} className={`flex items-center gap-3 px-4 py-3 rounded-lg border cursor-pointer transition-all ${
-                  form.blogPost === option ? 'border-[#175242] bg-[#175242]/5' : 'border-gray-200 hover:border-gray-300'
-                }`}>
-                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                    form.blogPost === option ? 'border-[#175242]' : 'border-gray-300'
-                  }`}>
-                    {form.blogPost === option && <div className="w-2 h-2 rounded-full bg-[#175242]" />}
-                  </div>
-                  <input type="radio" className="sr-only" checked={form.blogPost === option}
-                    onChange={() => { const e = { target: { value: option } } as React.ChangeEvent<HTMLTextAreaElement>; set('blogPost')(e); }} />
-                  <span className="text-sm text-gray-700">{option}</span>
-                </label>
-              ))}
-              {errors.blogPost && <p className="text-xs text-red-500 mt-1">{errors.blogPost}</p>}
-            </div>
-          ) : (
-          <FloatTextarea
-            label=""
-            value={form[current.key] as string}
-            onChange={set(current.key)}
-            placeholder={current.placeholder}
-            rows={current.rows ?? 5}
-            error={errors[current.key]}
-            required={current.key !== 'designations'}
-            showCompliance
-            showMic
-            micColor={accentColor}
-          />
-          )}
+        {/* Hint + word count guide */}
+        <p className="text-xs text-gray-400 mt-2 leading-relaxed">{current.hint}</p>
 
-          {current.hint && (
-            <p className="text-xs text-gray-400 mt-2">{current.hint}</p>
-          )}
+        {/* Prev / Skip / Next */}
+        <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-50">
+          <button
+            type="button"
+            onClick={() => { setNextPulsing(false); setQIdx(i => Math.max(0, i - 1)); }}
+            disabled={qIdx === 0}
+            className="text-sm text-gray-400 hover:text-gray-700 disabled:opacity-0 flex items-center gap-1.5 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
+            Previous
+          </button>
 
-          {/* Prev / Next */}
-          <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-50">
-            <button
-              type="button"
-              onClick={() => setQIdx(i => Math.max(0, i - 1))}
-              disabled={qIdx === 0}
-              className="text-sm text-gray-400 hover:text-gray-700 disabled:opacity-0 flex items-center gap-1.5 transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
-              Previous
-            </button>
+          <div className="flex items-center gap-3">
+            {/* Skip for now — optional questions only */}
+            {isOptional && !currentValue.trim() && !isSkipped && qIdx < total - 1 && (
+              <button
+                type="button"
+                onClick={skipQuestion}
+                className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                Skip for now
+              </button>
+            )}
 
-            <span className="text-xs text-gray-400">
-              {answered} of {total} answered
-              {answered === total && <span className="ml-1" style={{ color: accentColor }}>✓ All done</span>}
-            </span>
-
-            <button
-              type="button"
-              onClick={() => setQIdx(i => Math.min(total - 1, i + 1))}
-              disabled={qIdx === total - 1}
-              className="text-sm font-medium flex items-center gap-1.5 disabled:opacity-30 transition-opacity"
-              style={{ color: accentColor }}
-            >
-              Next
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
-            </button>
+            {qIdx < total - 1 ? (
+              <button
+                type="button"
+                onClick={goNext}
+                className={`text-sm font-medium flex items-center gap-1.5 transition-all px-4 py-2 rounded-full ${
+                  nextPulsing ? 'text-white shadow-md scale-105' : ''
+                }`}
+                style={{
+                  color: nextPulsing ? 'white' : accentColor,
+                  backgroundColor: nextPulsing ? accentColor : 'transparent',
+                }}
+              >
+                Next
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
+              </button>
+            ) : (
+              <span className="text-xs font-medium" style={{ color: accentColor }}>
+                {answered === total ? '✓ All done — click Next to review' : `${answered} of ${total} answered`}
+              </span>
+            )}
           </div>
+        </div>
       </div>
 
     </div>

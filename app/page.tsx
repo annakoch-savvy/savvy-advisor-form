@@ -540,7 +540,7 @@ export default function AdvisorForm() {
     anythingElse: '',
   });
 
-  // Auto-save draft to Supabase (debounced 5s) — persists across any device
+  // Auto-save draft to Supabase (debounced 2s) — saves after every edit
   useEffect(() => {
     if (!form.email.trim()) return;
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
@@ -554,7 +554,7 @@ export default function AdvisorForm() {
         });
         setDraftSavedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
       } catch { /* silent — draft save is best-effort */ }
-    }, 5000);
+    }, 2000);
     return () => { if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form]);

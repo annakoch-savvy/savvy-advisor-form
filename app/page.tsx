@@ -1074,23 +1074,6 @@ export default function AdvisorForm() {
             );
           })()}
 
-          {/* Draft banner — shown at top of right panel across all steps */}
-          {draftBanner && (
-            <div className="mx-6 md:mx-10 mt-4 rounded-[3px] border border-[#175242]/30 bg-[#175242]/5 px-4 py-3 flex items-start gap-3">
-              <svg className="shrink-0 mt-0.5 text-[#175242] w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[#175242]">Saved draft found</p>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  Last saved {new Date(draftBanner.draft.savedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })} at {new Date(draftBanner.draft.savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
-                </p>
-              </div>
-              <div className="flex gap-2 shrink-0">
-                <button type="button" onClick={() => applyDraft(draftBanner.draft)} className="text-xs font-medium px-3 py-1.5 rounded-[3px] bg-[#175242] text-white hover:bg-[#0f3b2e] transition-colors">Resume</button>
-                <button type="button" onClick={() => { clearDraft(form.email); setDraftBanner(null); }} className="text-xs font-medium px-3 py-1.5 rounded-[3px] border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors">Discard</button>
-              </div>
-            </div>
-          )}
-
           {/* Content */}
           <div className="flex-1 px-8 md:px-10 pt-[46px] pb-8 md:pb-10 overflow-y-auto">
             {step === 1 && (

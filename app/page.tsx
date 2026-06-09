@@ -1135,7 +1135,19 @@ export default function AdvisorForm() {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col items-end gap-2">
+              <div className="flex flex-col items-end gap-3">
+                {/* Optional confirmation checkbox */}
+                <label className="flex items-center gap-2.5 cursor-pointer self-stretch">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 rounded border-gray-300 accent-[#175242] shrink-0"
+                    checked={!!form.blogPost}
+                    onChange={(e) => setVal('blogPost', e.target.checked ? 'yes' : '')}
+                  />
+                  <span className="text-xs text-gray-500 leading-snug">
+                    I confirm this information is accurate and ready for the Savvy team to review.
+                  </span>
+                </label>
                 {submitError && <p className="text-sm text-red-500">{submitError}</p>}
                 <div className="flex items-center gap-3">
                   <a
@@ -1465,7 +1477,6 @@ const ALL_BIO_FAQ: Array<{ key: keyof FormData; question: string; placeholder: s
   { key: 'uniqueApproach', question: 'Is there a unique approach that sets you apart?', placeholder: 'What makes your advisory style different?', rows: 4 },
   { key: 'favoritePartWorking', question: 'What is your favorite part about working with clients?', placeholder: 'What do you enjoy most about your work?', rows: 4 },
   { key: 'likesAboutSavvy', question: 'What do you like about working with Savvy?', placeholder: 'Share what you value about the Savvy platform…', rows: 4 },
-  { key: 'blogPost', question: 'Would you like to be featured in a blog post on savvywealth.com?', placeholder: '', rows: 1 },
   { key: 'anythingElse', question: 'Anything else you\'d like us to include or know about?', placeholder: 'Share anything you\'d like us to know…', rows: 4 },
 ];
 

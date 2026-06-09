@@ -1309,33 +1309,6 @@ function StepBasicInfo({
               error={errors.email}
               required
             />
-            {draftBanner && (
-              <div className="rounded-[3px] border border-[#175242]/30 bg-[#175242]/5 px-4 py-3 flex items-start gap-3">
-                <svg className="shrink-0 mt-0.5 text-[#175242]" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[#175242]">Saved draft found</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Last saved {new Date(draftBanner.draft.savedAt).toLocaleDateString([], { month: 'short', day: 'numeric' })} at {new Date(draftBanner.draft.savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
-                  </p>
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => onApplyDraft(draftBanner.draft)}
-                    className="text-xs font-medium px-3 py-1.5 rounded-[3px] bg-[#175242] text-white hover:bg-[#0f3b2e] transition-colors"
-                  >
-                    Resume
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onDiscardDraft}
-                    className="text-xs font-medium px-3 py-1.5 rounded-[3px] border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors"
-                  >
-                    Discard
-                  </button>
-                </div>
-              </div>
-            )}
             <FloatInput label="Phone Number" value={form.phone} onChange={set('phone')} type="tel" />
             <div className="grid grid-cols-3 gap-3">
               <FloatInput label="First Name" value={form.firstName} onChange={set('firstName')} error={errors.firstName} required />

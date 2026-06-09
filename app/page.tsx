@@ -45,6 +45,7 @@ interface FormData {
   middleName: string;
   lastName: string;
   cityAndState: string;
+  linkedIn: string;
   yearsOfExperience: string;
   dbaName: string;
   financialTopics: string[];
@@ -522,6 +523,7 @@ export default function AdvisorForm() {
     middleName: '',
     lastName: '',
     cityAndState: '',
+    linkedIn: '',
     yearsOfExperience: '',
     dbaName: '',
     financialTopics: [],
@@ -623,6 +625,7 @@ export default function AdvisorForm() {
               designations: advisor.designations || prev.designations,
               currentBio: advisor.currentBio || prev.currentBio,
               yearsOfExperience: advisor.yearsOfExperience || prev.yearsOfExperience,
+              linkedIn: advisor.linkedIn || prev.linkedIn,
             }));
             airtableApplied = true;
           }
@@ -729,6 +732,7 @@ export default function AdvisorForm() {
       const fullName = [form.firstName, form.middleName, form.lastName].filter(Boolean).join(' ');
       fd.append('fullName', fullName);
       fd.append('cityAndState', form.cityAndState);
+      fd.append('linkedIn', form.linkedIn);
       fd.append('yearsOfExperience', form.yearsOfExperience);
       fd.append('dbaName', form.firmName);
       fd.append('financialTopics', JSON.stringify(form.financialTopics));
@@ -1323,6 +1327,10 @@ function StepBasicInfo({
               <FloatInput label="Firm / Brand Name" value={form.firmName} onChange={set('firmName')} error={errors.firmName} required />
             )}
             <FloatInput label="Your Title / Role" value={form.title} onChange={set('title')} />
+            <div>
+              <FloatInput label="LinkedIn URL" value={form.linkedIn} onChange={set('linkedIn')} type="url" />
+              <p className="text-xs text-gray-400 mt-1 pl-1">Optional</p>
+            </div>
             <div>
               <FloatInput
                 label="Designations"
@@ -1951,6 +1959,7 @@ function StepReview({ form }: { form: FormData }) {
               {[
                 ['Name', fullName],
                 ['Title / Role', form.title],
+                ['LinkedIn', form.linkedIn],
                 ['Email', form.email],
                 ['Phone', form.phone],
                 ['Location', form.cityAndState],

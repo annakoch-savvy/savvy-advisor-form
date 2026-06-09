@@ -284,23 +284,25 @@ async function generateWebpageDraft(
   const DISCLOSURE = 'Neither Savvy Wealth, nor Savvy Advisors compensates directly for testimonials or endorsements provided herein, by advisers. However advisors may have an indirect financial incentive to provide testimonials.';
   const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+  const phone: string = row.phone ?? '';
+  const linkedIn: string = row.linkedin ?? row.linked_in ?? s.linkedIn ?? '';
+  const title: string = row.title ?? '';
+
   const dataTable = [
     '<b>━━━ ADVISOR DATA TABLE ━━━</b>',
     `<b>Full Name (displayed):</b> ${s.fullName}`,
+    title ? `<b>Title / Role:</b> ${title}` : null,
     `<b>Location (City, State abbr.):</b> ${s.cityAndState}`,
-    `<b>Location (Full State):</b> [to be confirmed]`,
     `<b>Years of Experience:</b> ${s.yearsOfExperience}`,
-    `<b>Certifications / Designations:</b> ${s.designations || '—'}`,
+    s.designations ? `<b>Certifications / Designations:</b> ${s.designations}` : null,
     s.dbaName ? `<b>DBA Name:</b> ${s.dbaName}` : null,
-    `<b>E-mail:</b> ${advisorEmail || '[to be filled]'}`,
-    `<b>LinkedIn:</b> ${s.linkedIn}`,
-    `<b>Phone #:</b> [to be filled]`,
-    `<b>Advisor's Team:</b> [to be filled]`,
+    advisorEmail ? `<b>E-mail:</b> ${advisorEmail}` : null,
+    phone ? `<b>Phone #:</b> ${phone}` : null,
+    linkedIn ? `<b>LinkedIn:</b> ${linkedIn}` : null,
     `<b>HubSpot Form ID:</b> ${hubspotFormId}`,
     `<b>HubSpot Embed Code:</b><br><pre>${esc(hubspotEmbedCode)}</pre>`,
     calendlyUrl ? `<b>Calendly Scheduling URL:</b> ${calendlyUrl}` : '<b>Calendly:</b> <i>No 30-min call event found — set up manually</i>',
     calendlyEmbedCode ? `<b>Calendly Embed Code:</b><br><pre>${esc(calendlyEmbedCode)}</pre>` : null,
-    `<b>Advisor Quote:</b> [to be filled — "How [Name] works with clients"]`,
     `<b>Disclosures:</b> ${DISCLOSURE}`,
   ].filter(Boolean).join('<br>');
 

@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
       full_name: body.fullName || '',
       phone: body.phone || '',
       city_and_state: body.cityAndState || '',
+      linkedin: body.linkedIn || '',
       years_of_experience: body.yearsOfExperience || '',
       page_type: body.pageType || 'solo_savvy',
       firm_name: body.firmName || '',

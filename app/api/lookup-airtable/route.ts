@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
       'Advisor Name', 'Personal Email Address', 'Savvy Email',
       'Personal Phone Number', 'City', 'State', 'Designations',
       'Areas of Specialization', 'Professional Bio', 'Brand Name',
-      'Start Date', 'Team Type',
+      'LinkedIn', 'Start Date', 'Team Type',
     ].map(f => `fields[]=${encodeURIComponent(f)}`).join('&');
 
     // Try 1: match by stored email fields
@@ -76,6 +76,7 @@ export async function GET(req: NextRequest) {
         designations: Array.isArray(f['Designations']) ? f['Designations'].join(', ') : (f['Designations'] || ''),
         currentBio: f['Professional Bio'] || '',
         yearsOfExperience: yearsExp,
+        linkedIn: f['LinkedIn'] || '',
         // Provide as context — advisor can edit
         _airtableSource: true,
         _advisorName: f['Advisor Name'] || '',

@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
       lastName: (data.full_name || '').split(' ').slice(1).join(' ') || '',
       phone: data.phone || '',
       cityAndState: data.city_and_state || '',
+      linkedIn: data.linkedin || data.linked_in || '',
       yearsOfExperience: data.years_of_experience || '',
       pageType: data.page_type || 'solo_savvy',
       firmName: data.firm_name || '',

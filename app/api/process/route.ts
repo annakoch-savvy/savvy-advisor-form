@@ -267,16 +267,58 @@ Executive Compensation Planning | STRATEGIC PLANNING OF YOUR FINANCIAL AND NON-F
 Equity Compensation | STRATEGIC PLANNING FOR EQUITY COMPENSATION | We help clients make informed decisions around stock options, RSUs, ESPPs, and other equity awards. Our approach integrates tax planning, diversification strategies, and long-term wealth planning to help you manage concentration risk and align your equity compensation with your broader financial goals.
 `.trim();
 
-const COMPLIANCE_AVOID = [
-  'always','highest','revolutionary','amazing','industry leading','safest','attractive returns',
-  'innovative','special','award winning','investment gurus','state of the art','best','largest',
-  'superior','conservative','leading','time-tested','cutting edge','lucrative','top advisers',
-  'dynamic','major','top of the line','enviable','maximum','unbiased','exceptional','never',
-  'unique','expert','no risk','unlimited','extensive','outstanding','unmatched','free',
-  'peace of mind','unparalleled','guarantee','premier','we treat you like family',
-  'help you sleep at night','proven','world class','expertise','smarter','conflict free',
-  'no conflict','firm',
-];
+// Compliance buzzword replacements (from Compliance Buzzwords.pdf)
+const COMPLIANCE_REPLACEMENTS: Record<string, string> = {
+  'always': 'often',
+  'highest': 'one of the top',
+  'revolutionary': 'forward-looking',
+  'amazing': '[do not use]',
+  'industry leading': 'one of the top',
+  'safest': 'what we believe to be safe',
+  'attractive returns': '[do not discuss returns]',
+  'innovative': 'thoughtful',
+  'special': 'different, significant',
+  'state of the art': 'well-researched, carefully planned',
+  'best': 'one of the best',
+  'largest': 'one of the biggest',
+  'superior': 'one of the top',
+  'conservative': 'stable, steady',
+  'leading': 'one of the leading',
+  'time-tested': 'with a history of',
+  'cutting edge': 'compelling',
+  'lucrative': 'worthwhile, advantageous',
+  'dynamic': 'compelling, powerful',
+  'major': 'significant',
+  'top of the line': '[do not use]',
+  'enviable': '[do not use]',
+  'maximum': '[do not use]',
+  'unbiased': 'transparent',
+  'exceptional': 'noteworthy',
+  'never': 'rarely',
+  'unique': 'different',
+  'expert': 'a level of experience',
+  'expertise': 'experience',
+  'no risk': '[do not use]',
+  'unlimited': '[do not use]',
+  'extensive': 'wide-ranging',
+  'outstanding': 'white glove',
+  'unmatched': '[do not use]',
+  'free': 'complimentary',
+  'peace of mind': 'help to alleviate concerns, knowing you have a plan',
+  'unparalleled': '[do not use]',
+  'guarantee': '[do not use]',
+  'premier': 'white-glove',
+  'we treat you like family': 'white glove, high-touch service model',
+  'help you sleep at night': 'help to alleviate concerns, knowing you have a plan',
+  'proven': 'carefully researched',
+  'world class': 'white glove, high-touch service model',
+  'smarter': '[do not use]',
+  'conflict free': '[do not use]',
+  'no conflict': '[do not use]',
+  'firm': 'business, company, or practice',
+};
+
+const COMPLIANCE_AVOID = Object.keys(COMPLIANCE_REPLACEMENTS);
 
 async function generateWebpageDraft(
   s: AdvisorSubmission,
@@ -364,95 +406,106 @@ async function generateWebpageDraft(
   const isMulti = s.pageType === 'multi_savvy' || s.pageType === 'multi_dba';
   const firstName = s.fullName.split(' ')[0];
 
+  // Template guidance per page type — mirrors the GPT's reference documents
   const templateGuidance = isMulti && isDba
-    ? `This is a multi-advisor team page with DBA branding (like "Benda & Co." or "Colorado Wealth Group"). The DBA name is "${s.dbaName}". Include a [LOGO PLACEHOLDER] note in the Our Team section. Generate content for this advisor's individual section. The "Our Team" intro paragraph should reference the team brand and advisor's role, with a note that other team members' sections will be added separately.`
+    ? `This is a team of advisors with DBA branding (reference: Chris Benda / Benda & Co. format). The DBA name is "${s.dbaName}". The output must include a [LOGO PLACEHOLDER] for the team logo. Generate content for this advisor's individual section within the team page. The "Our Team" section should introduce the ${s.dbaName} team as a whole (2-3 sentences), then include "[TEAM MEMBER SECTION: ${s.fullName}]" for this advisor's content, then "[ADDITIONAL TEAM MEMBER SECTIONS TO BE ADDED]".`
     : isMulti
-    ? `This is a multi-advisor team page under Savvy branding. Generate content for this advisor's individual section. The "Our Team" intro paragraph should reference the team's shared mission, with a note that the other team member's section will be added separately.`
+    ? `This is a team of advisors under Savvy branding (reference: Cindy Alvarez and Janelle Van Meel format). Generate content for this advisor's individual section. The "Our Team" section should open with a paragraph about the team's shared mission and what they bring together, then include "[TEAM MEMBER SECTION: ${s.fullName}]" for this advisor, then "[ADDITIONAL TEAM MEMBER SECTIONS TO BE ADDED]".`
     : isDba
-    ? `This is a solo advisor page with their own DBA brand. The DBA name is "${s.dbaName}". Reference the DBA brand naturally where appropriate (e.g., "At ${s.dbaName}, we believe...").`
-    : `This is a solo advisor page under Savvy branding.`;
+    ? `This is a solo advisor with their own DBA brand (reference: Steve Marcou solo format but with DBA branding). The DBA name is "${s.dbaName}". Reference the DBA brand naturally throughout (e.g., "At ${s.dbaName}...").`
+    : `This is a solo advisor under Savvy branding (reference: Steve Marcou solo format).`;
 
-  const complianceNote = `NEVER use these words or phrases (compliance restricted): ${COMPLIANCE_AVOID.join(', ')}. Instead use natural alternatives.`;
+  const complianceNote = `COMPLIANCE — Never use these restricted words. Use the replacements instead:
+${Object.entries(COMPLIANCE_REPLACEMENTS).map(([bad, good]) => `  - "${bad}" → ${good}`).join('\n')}`;
 
-  const prompt = `You are writing a financial advisor webpage draft for Savvy Advisors. Generate polished, natural-sounding copy based on the survey responses below.
+  const prompt = `You are generating a draft advisor webpage for Savvy Advisors based on a submitted survey.
+
+The output must begin with the filled-in data table, then the webpage copy sections exactly as shown in the template format below.
 
 PAGE TYPE: ${pageTypeLabel}
 ${templateGuidance}
 
-ADVISOR SURVEY RESPONSES:
-- Full Name: ${s.fullName}
-- Location: ${s.cityAndState}
-- LinkedIn: ${s.linkedIn}
-- Years of Experience: ${s.yearsOfExperience}
-- Financial Topics: ${s.financialTopics.join(', ')}
-- Designations: ${s.designations || 'none listed'}
-- Current Bio: ${s.currentBio}
-- How they became an advisor: ${s.howBecameAdvisor}
-- Types of clients: ${s.clientTypes}
-- Areas of expertise: ${s.areasOfExpertise}
-- Strategies used: ${s.strategies}
-- Unique approach: ${s.uniqueApproach}
-- Favorite part of working with clients: ${s.favoritePartWorking}
-- What they like about Savvy: ${s.likesAboutSavvy}
+━━━ SURVEY RESPONSES ━━━
+Email: ${advisorEmail || '[not provided]'}
+Name: ${s.fullName}
+City and State: ${s.cityAndState}
+LinkedIn: ${linkedIn || '[not provided]'}
+Years of Experience: ${s.yearsOfExperience}
+Financial Topics: ${s.financialTopics.join(', ')}
+Types of clients: ${s.clientTypes}
+Areas of expertise: ${s.areasOfExpertise}
+Strategies used: ${s.strategies}
+Unique approach / advisor quote: ${s.uniqueApproach}
+Favorite part of working with clients: ${s.favoritePartWorking}
+What they like about Savvy: ${s.likesAboutSavvy}
+Designations / organizations: ${s.designations || 'none listed'}
+Current bio: ${s.currentBio}
 
-WRITING RULES:
-- Fix spelling and grammar; keep the advisor's own voice and meaning
-- Write naturally — do NOT make it sound AI-generated or overly polished
-- Do NOT use em-dashes (—). Use commas, periods, or rewrite the sentence instead
-- Do NOT add information that wasn't in the survey responses
-- ${complianceNote}
-- If an answer is very brief, form it into a clean short paragraph using only what was written
+━━━ WRITING RULES ━━━
+- Keep the advisor's own voice, tone, and meaning — this should feel like THEM, not AI-generated
+- Fix spelling and grammar only where needed
+- Do NOT use em-dashes (—). Use commas, periods, or restructure the sentence
+- Do NOT add information that was not in the survey — only use what was provided
+- If an answer is brief, form it into one clean short paragraph using only what was written
+- The writing should feel natural and conversational, not choppy
+${complianceNote}
 
-HOW CAN I HELP? SECTION:
-Choose exactly 4 options from the list below that best match the advisor's financial topics, expertise, and client types. Copy the option text VERBATIM — do not change a single word.
+━━━ HOW CAN I HELP? SECTION ━━━
+Choose exactly 4 options from the standard list below that best match the advisor's financial topics, expertise, and client types.
+Copy the TITLE, SUBTITLE, and DESCRIPTION verbatim — do not change a single word.
+Base your selection on keywords in the survey (financial topics, client types, expertise, strategies).
 
-Available options:
+STANDARD OPTIONS (choose 4 verbatim):
 ${HOW_CAN_I_HELP_OPTIONS}
 
-OUTPUT FORMAT — Generate each section with these exact headers (use plain text headers, no markdown):
+━━━ OUTPUT FORMAT ━━━
+Use these exact section headers. No markdown formatting. Plain text headers only.
 
 HERO SECTION INTRO
-[2-3 sentence intro written in first person. Warm, direct, conversational. Based on the bio and survey answers. For DBA pages, reference the brand name naturally.]
+[Written in first person. 2-3 sentences. Warm, direct, conversational. Based on the bio and survey. For DBA pages, reference the brand name naturally. Avoid opening every sentence with "I". Reference specific client types and what the advisor is known for.]
 
 HOW CAN I HELP?
-[List the 4 chosen options, each on its own block with Title, Subtitle, Description exactly as written in the options list]
+[4 options chosen from the standard list above. Each on its own block:
+Title
+SUBTITLE
+Description]
 ${isMulti ? `
 OUR TEAM
 [${isDba
-  ? `Opening paragraph (2-3 sentences) introducing the ${s.dbaName} team — their shared mission, values, and what sets the team apart. Reference the DBA brand name naturally. End with: "[LOGO PLACEHOLDER — ${s.dbaName} team logo]". Then add a note: "[TEAM MEMBER SECTION: ${s.fullName}]" followed by their individual bio below. Close with a note: "[ADDITIONAL TEAM MEMBER SECTIONS TO BE ADDED]".`
-  : `Opening paragraph (2-3 sentences) introducing the team under Savvy branding — their shared mission and what they collectively bring to clients. Then add a note: "[TEAM MEMBER SECTION: ${s.fullName}]" followed by their individual bio below. Close with a note: "[ADDITIONAL TEAM MEMBER SECTIONS TO BE ADDED]".`
+  ? `2-3 sentence intro about the ${s.dbaName} team — their shared mission, values, and what they bring to clients together. Reference the DBA brand name naturally. Then: [LOGO PLACEHOLDER — ${s.dbaName} team logo]. Then: [TEAM MEMBER SECTION: ${s.fullName}] — followed by their individual bio. Then: [ADDITIONAL TEAM MEMBER SECTIONS TO BE ADDED].`
+  : `2-3 sentence intro about the team under Savvy branding — their shared mission and what they bring together. Then: [TEAM MEMBER SECTION: ${s.fullName}] — followed by their individual bio. Then: [ADDITIONAL TEAM MEMBER SECTIONS TO BE ADDED].`
 }]
 ` : ''}
 GET TO KNOW ${s.fullName.toUpperCase()}
-[3-4 paragraph bio in third person. Covers career background, areas of focus, what drives them, and a personal detail if mentioned. Natural, warm tone. Use the bio + how they became an advisor answers as source material.]
+[3-4 paragraphs in third person. Cover: career background and how they got into advising, areas of focus and who they serve, their approach and what drives them, a personal detail if mentioned. Warm, natural tone. Source material: the bio + how they became an advisor answers. Do not make it a list — write in flowing paragraphs.]
 
 FAQ
 
 1. How did you become a financial advisor?
-[Polished version of their answer — their words, cleaned up]
+[Their answer, polished — their words cleaned up, not rewritten]
 
 2. What types of clients do you work with?
-[Polished version of their answer]
+[Their answer, polished]
 
 3. What areas of expertise do you have?
-[Polished version of their answer]
+[Their answer, polished]
 
 4. What types of strategies do you usually help clients with?
-[Polished version of their answer]
+[Their answer, polished]
 
 5. Is there a unique approach that sets you apart?
-[Polished version of their answer]
+[Their answer, polished]
 
 6. What is your favorite part about working with clients?
-[Polished version of their answer]
+[Their answer, polished]
 
 7. Working with Savvy
-[Polished version of their answer]`;
+[Their answer, polished]`;
 
   const client = new Anthropic({ apiKey: key });
   const msg = await client.messages.create({
     model: 'claude-sonnet-4-5',
-    max_tokens: 4096,
+    max_tokens: 6000,
     messages: [{ role: 'user', content: prompt }],
   });
 

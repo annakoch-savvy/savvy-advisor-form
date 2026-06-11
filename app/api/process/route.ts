@@ -306,6 +306,7 @@ async function generateWebpageDraft(
     advisorEmail ? `<b>E-mail:</b> ${advisorEmail}` : null,
     phone ? `<b>Phone #:</b> ${phone}` : null,
     linkedIn ? `<b>LinkedIn:</b> ${linkedIn}` : null,
+    s.uniqueApproach ? `<b>Advisor Quote:</b> "${s.uniqueApproach}"` : null,
     `<b>HubSpot Form ID:</b> ${hubspotFormId}`,
     `<b>HubSpot Embed Code:</b><br><pre>${esc(hubspotEmbedCode)}</pre>`,
     calendlyUrl ? `<b>Calendly Scheduling URL:</b> ${calendlyUrl}` : '<b>Calendly:</b> <i>No 30-min call event found — set up manually</i>',

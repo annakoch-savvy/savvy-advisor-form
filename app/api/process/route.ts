@@ -920,10 +920,9 @@ export async function POST(req: NextRequest) {
 
     // Step 2: Run AI cleanup + other lookups in parallel
     const cleaned = await cleanSubmission(submission);
-    const [hubspot, calendly, assigneeId, dueDate] = await Promise.all([
+    const [hubspot, calendly, dueDate] = await Promise.all([
       createHubSpotForm(submission.fullName),
       getCalendlyEmbed(submission.fullName),
-      findContactId('Gonzalo Silva Corcelet'),
       Promise.resolve(formatDate(addBusinessDays(new Date(), 3))),
     ]);
 
@@ -940,7 +939,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         title: 'Savvy Landing Page',
         description,
-        responsibles: assigneeId ? [assigneeId] : [],
+        responsibles: [],
         dates: { due: dueDate },
       }),
     });
